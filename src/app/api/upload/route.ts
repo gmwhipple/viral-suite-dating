@@ -11,6 +11,7 @@ import {
 import { logActivity } from "@/lib/activity-log";
 import { v4 as uuidv4 } from "uuid";
 import { MAX_UPLOAD_PHOTOS } from "@/lib/constants";
+import { getAppBaseUrl } from "@/lib/app-url";
 
 export async function POST(request: NextRequest) {
   const auth = await verifyAuthToken(request);
@@ -43,7 +44,8 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const stored = await uploadUserPhoto(auth.uid, file.name, buffer, file.type);
+    const baseUrl = getAppBaseUrl(request);
+    const stored = await uploadUserPhoto(auth.uid, file.name, buffer, file.type, baseUrl);
 
     const photo = {
       id: uuidv4(),

@@ -7,6 +7,7 @@ import {
   uploadCustomReference,
 } from "@/lib/reference-storage";
 import type { ReferenceGender } from "@/lib/firebase/types";
+import { getAppBaseUrl } from "@/lib/app-url";
 import { updateUser } from "@/lib/services/users";
 
 const MAX_REFERENCE_SIZE = 15 * 1024 * 1024;
@@ -23,10 +24,11 @@ export async function GET(request: NextRequest) {
   }
 
   const gender = parseGender(request.nextUrl.searchParams.get("gender"));
+  const baseUrl = getAppBaseUrl(request);
 
   const [catalogReferences, customReferences] = await Promise.all([
-    listCatalogReferences(gender),
-    listCustomReferences(auth.uid),
+    listCatalogReferences(gender, baseUrl),
+    listCustomReferences(auth.uid, baseUrl),
   ]);
 
   return NextResponse.json({
@@ -64,7 +66,8 @@ export async function POST(request: NextRequest) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const reference = await uploadCustomReference(auth.uid, file.name, buffer, file.type);
+    const baseUrl = getAppBaseUrl(request);
+    const reference = await uploadCustomReference(auth.uid, file.name, buffer, file.type, baseUrl);
 
     const genderField = formData.get("gender");
     if (genderField === "men" || genderField === "women") {

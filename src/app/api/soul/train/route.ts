@@ -4,12 +4,14 @@ import { getOrCreateUser, updateUser, getUserPhotos } from "@/lib/services/users
 import { logActivity } from "@/lib/activity-log";
 import { createSoulCharacter, isHiggsfieldConfigured, pollSoulIdStatus } from "@/lib/higgsfield";
 import { getExternalFetchUrl } from "@/lib/storage";
+import { getAppBaseUrl } from "@/lib/app-url";
 import { MIN_SOUL_TRAINING_PHOTOS } from "@/lib/constants";
 
 async function resolveTrainingImageUrls(
-  photos: Awaited<ReturnType<typeof getUserPhotos>>
+  photos: Awaited<ReturnType<typeof getUserPhotos>>,
+  baseUrl: string
 ): Promise<string[]> {
-  return Promise.all(photos.map((p) => getExternalFetchUrl(p.storageKey)));
+  return Promise.all(photos.map((p) => getExternalFetchUrl(p.storageKey, baseUrl)));
 }
 
 export async function POST(request: NextRequest) {
@@ -41,8 +43,8 @@ export async function POST(request: NextRequest) {
       lastTrainingError: undefined,
     });
 
-    const imageUrls = await resolveTrainingImageUrls(photos);
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+    const baseUrl = getAppBaseUrl(request);
+    const imageUrls = await resolveTrainingImageUrls(photos, baseUrl);
     console.log("[soul/train] starting", {
       uid: auth.uid.slice(0, 8),
       photoCount: photos.length,
@@ -53,7 +55,7 @@ export async function POST(request: NextRequest) {
           return "invalid";
         }
       })(),
-      appUrl,
+      appUrl: baseUrl,
     });
 
     const soulId = await createSoulCharacter({

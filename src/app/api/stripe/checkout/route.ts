@@ -3,6 +3,7 @@ import { verifyAuthToken } from "@/lib/auth";
 import { createCheckoutSession, isStripeConfigured } from "@/lib/stripe";
 import { logActivity } from "@/lib/activity-log";
 import { getClientIp } from "@/lib/auth";
+import { getAppBaseUrl } from "@/lib/app-url";
 
 export async function POST(request: NextRequest) {
   const auth = await verifyAuthToken(request);
@@ -14,7 +15,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
   }
 
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const appUrl = getAppBaseUrl(request);
 
   try {
     const session = await createCheckoutSession({

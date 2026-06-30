@@ -8,6 +8,7 @@ import {
   uploadToFirebaseStorage,
   existsInFirebaseStorage,
 } from "@/lib/firebase/storage";
+import { getAppBaseUrl } from "@/lib/app-url";
 
 const LOCAL_STORAGE_DIR = path.join(process.cwd(), ".local-storage");
 
@@ -16,13 +17,13 @@ export interface StorageResult {
   publicUrl: string;
 }
 
-export function getStoragePublicUrl(storageKey: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+export function getStoragePublicUrl(storageKey: string, baseUrl?: string): string {
+  const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
   const encoded = storageKey
     .split("/")
     .map((segment) => encodeURIComponent(segment))
     .join("/");
-  return `${baseUrl}/api/storage/${encoded}`;
+  return `${base}/api/storage/${encoded}`;
 }
 
 async function ensureLocalDir(subdir: string): Promise<string> {
@@ -34,11 +35,12 @@ async function ensureLocalDir(subdir: string): Promise<string> {
 async function uploadLocal(
   storageKey: string,
   buffer: Buffer,
-  _mimeType: string
+  _mimeType: string,
+  baseUrl?: string
 ): Promise<StorageResult> {
   const dir = await ensureLocalDir(path.dirname(storageKey));
   await fs.writeFile(path.join(dir, path.basename(storageKey)), buffer);
-  return { storageKey, publicUrl: getStoragePublicUrl(storageKey) };
+  return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
 }
 
 function userPhotoKey(userId: string, fileName: string): string {
@@ -50,29 +52,31 @@ export async function uploadUserPhoto(
   userId: string,
   fileName: string,
   buffer: Buffer,
-  mimeType: string
+  mimeType: string,
+  baseUrl?: string
 ): Promise<StorageResult> {
   const storageKey = userPhotoKey(userId, fileName);
 
   if (isFirebaseStorageConfigured()) {
     await uploadToFirebaseStorage(storageKey, buffer, mimeType);
-    return { storageKey, publicUrl: getStoragePublicUrl(storageKey) };
+    return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
   }
 
-  return uploadLocal(storageKey, buffer, mimeType);
+  return uploadLocal(storageKey, buffer, mimeType, baseUrl);
 }
 
 export async function uploadAtPath(
   storageKey: string,
   buffer: Buffer,
-  mimeType: string
+  mimeType: string,
+  baseUrl?: string
 ): Promise<StorageResult> {
   if (isFirebaseStorageConfigured()) {
     await uploadToFirebaseStorage(storageKey, buffer, mimeType);
-    return { storageKey, publicUrl: getStoragePublicUrl(storageKey) };
+    return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
   }
 
-  return uploadLocal(storageKey, buffer, mimeType);
+  return uploadLocal(storageKey, buffer, mimeType, baseUrl);
 }
 
 export async function downloadFromStorage(storageKey: string): Promise<Buffer> {
@@ -140,10 +144,13 @@ export function usesFirebaseStorage(): boolean {
 }
 
 /** URL for external services (Higgsfield) to download a user file. */
-export async function getExternalFetchUrl(storageKey: string): Promise<string> {
+export async function getExternalFetchUrl(
+  storageKey: string,
+  baseUrl?: string
+): Promise<string> {
   if (isFirebaseStorageConfigured()) {
     const { getFirebaseSignedReadUrl } = await import("@/lib/firebase/storage");
     return getFirebaseSignedReadUrl(storageKey);
   }
-  return getStoragePublicUrl(storageKey);
+  return getStoragePublicUrl(storageKey, baseUrl);
 }

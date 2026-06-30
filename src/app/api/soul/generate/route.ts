@@ -8,6 +8,7 @@ import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin
 import styleReferences from "@/data/style-references.json";
 import type { GenerationJob } from "@/lib/firebase/types";
 import { DEFAULT_SOUL_GENERATION_PROMPT, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
+import { getAppBaseUrl } from "@/lib/app-url";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
@@ -56,8 +57,10 @@ export async function POST(request: NextRequest) {
     let resolvedReferenceId = referenceId || storageKey || "custom";
     let resolvedStorageKey = storageKey;
 
+    const baseUrl = getAppBaseUrl(request);
+
     if (storageKey) {
-      const ref = await resolveImageReference(auth.uid, storageKey);
+      const ref = await resolveImageReference(auth.uid, storageKey, baseUrl);
       if (!ref) {
         return NextResponse.json({ error: "Invalid reference image" }, { status: 400 });
       }
@@ -80,7 +83,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "imageReferenceUrl or storageKey required" }, { status: 400 });
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
+    const appUrl = baseUrl;
     const jobId = uuidv4();
 
     const generation: GenerationJob = {

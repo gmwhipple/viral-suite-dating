@@ -28,46 +28,54 @@ function displayNameFromKey(storageKey: string): string {
 function toImageReference(
   storageKey: string,
   gender: ImageReference["gender"],
-  source: ImageReference["source"]
+  source: ImageReference["source"],
+  baseUrl?: string
 ): ImageReference {
   return {
     id: `${source}:${gender}:${storageKey}`,
     name: displayNameFromKey(storageKey),
     storageKey,
-    publicUrl: getStoragePublicUrl(storageKey),
+    publicUrl: getStoragePublicUrl(storageKey, baseUrl),
     gender,
     source,
   };
 }
 
-export async function listCatalogReferences(gender: ReferenceGender): Promise<ImageReference[]> {
+export async function listCatalogReferences(
+  gender: ReferenceGender,
+  baseUrl?: string
+): Promise<ImageReference[]> {
   const prefix = CATALOG_PREFIX[gender];
   const keys = (await listStoragePrefix(prefix)).filter(isImageFile);
 
   return keys
     .sort((a, b) => a.localeCompare(b))
-    .map((storageKey) => toImageReference(storageKey, gender, "catalog"));
+    .map((storageKey) => toImageReference(storageKey, gender, "catalog", baseUrl));
 }
 
-export async function listCustomReferences(userId: string): Promise<ImageReference[]> {
+export async function listCustomReferences(
+  userId: string,
+  baseUrl?: string
+): Promise<ImageReference[]> {
   const prefix = `users/${userId}/style-refs/`;
   const keys = (await listStoragePrefix(prefix)).filter(isImageFile);
 
   return keys
     .sort((a, b) => b.localeCompare(a))
-    .map((storageKey) => toImageReference(storageKey, "custom", "custom"));
+    .map((storageKey) => toImageReference(storageKey, "custom", "custom", baseUrl));
 }
 
 export async function uploadCustomReference(
   userId: string,
   fileName: string,
   buffer: Buffer,
-  mimeType: string
+  mimeType: string,
+  baseUrl?: string
 ): Promise<ImageReference> {
   const ext = path.extname(fileName) || ".jpg";
   const storageKey = `users/${userId}/style-refs/${uuidv4()}${ext}`;
 
-  await uploadAtPath(storageKey, buffer, mimeType);
+  await uploadAtPath(storageKey, buffer, mimeType, baseUrl);
 
   console.log("[reference-storage] custom reference uploaded", {
     userId,
@@ -80,7 +88,8 @@ export async function uploadCustomReference(
 
 export async function resolveImageReference(
   userId: string,
-  storageKey: string
+  storageKey: string,
+  baseUrl?: string
 ): Promise<ImageReference | null> {
   const isCatalog =
     storageKey.startsWith(CATALOG_PREFIX.men) || storageKey.startsWith(CATALOG_PREFIX.women);
@@ -105,7 +114,7 @@ export async function resolveImageReference(
   if (storageKey.startsWith(CATALOG_PREFIX.men)) gender = "men";
   if (storageKey.startsWith(CATALOG_PREFIX.women)) gender = "women";
 
-  return toImageReference(storageKey, gender, isCatalog ? "catalog" : "custom");
+  return toImageReference(storageKey, gender, isCatalog ? "catalog" : "custom", baseUrl);
 }
 
 export { getStoragePublicUrl };

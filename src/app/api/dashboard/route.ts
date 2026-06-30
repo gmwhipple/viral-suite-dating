@@ -6,6 +6,8 @@ import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin
 import { listCatalogReferences, listCustomReferences } from "@/lib/reference-storage";
 import type { EditJob, ReferenceGender } from "@/lib/firebase/types";
 import { MAX_UPLOAD_PHOTOS, MAX_GENERATIONS_PER_USER, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
+import { getAppBaseUrl } from "@/lib/app-url";
+import { getStoragePublicUrl } from "@/lib/storage";
 
 export async function GET(request: NextRequest) {
   const auth = await verifyAuthToken(request);
@@ -15,14 +17,18 @@ export async function GET(request: NextRequest) {
 
   try {
     const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
-    const photos = await getUserPhotos(auth.uid);
+    const baseUrl = getAppBaseUrl(request);
+    const photos = (await getUserPhotos(auth.uid)).map((photo) => ({
+      ...photo,
+      publicUrl: getStoragePublicUrl(photo.storageKey, baseUrl),
+    }));
     const generations = await getUserGenerations(auth.uid);
     const recentActivity = await getUserActivity(auth.uid, 30);
     const gender: ReferenceGender = user.referenceGender === "women" ? "women" : "men";
 
     const [catalogReferences, customReferences] = await Promise.all([
-      listCatalogReferences(gender),
-      listCustomReferences(auth.uid),
+      listCatalogReferences(gender, baseUrl),
+      listCustomReferences(auth.uid, baseUrl),
     ]);
 
     let edits: EditJob[] = [];
