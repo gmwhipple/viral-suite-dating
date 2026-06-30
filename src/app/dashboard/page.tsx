@@ -127,7 +127,9 @@ export default function DashboardPage() {
           photos={data.photos}
           maxPhotos={data.limits.maxPhotos}
           token={token!}
-          onUploadComplete={refresh}
+          plan={data.user.plan}
+          onRefresh={refresh}
+          onStartTraining={startTraining}
           disabled={!canUpload}
         />
 

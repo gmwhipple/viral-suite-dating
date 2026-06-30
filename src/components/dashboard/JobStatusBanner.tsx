@@ -68,7 +68,8 @@ export function JobStatusBanner({
   const canTrain =
     user.plan === "paid" &&
     photoCount >= MIN_SOUL_TRAINING_PHOTOS &&
-    ["draft", "failed"].includes(user.soulJobStatus);
+    ["draft", "failed"].includes(user.soulJobStatus) &&
+    photoCount > 0;
   const needsPayment = user.plan !== "paid";
 
   return (
