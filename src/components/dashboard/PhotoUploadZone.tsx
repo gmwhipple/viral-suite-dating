@@ -19,6 +19,7 @@ interface PhotoUploadZoneProps {
   onStartTraining: () => Promise<void>;
   disabled?: boolean;
   soulJobStatus?: SoulJobStatus;
+  training?: boolean;
 }
 
 export function PhotoUploadZone({
@@ -29,9 +30,11 @@ export function PhotoUploadZone({
   onStartTraining,
   disabled,
   soulJobStatus,
+  training = false,
 }: PhotoUploadZoneProps) {
   const [pendingFiles, setPendingFiles] = useState<PendingPhoto[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pendingRef = useRef(pendingFiles);
@@ -81,6 +84,27 @@ export function PhotoUploadZone({
       return prev.filter((p) => p.id !== id);
     });
   }, []);
+
+  const deleteSavedPhoto = async (photoId: string) => {
+    if (disabled || uploading) return;
+
+    setDeletingId(photoId);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/upload?photoId=${encodeURIComponent(photoId)}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Delete failed");
+      await onRefresh();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const uploadPendingAndTrain = async () => {
     if (!hasEnoughPhotos) {
@@ -155,8 +179,10 @@ export function PhotoUploadZone({
       </div>
 
       <p className="mt-1 text-sm text-gray-500">
-        Choose photos first — they stay on your device until you start training. Minimum{" "}
-        {MIN_SOUL_TRAINING_PHOTOS} required.
+        {photos.length > 0
+          ? `${photos.length} photo${photos.length === 1 ? "" : "s"} saved to your account (any device). `
+          : ""}
+        New picks stay on this device until you upload. Minimum {MIN_SOUL_TRAINING_PHOTOS} to train.
       </p>
 
       {isTraining && (
@@ -202,9 +228,23 @@ export function PhotoUploadZone({
       {totalCount > 0 && (
         <div className="mt-6 grid grid-cols-3 gap-2 sm:grid-cols-5 md:grid-cols-8">
           {photos.map((photo) => (
-            <div key={photo.id} className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+            <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={photo.publicUrl} alt={photo.fileName} className="h-full w-full object-cover" />
+              {!disabled && !uploading && (
+                <button
+                  type="button"
+                  onClick={() => deleteSavedPhoto(photo.id)}
+                  disabled={deletingId === photo.id}
+                  className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-xs text-white opacity-0 transition group-hover:opacity-100 disabled:opacity-100"
+                  aria-label={`Remove ${photo.fileName}`}
+                >
+                  {deletingId === photo.id ? "…" : "✕"}
+                </button>
+              )}
+              <span className="absolute bottom-1 left-1 rounded bg-gray-800/80 px-1.5 py-0.5 text-[10px] font-medium text-white">
+                Saved
+              </span>
             </div>
           ))}
           {pendingFiles.map((pending) => (
@@ -235,10 +275,10 @@ export function PhotoUploadZone({
             <button
               type="button"
               onClick={uploadPendingAndTrain}
-              disabled={uploading || !hasEnoughPhotos}
+              disabled={uploading || training || !hasEnoughPhotos}
               className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {uploading
+              {uploading || training
                 ? "Uploading & starting..."
                 : `Upload ${pendingFiles.length} photo${pendingFiles.length === 1 ? "" : "s"} & start AI training`}
             </button>
@@ -246,10 +286,10 @@ export function PhotoUploadZone({
             <button
               type="button"
               onClick={startTrainingOnly}
-              disabled={uploading || !hasEnoughPhotos}
+              disabled={uploading || training || !hasEnoughPhotos}
               className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {uploading ? "Starting..." : "Start AI training"}
+              {uploading || training ? "Starting..." : "Start AI training"}
             </button>
           ) : (
             <p className="text-sm text-gray-500">

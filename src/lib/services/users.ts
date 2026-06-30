@@ -96,6 +96,23 @@ export async function saveUserPhoto(photo: UserPhoto): Promise<void> {
   await getAdminDb().collection(COLLECTIONS.photos).doc(photo.id).set(photo);
 }
 
+export async function deleteUserPhoto(
+  userId: string,
+  photoId: string
+): Promise<UserPhoto | null> {
+  if (!isAdminConfigured()) return null;
+
+  const ref = getAdminDb().collection(COLLECTIONS.photos).doc(photoId);
+  const snap = await ref.get();
+  if (!snap.exists) return null;
+
+  const photo = snap.data() as UserPhoto;
+  if (photo.userId !== userId) return null;
+
+  await ref.delete();
+  return photo;
+}
+
 export async function getUserGenerations(userId: string): Promise<GenerationJob[]> {
   if (!isAdminConfigured()) return [];
 

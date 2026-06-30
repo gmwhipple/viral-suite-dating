@@ -54,6 +54,7 @@ export interface UserProfile {
   soulReferenceId?: string;
   soulJobStatus: SoulJobStatus;
   higgsfieldRequestId?: string;
+  lastTrainingError?: string;
   createdAt: string;
   updatedAt: string;
 }

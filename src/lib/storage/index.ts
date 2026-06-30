@@ -112,6 +112,20 @@ export async function storageObjectExists(storageKey: string): Promise<boolean> 
   }
 }
 
+export async function deleteFromStorage(storageKey: string): Promise<void> {
+  if (isFirebaseStorageConfigured()) {
+    const { deleteFromFirebaseStorage } = await import("@/lib/firebase/storage");
+    await deleteFromFirebaseStorage(storageKey);
+    return;
+  }
+
+  try {
+    await fs.unlink(path.join(LOCAL_STORAGE_DIR, storageKey));
+  } catch {
+    // ignore missing local files
+  }
+}
+
 export async function uploadProcessedImage(
   userId: string,
   buffer: Buffer,
@@ -123,4 +137,13 @@ export async function uploadProcessedImage(
 
 export function usesFirebaseStorage(): boolean {
   return isFirebaseStorageConfigured();
+}
+
+/** URL for external services (Higgsfield) to download a user file. */
+export async function getExternalFetchUrl(storageKey: string): Promise<string> {
+  if (isFirebaseStorageConfigured()) {
+    const { getFirebaseSignedReadUrl } = await import("@/lib/firebase/storage");
+    return getFirebaseSignedReadUrl(storageKey);
+  }
+  return getStoragePublicUrl(storageKey);
 }

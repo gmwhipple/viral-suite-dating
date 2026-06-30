@@ -167,9 +167,8 @@ export default function DashboardPage() {
         <JobStatusBanner
           user={data.user}
           photoCount={data.photos.length}
-          onStartTraining={startTraining}
+          recentActivity={data.recentActivity}
           onCheckout={checkout}
-          training={training}
           checkingOut={checkingOut}
         />
 
@@ -183,6 +182,7 @@ export default function DashboardPage() {
           onStartTraining={startTraining}
           disabled={!canUpload}
           soulJobStatus={data.user.soulJobStatus}
+          training={training}
         />
 
         {canGenerate && (

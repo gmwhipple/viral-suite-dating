@@ -49,3 +49,19 @@ export async function existsInFirebaseStorage(storageKey: string): Promise<boole
   const [exists] = await getAdminBucket().file(storageKey).exists();
   return exists;
 }
+
+export async function deleteFromFirebaseStorage(storageKey: string): Promise<void> {
+  await getAdminBucket().file(storageKey).delete({ ignoreNotFound: true });
+}
+
+/** Public HTTPS URL Higgsfield can fetch (signed, ~2h). */
+export async function getFirebaseSignedReadUrl(
+  storageKey: string,
+  expiresMs = 2 * 60 * 60 * 1000
+): Promise<string> {
+  const [url] = await getAdminBucket().file(storageKey).getSignedUrl({
+    action: "read",
+    expires: Date.now() + expiresMs,
+  });
+  return url;
+}

@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken, getClientIp } from "@/lib/auth";
-import { uploadUserPhoto } from "@/lib/storage";
-import { saveUserPhoto, getOrCreateUser } from "@/lib/services/users";
+import { uploadUserPhoto, deleteFromStorage } from "@/lib/storage";
+import {
+  saveUserPhoto,
+  getOrCreateUser,
+  deleteUserPhoto,
+  countUserPhotos,
+  updateUser,
+} from "@/lib/services/users";
 import { logActivity } from "@/lib/activity-log";
 import { v4 as uuidv4 } from "uuid";
 import { MAX_UPLOAD_PHOTOS } from "@/lib/constants";
@@ -13,6 +19,14 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
+    if (["training", "pending_training"].includes(user.soulJobStatus)) {
+      return NextResponse.json(
+        { error: "Cannot upload photos while training is in progress" },
+        { status: 409 }
+      );
+    }
+
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 
@@ -27,8 +41,6 @@ export async function POST(request: NextRequest) {
     if (file.size > 15 * 1024 * 1024) {
       return NextResponse.json({ error: "Max file size 15MB" }, { status: 400 });
     }
-
-    await getOrCreateUser(auth.uid, auth.email, auth.displayName);
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const stored = await uploadUserPhoto(auth.uid, file.name, buffer, file.type);
@@ -59,6 +71,55 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     const message = err instanceof Error ? err.message : "Upload failed";
     console.log("[upload] error", message);
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const auth = await verifyAuthToken(request);
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const photoId = request.nextUrl.searchParams.get("photoId");
+    if (!photoId) {
+      return NextResponse.json({ error: "photoId required" }, { status: 400 });
+    }
+
+    const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
+    if (["training", "pending_training"].includes(user.soulJobStatus)) {
+      return NextResponse.json(
+        { error: "Cannot remove photos while training is in progress" },
+        { status: 409 }
+      );
+    }
+
+    const photo = await deleteUserPhoto(auth.uid, photoId);
+    if (!photo) {
+      return NextResponse.json({ error: "Photo not found" }, { status: 404 });
+    }
+
+    await deleteFromStorage(photo.storageKey);
+
+    const remaining = await countUserPhotos(auth.uid);
+    if (remaining === 0 && user.soulJobStatus === "failed") {
+      await updateUser(auth.uid, {
+        soulJobStatus: "draft",
+        higgsfieldRequestId: undefined,
+        soulReferenceId: undefined,
+      });
+    }
+
+    await logActivity(auth.uid, "photo_deleted", { photoId, fileName: photo.fileName }, {
+      ip: getClientIp(request),
+      userAgent: request.headers.get("user-agent") || undefined,
+    });
+
+    return NextResponse.json({ ok: true, remaining });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Delete failed";
+    console.log("[upload] delete error", message);
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
