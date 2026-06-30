@@ -60,4 +60,5 @@ export const COLLECTIONS = {
   edits: "edits",
   activity: "activity_logs",
   abTests: "ab_test_events",
+  referenceCatalog: "reference_catalog",
 } as const;

@@ -28,6 +28,18 @@ export interface ImageReference {
   publicUrl: string;
   gender: ReferenceGender | "custom";
   source: "catalog" | "custom";
+  /** Populated later from Firestore `reference_catalog` (e.g. tennis, dinner). */
+  tags?: string[];
+}
+
+/** Firestore record for catalog images — tags for filtering thousands of refs. */
+export interface CatalogReferenceRecord {
+  storageKey: string;
+  gender: ReferenceGender;
+  name: string;
+  tags: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface UserProfile {
