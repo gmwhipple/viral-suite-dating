@@ -66,7 +66,6 @@ export function JobStatusBanner({
 }: JobStatusBannerProps) {
   const config = STATUS_CONFIG[user.soulJobStatus] || STATUS_CONFIG.draft;
   const canTrain =
-    user.plan === "paid" &&
     photoCount >= MIN_SOUL_TRAINING_PHOTOS &&
     ["draft", "failed"].includes(user.soulJobStatus) &&
     photoCount > 0;

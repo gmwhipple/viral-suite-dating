@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { UserPhoto, UserPlan } from "@/lib/firebase/types";
+import type { UserPhoto } from "@/lib/firebase/types";
 import { MIN_SOUL_TRAINING_PHOTOS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -15,7 +15,6 @@ interface PhotoUploadZoneProps {
   photos: UserPhoto[];
   maxPhotos: number;
   token: string;
-  plan: UserPlan;
   onRefresh: () => Promise<void>;
   onStartTraining: () => Promise<void>;
   disabled?: boolean;
@@ -25,7 +24,6 @@ export function PhotoUploadZone({
   photos,
   maxPhotos,
   token,
-  plan,
   onRefresh,
   onStartTraining,
   disabled,
@@ -39,7 +37,7 @@ export function PhotoUploadZone({
 
   const totalCount = photos.length + pendingFiles.length;
   const remaining = maxPhotos - totalCount;
-  const canStartTraining = totalCount >= MIN_SOUL_TRAINING_PHOTOS && plan === "paid";
+  const hasEnoughPhotos = totalCount >= MIN_SOUL_TRAINING_PHOTOS;
 
   useEffect(() => {
     return () => {
@@ -83,12 +81,8 @@ export function PhotoUploadZone({
   }, []);
 
   const uploadPendingAndTrain = async () => {
-    if (!canStartTraining) {
-      if (plan !== "paid") {
-        setError("Unlock the paid plan before starting AI training.");
-      } else {
-        setError(`Add at least ${MIN_SOUL_TRAINING_PHOTOS} photos to start training.`);
-      }
+    if (!hasEnoughPhotos) {
+      setError(`Add at least ${MIN_SOUL_TRAINING_PHOTOS} photos to start training.`);
       return;
     }
 
@@ -124,7 +118,7 @@ export function PhotoUploadZone({
   };
 
   const startTrainingOnly = async () => {
-    if (!canStartTraining) return;
+    if (!hasEnoughPhotos) return;
 
     setUploading(true);
     setError(null);
@@ -231,7 +225,7 @@ export function PhotoUploadZone({
             <button
               type="button"
               onClick={uploadPendingAndTrain}
-              disabled={uploading || !canStartTraining}
+              disabled={uploading || !hasEnoughPhotos}
               className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {uploading
@@ -242,7 +236,7 @@ export function PhotoUploadZone({
             <button
               type="button"
               onClick={startTrainingOnly}
-              disabled={uploading || !canStartTraining}
+              disabled={uploading || !hasEnoughPhotos}
               className="rounded-full bg-gray-900 px-6 py-2.5 text-sm font-semibold text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {uploading ? "Starting..." : "Start AI training"}
@@ -251,9 +245,7 @@ export function PhotoUploadZone({
             <p className="text-sm text-gray-500">
               {totalCount < MIN_SOUL_TRAINING_PHOTOS
                 ? `Add ${MIN_SOUL_TRAINING_PHOTOS - totalCount} more photo${MIN_SOUL_TRAINING_PHOTOS - totalCount === 1 ? "" : "s"} to enable training.`
-                : plan !== "paid"
-                  ? "Unlock the paid plan to upload and start training."
-                  : "Choose photos above, then start training."}
+                : "Choose photos above, then start training."}
             </p>
           )}
         </div>
