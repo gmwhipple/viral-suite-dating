@@ -38,14 +38,15 @@ export function getAdminAuth(): Auth {
   return adminAuth;
 }
 
-export function omitUndefined<T extends Record<string, unknown>>(data: T): Partial<T> {
-  const result: Record<string, unknown> = {};
-  for (const [key, value] of Object.entries(data)) {
+export function omitUndefined<T extends object>(data: T): Partial<T> {
+  const result = {} as Partial<T>;
+  for (const key of Object.keys(data) as (keyof T)[]) {
+    const value = data[key];
     if (value !== undefined) {
       result[key] = value;
     }
   }
-  return result as Partial<T>;
+  return result;
 }
 
 export function getAdminDb(): Firestore {

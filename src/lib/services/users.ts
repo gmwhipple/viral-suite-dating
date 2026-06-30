@@ -40,7 +40,7 @@ export async function getOrCreateUser(
     ...(displayName ? { displayName } : {}),
   };
 
-  await ref.set(omitUndefined(user as Record<string, unknown>));
+  await ref.set(omitUndefined(user));
   return user;
 }
 
@@ -52,7 +52,7 @@ export async function updateUser(
   await getAdminDb()
     .collection(COLLECTIONS.users)
     .doc(uid)
-    .update(omitUndefined({ ...data, updatedAt: new Date().toISOString() } as Record<string, unknown>));
+    .update(omitUndefined({ ...data, updatedAt: new Date().toISOString() }));
 }
 
 export async function activatePaidPlan(uid: string, stripeCustomerId: string) {

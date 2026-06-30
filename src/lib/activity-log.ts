@@ -26,7 +26,7 @@ export async function logActivity(
   await getAdminDb()
     .collection(COLLECTIONS.activity)
     .doc(entry.id)
-    .set(omitUndefined(entry as Record<string, unknown>));
+    .set(omitUndefined(entry));
 
   console.log("[activity]", action, userId, metadata ? JSON.stringify(metadata) : "");
 }
