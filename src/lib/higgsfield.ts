@@ -131,6 +131,30 @@ export async function generateSoulImage(input: SoulGenerationInput): Promise<Hig
   return job;
 }
 
+/** Poll a generation request (GET /requests/{request_id}/status). */
+export async function pollGenerationRequest(requestId: string) {
+  const { apiKey, apiSecret } = getCredentials();
+  const response = await fetch(`${HIGGSFIELD_BASE_URL}/requests/${requestId}/status`, {
+    headers: {
+      ...getAuthHeaders(),
+      Authorization: `Key ${apiKey}:${apiSecret}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    console.log("[higgsfield] poll generation failed", requestId, response.status);
+    return null;
+  }
+
+  return response.json() as Promise<{
+    status: string;
+    request_id?: string;
+    images?: Array<{ url: string }>;
+    jobs?: Array<{ results?: { raw?: { url?: string }; min?: { url?: string } } }>;
+  }>;
+}
+
 /** Poll a single Soul ID (GET /v1/custom-references/{id}). */
 export async function pollSoulIdStatus(soulId: string) {
   const response = await fetch(`${HIGGSFIELD_BASE_URL}/v1/custom-references/${soulId}`, {

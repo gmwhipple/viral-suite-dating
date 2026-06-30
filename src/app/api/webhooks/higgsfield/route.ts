@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
-import { updateUser } from "@/lib/services/users";
-import { logActivity } from "@/lib/activity-log";
-import { removeWatermark, fetchImageBuffer } from "@/lib/watermark";
-import { uploadProcessedImage } from "@/lib/storage";
+import {
+  completeGenerationFromUrl,
+  extractResultUrl,
+  markGenerationFailed,
+} from "@/lib/generation-completion";
 import type { GenerationJob } from "@/lib/firebase/types";
 
 export async function POST(request: NextRequest) {
@@ -17,11 +18,7 @@ export async function POST(request: NextRequest) {
       body?.request_id ||
       body?.requestId;
     const status = body?.status || body?.jobs?.[0]?.status;
-    const resultUrl =
-      body?.images?.[0]?.url ||
-      body?.jobs?.[0]?.results?.raw?.url ||
-      body?.jobs?.[0]?.results?.min?.url ||
-      body?.output?.url;
+    const resultUrl = extractResultUrl(body);
 
     if (!jobId) {
       return NextResponse.json({ received: true });
@@ -46,13 +43,8 @@ export async function POST(request: NextRequest) {
     const genDoc = genSnap.docs[0];
     const generation = genDoc.data() as GenerationJob;
 
-    if (status === "failed" || status === "canceled") {
-      await genDoc.ref.update({
-        status: "failed",
-        error: "Higgsfield job failed",
-        updatedAt: new Date().toISOString(),
-      });
-      await logActivity(generation.userId, "generation_failed", { generationId: generation.id });
+    if (status === "failed" || status === "canceled" || status === "nsfw") {
+      await markGenerationFailed(generation.id, generation.userId, "Generation did not complete");
       return NextResponse.json({ received: true });
     }
 
@@ -64,33 +56,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true, waiting: true });
     }
 
-    await genDoc.ref.update({
-      status: "watermark_removal",
-      rawImageUrl: resultUrl,
-      updatedAt: new Date().toISOString(),
-    });
-
-    const rawBuffer = await fetchImageBuffer(resultUrl);
-    const cleanedBuffer = await removeWatermark(rawBuffer);
-    const stored = await uploadProcessedImage(
-      generation.userId,
-      cleanedBuffer,
-      `gen-${generation.id}`
-    );
-
-    await genDoc.ref.update({
-      status: "completed",
-      finalImageUrl: stored.publicUrl,
-      storageKey: stored.storageKey,
-      updatedAt: new Date().toISOString(),
-    });
-
-    await updateUser(generation.userId, { soulJobStatus: "completed" });
-
-    await logActivity(generation.userId, "generation_completed", {
-      generationId: generation.id,
-      finalImageUrl: stored.publicUrl,
-    });
+    await completeGenerationFromUrl(generation, resultUrl);
 
     return NextResponse.json({ received: true, processed: true });
   } catch (err) {

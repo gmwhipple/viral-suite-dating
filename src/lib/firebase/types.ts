@@ -88,6 +88,7 @@ export interface GenerationJob {
   imageReferenceKey?: string;
   status: GenerationStatus;
   higgsfieldJobId?: string;
+  higgsfieldStatusUrl?: string;
   rawImageUrl?: string;
   finalImageUrl?: string;
   storageKey?: string;

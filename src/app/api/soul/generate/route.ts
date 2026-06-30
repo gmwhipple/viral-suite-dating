@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken, getClientIp } from "@/lib/auth";
-import { getOrCreateUser, canUserGenerate, incrementGenerationsUsed } from "@/lib/services/users";
+import { getOrCreateUser, canUserGenerate, incrementGenerationsUsed, getUserGenerations } from "@/lib/services/users";
 import { logActivity } from "@/lib/activity-log";
-import { generateSoulImage, isHiggsfieldConfigured } from "@/lib/higgsfield";
+import { generateSoulImage, isHiggsfieldConfigured, pollGenerationRequest } from "@/lib/higgsfield";
+import {
+  completeGenerationFromUrl,
+  extractResultUrl,
+  markGenerationFailed,
+} from "@/lib/generation-completion";
 import { resolveImageReference } from "@/lib/reference-storage";
 import { getExternalFetchUrl } from "@/lib/storage";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
@@ -11,6 +16,63 @@ import type { GenerationJob } from "@/lib/firebase/types";
 import { DEFAULT_SOUL_GENERATION_PROMPT, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 import { getAppBaseUrl } from "@/lib/app-url";
 import { v4 as uuidv4 } from "uuid";
+
+export async function GET(request: NextRequest) {
+  const auth = await verifyAuthToken(request);
+  if (!auth) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!isHiggsfieldConfigured()) {
+    return NextResponse.json({ error: "AI service not configured" }, { status: 503 });
+  }
+
+  try {
+    const generations = await getUserGenerations(auth.uid);
+    const pending = generations.filter(
+      (g) =>
+        g.higgsfieldJobId &&
+        g.status !== "completed" &&
+        g.status !== "failed"
+    );
+
+    let synced = 0;
+
+    for (const generation of pending) {
+      const status = await pollGenerationRequest(generation.higgsfieldJobId!);
+      if (!status) continue;
+
+      console.log("[soul/generate] poll", {
+        generationId: generation.id,
+        remoteStatus: status.status,
+      });
+
+      if (status.status === "failed" || status.status === "nsfw") {
+        await markGenerationFailed(
+          generation.id,
+          generation.userId,
+          "Generation did not complete"
+        );
+        synced += 1;
+        continue;
+      }
+
+      if (status.status !== "completed") continue;
+
+      const resultUrl = extractResultUrl(status as Record<string, unknown>);
+      if (!resultUrl) continue;
+
+      await completeGenerationFromUrl(generation, resultUrl);
+      synced += 1;
+    }
+
+    return NextResponse.json({ synced, pending: pending.length });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Sync failed";
+    console.log("[soul/generate] sync error", message);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+}
 
 export async function POST(request: NextRequest) {
   const auth = await verifyAuthToken(request);
@@ -130,6 +192,7 @@ export async function POST(request: NextRequest) {
     if (isAdminConfigured()) {
       await getAdminDb().collection(COLLECTIONS.generations).doc(jobId).update({
         higgsfieldJobId: job.id,
+        higgsfieldStatusUrl: job.statusUrl,
         status: "processing",
         updatedAt: new Date().toISOString(),
       });

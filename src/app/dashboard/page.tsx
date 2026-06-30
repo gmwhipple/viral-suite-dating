@@ -51,6 +51,11 @@ export default function DashboardPage() {
             headers: { Authorization: `Bearer ${token}` },
           });
         }
+        if (pendingKey.length > 0) {
+          await fetch("/api/soul/generate", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        }
         await refresh();
       } catch {
         // ignore poll errors
@@ -220,7 +225,8 @@ export default function DashboardPage() {
             />
 
             <div>
-              <h2 className="mb-4 text-lg font-bold text-gray-900">Your generated photos</h2>
+              <h2 className="text-lg font-bold text-gray-900">Your generated photos</h2>
+              <p className="text-sm text-gray-500">Tap the sparkle icon to AI edit a finished photo.</p>
               <GenerationGallery
                 generations={data.generations}
                 token={token!}
