@@ -5,7 +5,7 @@ import { getUserActivity } from "@/lib/activity-log";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import { listCatalogReferences, listCustomReferences } from "@/lib/reference-storage";
 import type { EditJob, ReferenceGender } from "@/lib/firebase/types";
-import { MAX_UPLOAD_PHOTOS, MAX_GENERATIONS_PER_USER } from "@/lib/constants";
+import { MAX_UPLOAD_PHOTOS, MAX_GENERATIONS_PER_USER, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
   const auth = await verifyAuthToken(request);
@@ -45,8 +45,12 @@ export async function GET(request: NextRequest) {
     customReferences,
     limits: {
       maxPhotos: MAX_UPLOAD_PHOTOS,
-      maxGenerations: MAX_GENERATIONS_PER_USER,
-      generationsRemaining: Math.max(0, user.generationsLimit - user.generationsUsed),
+      maxGenerations: TESTING_BYPASS_PAYMENT
+        ? MAX_GENERATIONS_PER_USER
+        : user.generationsLimit,
+      generationsRemaining: TESTING_BYPASS_PAYMENT
+        ? Math.max(0, MAX_GENERATIONS_PER_USER - user.generationsUsed)
+        : Math.max(0, user.generationsLimit - user.generationsUsed),
     },
   });
 }

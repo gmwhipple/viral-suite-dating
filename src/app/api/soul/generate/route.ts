@@ -7,7 +7,7 @@ import { resolveImageReference } from "@/lib/reference-storage";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import styleReferences from "@/data/style-references.json";
 import type { GenerationJob } from "@/lib/firebase/types";
-import { DEFAULT_SOUL_GENERATION_PROMPT } from "@/lib/constants";
+import { DEFAULT_SOUL_GENERATION_PROMPT, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     if (!canUserGenerate(user)) {
       return NextResponse.json({
-        error: user.plan !== "paid"
+        error: !TESTING_BYPASS_PAYMENT && user.plan !== "paid"
           ? "Purchase a plan to generate photos"
           : "Generation limit reached (100 max)",
       }, { status: 403 });

@@ -11,7 +11,7 @@ import { JobStatusBanner } from "@/components/dashboard/JobStatusBanner";
 import { ImageReferencePicker, type GenerateReferencePayload } from "@/components/dashboard/ImageReferencePicker";
 import { GenerationGallery } from "@/components/dashboard/GenerationGallery";
 import { ActivityDebugPanel } from "@/components/dashboard/ActivityDebugPanel";
-import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
+import { APP_NAME, SUPPORT_EMAIL, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -139,7 +139,7 @@ export default function DashboardPage() {
               initialGender={data.user.referenceGender === "women" ? "women" : "men"}
               onGenerate={generatePhoto}
               generationsRemaining={data.limits.generationsRemaining}
-              disabled={data.user.plan !== "paid"}
+              disabled={!TESTING_BYPASS_PAYMENT && data.user.plan !== "paid"}
             />
 
             <div>

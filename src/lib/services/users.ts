@@ -1,6 +1,6 @@
 import { getAdminDb, COLLECTIONS, isAdminConfigured, omitUndefined } from "@/lib/firebase/admin";
 import type { UserProfile, UserPhoto, GenerationJob } from "@/lib/firebase/types";
-import { MAX_GENERATIONS_PER_USER, MAX_UPLOAD_PHOTOS } from "@/lib/constants";
+import { MAX_GENERATIONS_PER_USER, MAX_UPLOAD_PHOTOS, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 
 export async function getOrCreateUser(
   uid: string,
@@ -108,6 +108,9 @@ export async function getUserGenerations(userId: string): Promise<GenerationJob[
 }
 
 export function canUserGenerate(user: UserProfile): boolean {
+  if (TESTING_BYPASS_PAYMENT) {
+    return user.generationsUsed < MAX_GENERATIONS_PER_USER;
+  }
   if (user.plan !== "paid") return false;
   return user.generationsUsed < user.generationsLimit;
 }

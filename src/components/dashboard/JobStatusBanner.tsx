@@ -1,7 +1,7 @@
 "use client";
 
 import type { UserProfile } from "@/lib/firebase/types";
-import { MIN_SOUL_TRAINING_PHOTOS } from "@/lib/constants";
+import { MIN_SOUL_TRAINING_PHOTOS, MAX_GENERATIONS_PER_USER, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface JobStatusBannerProps {
@@ -69,7 +69,7 @@ export function JobStatusBanner({
     photoCount >= MIN_SOUL_TRAINING_PHOTOS &&
     ["draft", "failed"].includes(user.soulJobStatus) &&
     photoCount > 0;
-  const needsPayment = user.plan !== "paid";
+  const needsPayment = !TESTING_BYPASS_PAYMENT && user.plan !== "paid";
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -79,9 +79,10 @@ export function JobStatusBanner({
             {config.label}
           </span>
           <p className="mt-2 text-sm text-gray-600">{config.description}</p>
-          {user.plan === "paid" && (
+          {(user.plan === "paid" || TESTING_BYPASS_PAYMENT) && (
             <p className="mt-1 text-xs text-gray-500">
-              Generations used: {user.generationsUsed} / {user.generationsLimit}
+              Generations used: {user.generationsUsed} /{" "}
+              {TESTING_BYPASS_PAYMENT ? MAX_GENERATIONS_PER_USER : user.generationsLimit}
             </p>
           )}
         </div>
