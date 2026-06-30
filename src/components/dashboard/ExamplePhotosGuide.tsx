@@ -1,6 +1,6 @@
 "use client";
 
-import { EXAMPLE_GOOD_PHOTOS, EXAMPLE_BAD_PHOTOS } from "@/lib/constants";
+import { EXAMPLE_GOOD_PHOTOS, EXAMPLE_BAD_PHOTOS, MIN_SOUL_TRAINING_PHOTOS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 export function ExamplePhotosGuide() {
@@ -8,7 +8,7 @@ export function ExamplePhotosGuide() {
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
       <h2 className="text-lg font-bold text-gray-900">Photo upload guide</h2>
       <p className="mt-1 text-sm text-gray-600">
-        Upload up to 100 photos. Mix of angles, lighting, and outfits works best. Minimum 10 required to start training.
+        Upload up to 100 photos. Mix of angles, lighting, and outfits works best. Minimum {MIN_SOUL_TRAINING_PHOTOS} required to start training.
       </p>
 
       <div className="mt-6">

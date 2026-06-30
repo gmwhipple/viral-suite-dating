@@ -2,7 +2,7 @@ export const APP_NAME = "Viral Suite Dating";
 export const SUPPORT_EMAIL = "contact@viral-suite.com";
 export const MAX_UPLOAD_PHOTOS = 100;
 export const MAX_GENERATIONS_PER_USER = 100;
-export const MIN_SOUL_TRAINING_PHOTOS = 10;
+export const MIN_SOUL_TRAINING_PHOTOS = 5;
 export const AB_TEST_COOKIE = "vs_ab_variant";
 export const DEFAULT_SOUL_GENERATION_PROMPT =
   "Professional dating profile photo, photorealistic, flattering natural lighting, confident expression, high quality portrait";

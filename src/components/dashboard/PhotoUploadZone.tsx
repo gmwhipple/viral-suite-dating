@@ -153,9 +153,6 @@ export function PhotoUploadZone({
         <h2 className="text-lg font-bold text-gray-900">Your training photos</h2>
         <span className="rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
           {totalCount} / {maxPhotos}
-          {hasPending && (
-            <span className="ml-1 text-rose-600">({pendingFiles.length} not saved)</span>
-          )}
         </span>
       </div>
 
