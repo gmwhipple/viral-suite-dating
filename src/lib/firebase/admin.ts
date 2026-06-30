@@ -38,9 +38,20 @@ export function getAdminAuth(): Auth {
   return adminAuth;
 }
 
+export function omitUndefined<T extends Record<string, unknown>>(data: T): Partial<T> {
+  const result: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(data)) {
+    if (value !== undefined) {
+      result[key] = value;
+    }
+  }
+  return result as Partial<T>;
+}
+
 export function getAdminDb(): Firestore {
   if (!adminDb) {
     adminDb = getFirestore(getAdminApp());
+    adminDb.settings({ ignoreUndefinedProperties: true });
   }
   return adminDb;
 }

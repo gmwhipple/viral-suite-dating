@@ -1,4 +1,4 @@
-import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
+import { getAdminDb, COLLECTIONS, isAdminConfigured, omitUndefined } from "@/lib/firebase/admin";
 import type { UserProfile, UserPhoto, GenerationJob } from "@/lib/firebase/types";
 import { MAX_GENERATIONS_PER_USER, MAX_UPLOAD_PHOTOS } from "@/lib/constants";
 
@@ -31,16 +31,16 @@ export async function getOrCreateUser(
   const user: UserProfile = {
     uid,
     email,
-    displayName,
     plan: "free",
     generationsUsed: 0,
     generationsLimit: 0,
     soulJobStatus: "draft",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
+    ...(displayName ? { displayName } : {}),
   };
 
-  await ref.set(user);
+  await ref.set(omitUndefined(user as Record<string, unknown>));
   return user;
 }
 
@@ -52,7 +52,7 @@ export async function updateUser(
   await getAdminDb()
     .collection(COLLECTIONS.users)
     .doc(uid)
-    .update({ ...data, updatedAt: new Date().toISOString() });
+    .update(omitUndefined({ ...data, updatedAt: new Date().toISOString() } as Record<string, unknown>));
 }
 
 export async function activatePaidPlan(uid: string, stripeCustomerId: string) {

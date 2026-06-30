@@ -3,7 +3,7 @@ import { getAdminAuth, isAdminConfigured } from "@/lib/firebase/admin";
 
 export async function verifyAuthToken(
   request: NextRequest
-): Promise<{ uid: string; email: string } | null> {
+): Promise<{ uid: string; email: string; displayName?: string } | null> {
   if (!isAdminConfigured()) {
     return null;
   }
@@ -20,6 +20,7 @@ export async function verifyAuthToken(
     return {
       uid: decoded.uid,
       email: decoded.email || "",
+      ...(decoded.name ? { displayName: decoded.name } : {}),
     };
   } catch {
     return null;

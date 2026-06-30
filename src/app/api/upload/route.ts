@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Max file size 15MB" }, { status: 400 });
     }
 
-    await getOrCreateUser(auth.uid, auth.email);
+    await getOrCreateUser(auth.uid, auth.email, auth.displayName);
 
     const buffer = Buffer.from(await file.arrayBuffer());
     const stored = await uploadUserPhoto(auth.uid, file.name, buffer, file.type);

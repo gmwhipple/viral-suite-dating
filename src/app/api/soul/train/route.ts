@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const user = await getOrCreateUser(auth.uid, auth.email);
+    const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
     const photos = await getUserPhotos(auth.uid);
 
     if (photos.length < MIN_SOUL_TRAINING_PHOTOS) {
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await getOrCreateUser(auth.uid, auth.email);
+  const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
 
   if (user.higgsfieldRequestId && user.soulJobStatus === "training") {
     const { pollSoulIdStatus } = await import("@/lib/higgsfield");

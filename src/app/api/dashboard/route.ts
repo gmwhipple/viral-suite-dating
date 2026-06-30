@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await getOrCreateUser(auth.uid, auth.email);
+  const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
   const photos = await getUserPhotos(auth.uid);
   const generations = await getUserGenerations(auth.uid);
   const recentActivity = await getUserActivity(auth.uid, 30);

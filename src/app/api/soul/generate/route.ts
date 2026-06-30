@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
       referenceId?: string;
     };
 
-    const user = await getOrCreateUser(auth.uid, auth.email);
+    const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
 
     if (user.soulJobStatus !== "ready" || !user.soulReferenceId) {
       return NextResponse.json({ error: "Character not ready yet" }, { status: 400 });

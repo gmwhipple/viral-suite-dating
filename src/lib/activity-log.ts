@@ -1,4 +1,4 @@
-import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
+import { getAdminDb, COLLECTIONS, isAdminConfigured, omitUndefined } from "@/lib/firebase/admin";
 import type { ActivityLogEntry } from "@/lib/firebase/types";
 import { v4 as uuidv4 } from "uuid";
 
@@ -26,7 +26,7 @@ export async function logActivity(
   await getAdminDb()
     .collection(COLLECTIONS.activity)
     .doc(entry.id)
-    .set(entry);
+    .set(omitUndefined(entry as Record<string, unknown>));
 
   console.log("[activity]", action, userId, metadata ? JSON.stringify(metadata) : "");
 }
