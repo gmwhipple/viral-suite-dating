@@ -1,0 +1,702 @@
+[
+  {
+    "id": "ref-001",
+    "name": "Outdoor Adventure #1",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs1/400/500"
+  },
+  {
+    "id": "ref-002",
+    "name": "Coffee Shop Casual #1",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs2/400/500"
+  },
+  {
+    "id": "ref-003",
+    "name": "City Nightlife #1",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs3/400/500"
+  },
+  {
+    "id": "ref-004",
+    "name": "Beach Sunset #1",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs4/400/500"
+  },
+  {
+    "id": "ref-005",
+    "name": "Gym Fit #1",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs5/400/500"
+  },
+  {
+    "id": "ref-006",
+    "name": "Smart Casual #1",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs6/400/500"
+  },
+  {
+    "id": "ref-007",
+    "name": "Travel Explorer #1",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs7/400/500"
+  },
+  {
+    "id": "ref-008",
+    "name": "Dog Lover #1",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs8/400/500"
+  },
+  {
+    "id": "ref-009",
+    "name": "Foodie Date #1",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs9/400/500"
+  },
+  {
+    "id": "ref-010",
+    "name": "Art Gallery #1",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs10/400/500"
+  },
+  {
+    "id": "ref-011",
+    "name": "Outdoor Adventure #2",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs11/400/500"
+  },
+  {
+    "id": "ref-012",
+    "name": "Coffee Shop Casual #2",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs12/400/500"
+  },
+  {
+    "id": "ref-013",
+    "name": "City Nightlife #2",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs13/400/500"
+  },
+  {
+    "id": "ref-014",
+    "name": "Beach Sunset #2",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs14/400/500"
+  },
+  {
+    "id": "ref-015",
+    "name": "Gym Fit #2",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs15/400/500"
+  },
+  {
+    "id": "ref-016",
+    "name": "Smart Casual #2",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs16/400/500"
+  },
+  {
+    "id": "ref-017",
+    "name": "Travel Explorer #2",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs17/400/500"
+  },
+  {
+    "id": "ref-018",
+    "name": "Dog Lover #2",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs18/400/500"
+  },
+  {
+    "id": "ref-019",
+    "name": "Foodie Date #2",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs19/400/500"
+  },
+  {
+    "id": "ref-020",
+    "name": "Art Gallery #2",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs20/400/500"
+  },
+  {
+    "id": "ref-021",
+    "name": "Outdoor Adventure #3",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs21/400/500"
+  },
+  {
+    "id": "ref-022",
+    "name": "Coffee Shop Casual #3",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs22/400/500"
+  },
+  {
+    "id": "ref-023",
+    "name": "City Nightlife #3",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs23/400/500"
+  },
+  {
+    "id": "ref-024",
+    "name": "Beach Sunset #3",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs24/400/500"
+  },
+  {
+    "id": "ref-025",
+    "name": "Gym Fit #3",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs25/400/500"
+  },
+  {
+    "id": "ref-026",
+    "name": "Smart Casual #3",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs26/400/500"
+  },
+  {
+    "id": "ref-027",
+    "name": "Travel Explorer #3",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs27/400/500"
+  },
+  {
+    "id": "ref-028",
+    "name": "Dog Lover #3",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs28/400/500"
+  },
+  {
+    "id": "ref-029",
+    "name": "Foodie Date #3",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs29/400/500"
+  },
+  {
+    "id": "ref-030",
+    "name": "Art Gallery #3",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs30/400/500"
+  },
+  {
+    "id": "ref-031",
+    "name": "Outdoor Adventure #4",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs31/400/500"
+  },
+  {
+    "id": "ref-032",
+    "name": "Coffee Shop Casual #4",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs32/400/500"
+  },
+  {
+    "id": "ref-033",
+    "name": "City Nightlife #4",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs33/400/500"
+  },
+  {
+    "id": "ref-034",
+    "name": "Beach Sunset #4",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs34/400/500"
+  },
+  {
+    "id": "ref-035",
+    "name": "Gym Fit #4",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs35/400/500"
+  },
+  {
+    "id": "ref-036",
+    "name": "Smart Casual #4",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs36/400/500"
+  },
+  {
+    "id": "ref-037",
+    "name": "Travel Explorer #4",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs37/400/500"
+  },
+  {
+    "id": "ref-038",
+    "name": "Dog Lover #4",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs38/400/500"
+  },
+  {
+    "id": "ref-039",
+    "name": "Foodie Date #4",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs39/400/500"
+  },
+  {
+    "id": "ref-040",
+    "name": "Art Gallery #4",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs40/400/500"
+  },
+  {
+    "id": "ref-041",
+    "name": "Outdoor Adventure #5",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs41/400/500"
+  },
+  {
+    "id": "ref-042",
+    "name": "Coffee Shop Casual #5",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs42/400/500"
+  },
+  {
+    "id": "ref-043",
+    "name": "City Nightlife #5",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs43/400/500"
+  },
+  {
+    "id": "ref-044",
+    "name": "Beach Sunset #5",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs44/400/500"
+  },
+  {
+    "id": "ref-045",
+    "name": "Gym Fit #5",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs45/400/500"
+  },
+  {
+    "id": "ref-046",
+    "name": "Smart Casual #5",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs46/400/500"
+  },
+  {
+    "id": "ref-047",
+    "name": "Travel Explorer #5",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs47/400/500"
+  },
+  {
+    "id": "ref-048",
+    "name": "Dog Lover #5",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs48/400/500"
+  },
+  {
+    "id": "ref-049",
+    "name": "Foodie Date #5",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs49/400/500"
+  },
+  {
+    "id": "ref-050",
+    "name": "Art Gallery #5",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs50/400/500"
+  },
+  {
+    "id": "ref-051",
+    "name": "Outdoor Adventure #6",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs51/400/500"
+  },
+  {
+    "id": "ref-052",
+    "name": "Coffee Shop Casual #6",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs52/400/500"
+  },
+  {
+    "id": "ref-053",
+    "name": "City Nightlife #6",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs53/400/500"
+  },
+  {
+    "id": "ref-054",
+    "name": "Beach Sunset #6",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs54/400/500"
+  },
+  {
+    "id": "ref-055",
+    "name": "Gym Fit #6",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs55/400/500"
+  },
+  {
+    "id": "ref-056",
+    "name": "Smart Casual #6",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs56/400/500"
+  },
+  {
+    "id": "ref-057",
+    "name": "Travel Explorer #6",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs57/400/500"
+  },
+  {
+    "id": "ref-058",
+    "name": "Dog Lover #6",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs58/400/500"
+  },
+  {
+    "id": "ref-059",
+    "name": "Foodie Date #6",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs59/400/500"
+  },
+  {
+    "id": "ref-060",
+    "name": "Art Gallery #6",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs60/400/500"
+  },
+  {
+    "id": "ref-061",
+    "name": "Outdoor Adventure #7",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs61/400/500"
+  },
+  {
+    "id": "ref-062",
+    "name": "Coffee Shop Casual #7",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs62/400/500"
+  },
+  {
+    "id": "ref-063",
+    "name": "City Nightlife #7",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs63/400/500"
+  },
+  {
+    "id": "ref-064",
+    "name": "Beach Sunset #7",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs64/400/500"
+  },
+  {
+    "id": "ref-065",
+    "name": "Gym Fit #7",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs65/400/500"
+  },
+  {
+    "id": "ref-066",
+    "name": "Smart Casual #7",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs66/400/500"
+  },
+  {
+    "id": "ref-067",
+    "name": "Travel Explorer #7",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs67/400/500"
+  },
+  {
+    "id": "ref-068",
+    "name": "Dog Lover #7",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs68/400/500"
+  },
+  {
+    "id": "ref-069",
+    "name": "Foodie Date #7",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs69/400/500"
+  },
+  {
+    "id": "ref-070",
+    "name": "Art Gallery #7",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs70/400/500"
+  },
+  {
+    "id": "ref-071",
+    "name": "Outdoor Adventure #8",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs71/400/500"
+  },
+  {
+    "id": "ref-072",
+    "name": "Coffee Shop Casual #8",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs72/400/500"
+  },
+  {
+    "id": "ref-073",
+    "name": "City Nightlife #8",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs73/400/500"
+  },
+  {
+    "id": "ref-074",
+    "name": "Beach Sunset #8",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs74/400/500"
+  },
+  {
+    "id": "ref-075",
+    "name": "Gym Fit #8",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs75/400/500"
+  },
+  {
+    "id": "ref-076",
+    "name": "Smart Casual #8",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs76/400/500"
+  },
+  {
+    "id": "ref-077",
+    "name": "Travel Explorer #8",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs77/400/500"
+  },
+  {
+    "id": "ref-078",
+    "name": "Dog Lover #8",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs78/400/500"
+  },
+  {
+    "id": "ref-079",
+    "name": "Foodie Date #8",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs79/400/500"
+  },
+  {
+    "id": "ref-080",
+    "name": "Art Gallery #8",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs80/400/500"
+  },
+  {
+    "id": "ref-081",
+    "name": "Outdoor Adventure #9",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs81/400/500"
+  },
+  {
+    "id": "ref-082",
+    "name": "Coffee Shop Casual #9",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs82/400/500"
+  },
+  {
+    "id": "ref-083",
+    "name": "City Nightlife #9",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs83/400/500"
+  },
+  {
+    "id": "ref-084",
+    "name": "Beach Sunset #9",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs84/400/500"
+  },
+  {
+    "id": "ref-085",
+    "name": "Gym Fit #9",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs85/400/500"
+  },
+  {
+    "id": "ref-086",
+    "name": "Smart Casual #9",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs86/400/500"
+  },
+  {
+    "id": "ref-087",
+    "name": "Travel Explorer #9",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs87/400/500"
+  },
+  {
+    "id": "ref-088",
+    "name": "Dog Lover #9",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs88/400/500"
+  },
+  {
+    "id": "ref-089",
+    "name": "Foodie Date #9",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs89/400/500"
+  },
+  {
+    "id": "ref-090",
+    "name": "Art Gallery #9",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs90/400/500"
+  },
+  {
+    "id": "ref-091",
+    "name": "Outdoor Adventure #10",
+    "category": "Outdoor Adventure",
+    "prompt": "Professional dating profile photo, hiking trail golden hour portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs91/400/500"
+  },
+  {
+    "id": "ref-092",
+    "name": "Coffee Shop Casual #10",
+    "category": "Coffee Shop Casual",
+    "prompt": "Professional dating profile photo, cozy cafe window seat candid, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs92/400/500"
+  },
+  {
+    "id": "ref-093",
+    "name": "City Nightlife #10",
+    "category": "City Nightlife",
+    "prompt": "Professional dating profile photo, urban rooftop evening city lights, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs93/400/500"
+  },
+  {
+    "id": "ref-094",
+    "name": "Beach Sunset #10",
+    "category": "Beach Sunset",
+    "prompt": "Professional dating profile photo, beach golden hour relaxed smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs94/400/500"
+  },
+  {
+    "id": "ref-095",
+    "name": "Gym Fit #10",
+    "category": "Gym Fit",
+    "prompt": "Professional dating profile photo, modern gym natural lighting athletic, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs95/400/500"
+  },
+  {
+    "id": "ref-096",
+    "name": "Smart Casual #10",
+    "category": "Smart Casual",
+    "prompt": "Professional dating profile photo, blazer jeans confident smile, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs96/400/500"
+  },
+  {
+    "id": "ref-097",
+    "name": "Travel Explorer #10",
+    "category": "Travel Explorer",
+    "prompt": "Professional dating profile photo, European street travel portrait, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs97/400/500"
+  },
+  {
+    "id": "ref-098",
+    "name": "Dog Lover #10",
+    "category": "Dog Lover",
+    "prompt": "Professional dating profile photo, park with golden retriever friendly, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs98/400/500"
+  },
+  {
+    "id": "ref-099",
+    "name": "Foodie Date #10",
+    "category": "Foodie Date",
+    "prompt": "Professional dating profile photo, restaurant patio warm ambiance, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs99/400/500"
+  },
+  {
+    "id": "ref-100",
+    "name": "Art Gallery #10",
+    "category": "Art Gallery",
+    "prompt": "Professional dating profile photo, gallery white walls sophisticated, photorealistic, flattering lighting, confident natural expression",
+    "thumbnailUrl": "https://picsum.photos/seed/vs100/400/500"
+  }
+]

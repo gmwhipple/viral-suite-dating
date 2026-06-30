@@ -1,0 +1,123 @@
+"use client";
+
+import type { UserProfile } from "@/lib/firebase/types";
+import { MIN_SOUL_TRAINING_PHOTOS } from "@/lib/constants";
+import { cn } from "@/lib/utils";
+
+interface JobStatusBannerProps {
+  user: UserProfile;
+  photoCount: number;
+  onStartTraining: () => Promise<void>;
+  onCheckout: () => Promise<void>;
+  training: boolean;
+  checkingOut: boolean;
+}
+
+const STATUS_CONFIG: Record<string, { label: string; color: string; description: string }> = {
+  draft: {
+    label: "Getting started",
+    color: "bg-gray-100 text-gray-800",
+    description: "Upload your photos to begin",
+  },
+  uploading: {
+    label: "Uploading",
+    color: "bg-blue-100 text-blue-800",
+    description: "Saving your photos...",
+  },
+  pending_training: {
+    label: "Queued for training",
+    color: "bg-amber-100 text-amber-800",
+    description: "Your character is in the queue",
+  },
+  training: {
+    label: "Training your AI character",
+    color: "bg-amber-100 text-amber-800",
+    description: "Higgsfield Soul 2.0 is learning your face. This usually takes 1-2 hours.",
+  },
+  ready: {
+    label: "Ready to generate",
+    color: "bg-green-100 text-green-800",
+    description: "Pick a style reference and generate your dating photos!",
+  },
+  generating: {
+    label: "Generating photos",
+    color: "bg-blue-100 text-blue-800",
+    description: "Your photos are being created...",
+  },
+  completed: {
+    label: "Complete",
+    color: "bg-green-100 text-green-800",
+    description: "Your photos are ready for download and editing.",
+  },
+  failed: {
+    label: "Something went wrong",
+    color: "bg-red-100 text-red-800",
+    description: "Please contact support or try again.",
+  },
+};
+
+export function JobStatusBanner({
+  user,
+  photoCount,
+  onStartTraining,
+  onCheckout,
+  training,
+  checkingOut,
+}: JobStatusBannerProps) {
+  const config = STATUS_CONFIG[user.soulJobStatus] || STATUS_CONFIG.draft;
+  const canTrain =
+    user.plan === "paid" &&
+    photoCount >= MIN_SOUL_TRAINING_PHOTOS &&
+    ["draft", "failed"].includes(user.soulJobStatus);
+  const needsPayment = user.plan !== "paid";
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <span className={cn("inline-block rounded-full px-3 py-1 text-xs font-semibold", config.color)}>
+            {config.label}
+          </span>
+          <p className="mt-2 text-sm text-gray-600">{config.description}</p>
+          {user.plan === "paid" && (
+            <p className="mt-1 text-xs text-gray-500">
+              Generations used: {user.generationsUsed} / {user.generationsLimit}
+            </p>
+          )}
+        </div>
+
+        <div className="flex gap-2">
+          {needsPayment && (
+            <button
+              onClick={onCheckout}
+              disabled={checkingOut}
+              className="rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+            >
+              {checkingOut ? "Loading..." : "Unlock — $49"}
+            </button>
+          )}
+          {canTrain && (
+            <button
+              onClick={onStartTraining}
+              disabled={training}
+              className="rounded-full bg-gray-900 px-5 py-2 text-sm font-semibold text-white hover:bg-gray-800 disabled:opacity-50"
+            >
+              {training ? "Starting..." : "Start AI training"}
+            </button>
+          )}
+        </div>
+      </div>
+
+      {(user.soulJobStatus === "training" || user.soulJobStatus === "pending_training") && (
+        <div className="mt-4">
+          <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-amber-400" />
+          </div>
+          <p className="mt-2 text-xs text-gray-500">
+            Waiting for Higgsfield API — this page auto-refreshes every 15 seconds
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
