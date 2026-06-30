@@ -82,10 +82,10 @@ export async function GET(request: NextRequest) {
     if (status?.status === "completed") {
       await updateUser(auth.uid, {
         soulJobStatus: "ready",
-        soulReferenceId: user.higgsfieldRequestId,
+        soulReferenceId: status.id,
       });
       user.soulJobStatus = "ready";
-      user.soulReferenceId = user.higgsfieldRequestId;
+      user.soulReferenceId = status.id;
     } else if (status?.status === "failed") {
       await updateUser(auth.uid, { soulJobStatus: "failed" });
       user.soulJobStatus = "failed";

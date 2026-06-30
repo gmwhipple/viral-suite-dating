@@ -11,9 +11,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     console.log("[webhook/higgsfield] received", JSON.stringify(body).slice(0, 500));
 
-    const jobId = body?.id || body?.job_set_id || body?.request_id;
+    const jobId =
+      body?.id ||
+      body?.job_set_id ||
+      body?.request_id ||
+      body?.requestId;
     const status = body?.status || body?.jobs?.[0]?.status;
     const resultUrl =
+      body?.images?.[0]?.url ||
       body?.jobs?.[0]?.results?.raw?.url ||
       body?.jobs?.[0]?.results?.min?.url ||
       body?.output?.url;

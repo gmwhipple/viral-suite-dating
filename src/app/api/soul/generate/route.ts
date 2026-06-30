@@ -63,15 +63,16 @@ export async function POST(request: NextRequest) {
       await getAdminDb().collection(COLLECTIONS.generations).doc(jobId).set(generation);
     }
 
-    const jobSet = await generateSoulImage({
+    const job = await generateSoulImage({
       soulReferenceId: user.soulReferenceId,
       prompt: reference.prompt,
+      imageReferenceUrl: reference.thumbnailUrl,
       webhookUrl: `${appUrl}/api/webhooks/higgsfield`,
     });
 
     if (isAdminConfigured()) {
       await getAdminDb().collection(COLLECTIONS.generations).doc(jobId).update({
-        higgsfieldJobId: jobSet.id,
+        higgsfieldJobId: job.id,
         status: "processing",
         updatedAt: new Date().toISOString(),
       });
@@ -83,13 +84,14 @@ export async function POST(request: NextRequest) {
     await logActivity(auth.uid, "generation_started", {
       generationId: jobId,
       referenceId: reference.id,
-      higgsfieldJobId: jobSet.id,
+      higgsfieldJobId: job.id,
+      imageReferenceUrl: reference.thumbnailUrl,
     }, {
       ip: getClientIp(request),
       userAgent: request.headers.get("user-agent") || undefined,
     });
 
-    return NextResponse.json({ generation: { ...generation, higgsfieldJobId: jobSet.id, status: "processing" } });
+    return NextResponse.json({ generation: { ...generation, higgsfieldJobId: job.id, status: "processing" } });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Generation failed";
     console.log("[soul/generate] error", message);
