@@ -23,6 +23,9 @@ export function getAdminApp(): App {
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
       privateKey: getPrivateKey(),
     }),
+    storageBucket:
+      process.env.FIREBASE_STORAGE_BUCKET ||
+      process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   });
 
   return adminApp;

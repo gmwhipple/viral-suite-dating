@@ -1,0 +1,20 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Style catalog — public read (upload via Admin SDK / Firebase Console only)
+    match /references/{gender}/{fileName} {
+      allow read: if gender in ["men", "women"];
+      allow write: if false;
+    }
+
+    // User-owned files — no direct client access; server uses Admin SDK
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

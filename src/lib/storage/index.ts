@@ -1,12 +1,28 @@
 import { promises as fs } from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import {
+  downloadFromFirebaseStorage,
+  isFirebaseStorageConfigured,
+  listFirebaseStoragePrefix,
+  uploadToFirebaseStorage,
+  existsInFirebaseStorage,
+} from "@/lib/firebase/storage";
 
 const LOCAL_STORAGE_DIR = path.join(process.cwd(), ".local-storage");
 
 export interface StorageResult {
   storageKey: string;
   publicUrl: string;
+}
+
+export function getStoragePublicUrl(storageKey: string): string {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const encoded = storageKey
+    .split("/")
+    .map((segment) => encodeURIComponent(segment))
+    .join("/");
+  return `${baseUrl}/api/storage/${encoded}`;
 }
 
 async function ensureLocalDir(subdir: string): Promise<string> {
@@ -16,44 +32,18 @@ async function ensureLocalDir(subdir: string): Promise<string> {
 }
 
 async function uploadLocal(
-  userId: string,
-  fileName: string,
+  storageKey: string,
   buffer: Buffer,
-  mimeType: string
+  _mimeType: string
 ): Promise<StorageResult> {
-  const ext = path.extname(fileName) || ".jpg";
-  const objectName = `${userId}/${uuidv4()}${ext}`;
-  const dir = await ensureLocalDir(path.dirname(objectName));
-  const filePath = path.join(dir, path.basename(objectName));
-  await fs.writeFile(filePath, buffer);
-
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return {
-    storageKey: objectName,
-    publicUrl: `${baseUrl}/api/storage/${objectName}`,
-  };
+  const dir = await ensureLocalDir(path.dirname(storageKey));
+  await fs.writeFile(path.join(dir, path.basename(storageKey)), buffer);
+  return { storageKey, publicUrl: getStoragePublicUrl(storageKey) };
 }
 
-async function uploadReplit(
-  userId: string,
-  fileName: string,
-  buffer: Buffer
-): Promise<StorageResult> {
-  const { Client } = await import("@replit/object-storage");
-  const client = new Client();
+function userPhotoKey(userId: string, fileName: string): string {
   const ext = path.extname(fileName) || ".jpg";
-  const objectName = `private/${userId}/${uuidv4()}${ext}`;
-
-  const { ok, error } = await client.uploadFromBytes(objectName, buffer);
-  if (!ok) {
-    throw new Error(`Replit storage upload failed: ${error?.message || "unknown"}`);
-  }
-
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "";
-  return {
-    storageKey: objectName,
-    publicUrl: `${baseUrl}/api/storage/${encodeURIComponent(objectName)}`,
-  };
+  return `users/${userId}/photos/${uuidv4()}${ext}`;
 }
 
 export async function uploadUserPhoto(
@@ -62,26 +52,64 @@ export async function uploadUserPhoto(
   buffer: Buffer,
   mimeType: string
 ): Promise<StorageResult> {
-  if (process.env.REPL_ID) {
-    return uploadReplit(userId, fileName, buffer);
+  const storageKey = userPhotoKey(userId, fileName);
+
+  if (isFirebaseStorageConfigured()) {
+    await uploadToFirebaseStorage(storageKey, buffer, mimeType);
+    return { storageKey, publicUrl: getStoragePublicUrl(storageKey) };
   }
-  return uploadLocal(userId, fileName, buffer, mimeType);
+
+  return uploadLocal(storageKey, buffer, mimeType);
+}
+
+export async function uploadAtPath(
+  storageKey: string,
+  buffer: Buffer,
+  mimeType: string
+): Promise<StorageResult> {
+  if (isFirebaseStorageConfigured()) {
+    await uploadToFirebaseStorage(storageKey, buffer, mimeType);
+    return { storageKey, publicUrl: getStoragePublicUrl(storageKey) };
+  }
+
+  return uploadLocal(storageKey, buffer, mimeType);
 }
 
 export async function downloadFromStorage(storageKey: string): Promise<Buffer> {
-  if (process.env.REPL_ID) {
-    const { Client } = await import("@replit/object-storage");
-    const client = new Client();
-    const { ok, value, error } = await client.downloadAsBytes(storageKey);
-    if (!ok || !value) {
-      throw new Error(`Replit download failed: ${error?.message || "unknown"}`);
-    }
-    const [buffer] = value;
-    return buffer;
+  if (isFirebaseStorageConfigured()) {
+    return downloadFromFirebaseStorage(storageKey);
   }
 
   const filePath = path.join(LOCAL_STORAGE_DIR, storageKey);
   return fs.readFile(filePath);
+}
+
+export async function listStoragePrefix(prefix: string): Promise<string[]> {
+  if (isFirebaseStorageConfigured()) {
+    return listFirebaseStoragePrefix(prefix);
+  }
+
+  const dir = path.join(LOCAL_STORAGE_DIR, prefix);
+  try {
+    const entries = await fs.readdir(dir, { withFileTypes: true });
+    return entries.filter((e) => e.isFile()).map((e) => `${prefix}${e.name}`);
+  } catch {
+    await fs.mkdir(dir, { recursive: true });
+    return [];
+  }
+}
+
+export async function storageObjectExists(storageKey: string): Promise<boolean> {
+  if (isFirebaseStorageConfigured()) {
+    return existsInFirebaseStorage(storageKey);
+  }
+
+  try {
+    await fs.access(path.join(LOCAL_STORAGE_DIR, storageKey));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function uploadProcessedImage(
@@ -89,10 +117,10 @@ export async function uploadProcessedImage(
   buffer: Buffer,
   prefix: string
 ): Promise<StorageResult> {
-  const fileName = `${prefix}-${uuidv4()}.png`;
-  return uploadUserPhoto(userId, fileName, buffer, "image/png");
+  const storageKey = `users/${userId}/generations/${prefix}-${uuidv4()}.png`;
+  return uploadAtPath(storageKey, buffer, "image/png");
 }
 
-export function isReplitEnvironment(): boolean {
-  return Boolean(process.env.REPL_ID);
+export function usesFirebaseStorage(): boolean {
+  return isFirebaseStorageConfigured();
 }

@@ -171,8 +171,9 @@ export function ImageReferencePicker({
         </div>
       ) : allReferences.length === 0 ? (
         <div className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
-          No reference images yet. Upload your own above, or add files to App Storage at{" "}
-          <code className="rounded bg-amber-100 px-1">references/{gender}/</code> in Replit.
+          No reference images yet. Upload your own above, or add files in{" "}
+          <strong>Firebase Console → Storage</strong> under{" "}
+          <code className="rounded bg-amber-100 px-1">references/{gender}/</code>.
         </div>
       ) : (
         <div className="mt-4 space-y-6">

@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "*.fal.media" },
     ],
   },
-  serverExternalPackages: ["sharp", "@replit/object-storage"],
+  serverExternalPackages: ["sharp"],
 };
 
 export default nextConfig;

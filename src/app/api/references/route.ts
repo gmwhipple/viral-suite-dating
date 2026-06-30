@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
     uploadPaths: {
       men: "references/men/",
       women: "references/women/",
+      location: "Firebase Console → Storage",
     },
   });
 }

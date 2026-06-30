@@ -12,7 +12,6 @@
   "dependencies": {
     "@fal-ai/client": "^1.10.1",
     "@higgsfield/client": "^0.2.1",
-    "@replit/object-storage": "^1.0.0",
     "clsx": "^2.1.1",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
