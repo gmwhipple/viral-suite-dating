@@ -5,6 +5,8 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
   signOut,
   User,
 } from "firebase/auth";
@@ -55,10 +57,27 @@ export function useAuth() {
     return createUserWithEmailAndPassword(auth, email, password);
   };
 
+  const loginWithGoogle = async () => {
+    const auth = getFirebaseAuth();
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    return signInWithPopup(auth, provider);
+  };
+
   const logout = async () => {
     const auth = getFirebaseAuth();
     await signOut(auth);
   };
 
-  return { user, loading, token, login, signup, logout, refreshToken, isConfigured: isFirebaseConfigured() };
+  return {
+    user,
+    loading,
+    token,
+    login,
+    signup,
+    loginWithGoogle,
+    logout,
+    refreshToken,
+    isConfigured: isFirebaseConfigured(),
+  };
 }
