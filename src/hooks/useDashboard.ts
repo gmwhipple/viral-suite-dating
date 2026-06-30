@@ -2,12 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import type { DashboardState } from "@/lib/firebase/types";
-import styleReferences from "@/data/style-references.json";
 import { MAX_GENERATIONS_PER_USER, MAX_UPLOAD_PHOTOS } from "@/lib/constants";
 
 const emptyState: DashboardState & {
   limits: { maxPhotos: number; maxGenerations: number; generationsRemaining: number };
-  styleReferences: typeof styleReferences;
 } = {
   user: {
     uid: "",
@@ -23,7 +21,8 @@ const emptyState: DashboardState & {
   generations: [],
   edits: [],
   recentActivity: [],
-  styleReferences,
+  catalogReferences: [],
+  customReferences: [],
   limits: {
     maxPhotos: MAX_UPLOAD_PHOTOS,
     maxGenerations: MAX_GENERATIONS_PER_USER,

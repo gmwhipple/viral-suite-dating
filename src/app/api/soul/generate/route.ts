@@ -3,9 +3,11 @@ import { verifyAuthToken, getClientIp } from "@/lib/auth";
 import { getOrCreateUser, canUserGenerate, incrementGenerationsUsed } from "@/lib/services/users";
 import { logActivity } from "@/lib/activity-log";
 import { generateSoulImage, isHiggsfieldConfigured } from "@/lib/higgsfield";
+import { resolveImageReference } from "@/lib/reference-storage";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import styleReferences from "@/data/style-references.json";
 import type { GenerationJob } from "@/lib/firebase/types";
+import { DEFAULT_SOUL_GENERATION_PROMPT } from "@/lib/constants";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
@@ -20,11 +22,19 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { referenceId } = body as { referenceId?: string };
-
-    if (!referenceId) {
-      return NextResponse.json({ error: "referenceId required" }, { status: 400 });
-    }
+    const {
+      storageKey,
+      imageReferenceUrl,
+      referenceName,
+      prompt,
+      referenceId,
+    } = body as {
+      storageKey?: string;
+      imageReferenceUrl?: string;
+      referenceName?: string;
+      prompt?: string;
+      referenceId?: string;
+    };
 
     const user = await getOrCreateUser(auth.uid, auth.email);
 
@@ -40,9 +50,34 @@ export async function POST(request: NextRequest) {
       }, { status: 403 });
     }
 
-    const reference = styleReferences.find((r) => r.id === referenceId);
-    if (!reference) {
-      return NextResponse.json({ error: "Invalid reference" }, { status: 400 });
+    let resolvedUrl = imageReferenceUrl;
+    let resolvedName = referenceName || "Custom reference";
+    let resolvedPrompt = prompt || DEFAULT_SOUL_GENERATION_PROMPT;
+    let resolvedReferenceId = referenceId || storageKey || "custom";
+    let resolvedStorageKey = storageKey;
+
+    if (storageKey) {
+      const ref = await resolveImageReference(auth.uid, storageKey);
+      if (!ref) {
+        return NextResponse.json({ error: "Invalid reference image" }, { status: 400 });
+      }
+      resolvedUrl = ref.publicUrl;
+      resolvedName = ref.name;
+      resolvedReferenceId = ref.id;
+      resolvedStorageKey = ref.storageKey;
+    } else if (referenceId) {
+      const builtin = styleReferences.find((r) => r.id === referenceId);
+      if (!builtin) {
+        return NextResponse.json({ error: "Invalid reference" }, { status: 400 });
+      }
+      resolvedUrl = builtin.thumbnailUrl;
+      resolvedName = builtin.name;
+      resolvedPrompt = builtin.prompt;
+      resolvedReferenceId = builtin.id;
+    }
+
+    if (!resolvedUrl) {
+      return NextResponse.json({ error: "imageReferenceUrl or storageKey required" }, { status: 400 });
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || "";
@@ -51,9 +86,11 @@ export async function POST(request: NextRequest) {
     const generation: GenerationJob = {
       id: jobId,
       userId: auth.uid,
-      referenceId: reference.id,
-      referenceName: reference.name,
-      prompt: reference.prompt,
+      referenceId: resolvedReferenceId,
+      referenceName: resolvedName,
+      prompt: resolvedPrompt,
+      imageReferenceUrl: resolvedUrl,
+      imageReferenceKey: resolvedStorageKey,
       status: "queued",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -65,8 +102,8 @@ export async function POST(request: NextRequest) {
 
     const job = await generateSoulImage({
       soulReferenceId: user.soulReferenceId,
-      prompt: reference.prompt,
-      imageReferenceUrl: reference.thumbnailUrl,
+      prompt: resolvedPrompt,
+      imageReferenceUrl: resolvedUrl,
       webhookUrl: `${appUrl}/api/webhooks/higgsfield`,
     });
 
@@ -83,15 +120,18 @@ export async function POST(request: NextRequest) {
 
     await logActivity(auth.uid, "generation_started", {
       generationId: jobId,
-      referenceId: reference.id,
+      referenceId: resolvedReferenceId,
       higgsfieldJobId: job.id,
-      imageReferenceUrl: reference.thumbnailUrl,
+      imageReferenceUrl: resolvedUrl,
+      imageReferenceKey: resolvedStorageKey,
     }, {
       ip: getClientIp(request),
       userAgent: request.headers.get("user-agent") || undefined,
     });
 
-    return NextResponse.json({ generation: { ...generation, higgsfieldJobId: job.id, status: "processing" } });
+    return NextResponse.json({
+      generation: { ...generation, higgsfieldJobId: job.id, status: "processing" },
+    });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Generation failed";
     console.log("[soul/generate] error", message);

@@ -8,7 +8,7 @@ import { useDashboard } from "@/hooks/useDashboard";
 import { ExamplePhotosGuide } from "@/components/dashboard/ExamplePhotosGuide";
 import { PhotoUploadZone } from "@/components/dashboard/PhotoUploadZone";
 import { JobStatusBanner } from "@/components/dashboard/JobStatusBanner";
-import { StyleReferencePicker } from "@/components/dashboard/StyleReferencePicker";
+import { ImageReferencePicker, type GenerateReferencePayload } from "@/components/dashboard/ImageReferencePicker";
 import { GenerationGallery } from "@/components/dashboard/GenerationGallery";
 import { ActivityDebugPanel } from "@/components/dashboard/ActivityDebugPanel";
 import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
@@ -17,7 +17,6 @@ export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading, token, logout } = useAuth();
   const { data, loading, refresh } = useDashboard(token);
-  const [selectedRef, setSelectedRef] = useState<string | null>(null);
   const [training, setTraining] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
 
@@ -63,7 +62,7 @@ export default function DashboardPage() {
     }
   };
 
-  const generatePhoto = async (referenceId: string) => {
+  const generatePhoto = async (payload: GenerateReferencePayload) => {
     if (!token) return;
     const res = await fetch("/api/soul/generate", {
       method: "POST",
@@ -71,7 +70,11 @@ export default function DashboardPage() {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ referenceId }),
+      body: JSON.stringify({
+        storageKey: payload.storageKey,
+        imageReferenceUrl: payload.publicUrl,
+        referenceName: payload.name,
+      }),
     });
     const json = await res.json();
     if (!res.ok) throw new Error(json.error);
@@ -130,10 +133,9 @@ export default function DashboardPage() {
 
         {canGenerate && (
           <>
-            <StyleReferencePicker
-              references={data.styleReferences}
-              selectedId={selectedRef}
-              onSelect={setSelectedRef}
+            <ImageReferencePicker
+              token={token!}
+              initialGender={data.user.referenceGender === "women" ? "women" : "men"}
               onGenerate={generatePhoto}
               generationsRemaining={data.limits.generationsRemaining}
               disabled={data.user.plan !== "paid"}

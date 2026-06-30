@@ -4,6 +4,13 @@ export const MAX_UPLOAD_PHOTOS = 100;
 export const MAX_GENERATIONS_PER_USER = 100;
 export const MIN_SOUL_TRAINING_PHOTOS = 10;
 export const AB_TEST_COOKIE = "vs_ab_variant";
+export const DEFAULT_SOUL_GENERATION_PROMPT =
+  "Professional dating profile photo, photorealistic, flattering natural lighting, confident expression, high quality portrait";
+
+export const REFERENCE_CATALOG_PATHS = {
+  men: "references/men/",
+  women: "references/women/",
+} as const;
 
 export const PRICING = {
   name: "Profile Makeover Pro",

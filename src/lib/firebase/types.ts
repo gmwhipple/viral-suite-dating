@@ -19,10 +19,22 @@ export type GenerationStatus =
 
 export type EditJobStatus = "queued" | "processing" | "completed" | "failed";
 
+export type ReferenceGender = "men" | "women";
+
+export interface ImageReference {
+  id: string;
+  name: string;
+  storageKey: string;
+  publicUrl: string;
+  gender: ReferenceGender | "custom";
+  source: "catalog" | "custom";
+}
+
 export interface UserProfile {
   uid: string;
   email: string;
   displayName?: string;
+  referenceGender?: ReferenceGender;
   plan: UserPlan;
   stripeCustomerId?: string;
   generationsUsed: number;
@@ -59,6 +71,8 @@ export interface GenerationJob {
   referenceId: string;
   referenceName: string;
   prompt: string;
+  imageReferenceUrl?: string;
+  imageReferenceKey?: string;
   status: GenerationStatus;
   higgsfieldJobId?: string;
   rawImageUrl?: string;
@@ -110,4 +124,6 @@ export interface DashboardState {
   generations: GenerationJob[];
   edits: EditJob[];
   recentActivity: ActivityLogEntry[];
+  catalogReferences: ImageReference[];
+  customReferences: ImageReference[];
 }

@@ -1,0 +1,243 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import type { ImageReference, ReferenceGender } from "@/lib/firebase/types";
+import { cn } from "@/lib/utils";
+
+export interface GenerateReferencePayload {
+  storageKey: string;
+  publicUrl: string;
+  name: string;
+  source: ImageReference["source"];
+}
+
+interface ImageReferencePickerProps {
+  token: string;
+  initialGender?: ReferenceGender;
+  onGenerate: (payload: GenerateReferencePayload) => Promise<void>;
+  generationsRemaining: number;
+  disabled?: boolean;
+}
+
+export function ImageReferencePicker({
+  token,
+  initialGender = "men",
+  onGenerate,
+  generationsRemaining,
+  disabled,
+}: ImageReferencePickerProps) {
+  const [gender, setGender] = useState<ReferenceGender>(initialGender);
+  const [catalogReferences, setCatalogReferences] = useState<ImageReference[]>([]);
+  const [customReferences, setCustomReferences] = useState<ImageReference[]>([]);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+
+  const loadReferences = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/references?gender=${gender}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Failed to load references");
+      setCatalogReferences(json.catalogReferences || []);
+      setCustomReferences(json.customReferences || []);
+    } catch (err) {
+      console.log("[ImageReferencePicker] load error", err);
+      setCatalogReferences([]);
+      setCustomReferences([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [gender, token]);
+
+  useEffect(() => {
+    loadReferences();
+  }, [loadReferences]);
+
+  const saveGender = async (next: ReferenceGender) => {
+    setGender(next);
+    setSelectedKey(null);
+    await fetch("/api/references", {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ gender: next }),
+    });
+  };
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("gender", gender);
+      const res = await fetch("/api/references", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Upload failed");
+      setSelectedKey(json.reference.storageKey);
+      await loadReferences();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const allReferences = [...customReferences, ...catalogReferences];
+  const selected = allReferences.find((r) => r.storageKey === selectedKey) || null;
+
+  const handleGenerate = async () => {
+    if (!selected || generating) return;
+    setGenerating(true);
+    try {
+      await onGenerate({
+        storageKey: selected.storageKey,
+        publicUrl: selected.publicUrl,
+        name: selected.name,
+        source: selected.source,
+      });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">Pick a style reference image</h2>
+          <p className="text-sm text-gray-600">
+            Choose from {gender === "men" ? "men's" : "women's"} catalog or upload your own ·{" "}
+            {generationsRemaining} generations left
+          </p>
+        </div>
+        <button
+          onClick={handleGenerate}
+          disabled={!selected || disabled || generating || generationsRemaining <= 0}
+          className="rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50 hover:bg-rose-700"
+        >
+          {generating ? "Generating..." : "Generate photo"}
+        </button>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {(["men", "women"] as const).map((g) => (
+          <button
+            key={g}
+            onClick={() => saveGender(g)}
+            className={cn(
+              "rounded-full px-4 py-2 text-sm font-medium capitalize transition",
+              gender === g ? "bg-rose-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            )}
+          >
+            {g}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-4">
+        <label className="flex cursor-pointer flex-col items-center gap-2 text-center">
+          <span className="text-sm font-semibold text-gray-900">Upload your own reference</span>
+          <span className="text-xs text-gray-500">JPG, PNG, or WEBP · max 15MB</span>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            disabled={uploading || disabled}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleUpload(file);
+              e.target.value = "";
+            }}
+          />
+          <span className="rounded-full bg-white px-4 py-2 text-sm font-medium text-rose-600 ring-1 ring-rose-200">
+            {uploading ? "Uploading..." : "Choose file"}
+          </span>
+        </label>
+      </div>
+
+      {loading ? (
+        <div className="mt-6 flex justify-center py-12">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-rose-600 border-t-transparent" />
+        </div>
+      ) : allReferences.length === 0 ? (
+        <div className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
+          No reference images yet. Upload your own above, or add files to App Storage at{" "}
+          <code className="rounded bg-amber-100 px-1">references/{gender}/</code> in Replit.
+        </div>
+      ) : (
+        <div className="mt-4 space-y-6">
+          {customReferences.length > 0 && (
+            <section>
+              <h3 className="mb-2 text-sm font-semibold text-gray-900">Your uploads</h3>
+              <ReferenceGrid
+                references={customReferences}
+                selectedKey={selectedKey}
+                onSelect={setSelectedKey}
+              />
+            </section>
+          )}
+          <section>
+            <h3 className="mb-2 text-sm font-semibold text-gray-900">
+              {gender === "men" ? "Men's" : "Women's"} catalog
+            </h3>
+            <ReferenceGrid
+              references={catalogReferences}
+              selectedKey={selectedKey}
+              onSelect={setSelectedKey}
+            />
+          </section>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReferenceGrid({
+  references,
+  selectedKey,
+  onSelect,
+}: {
+  references: ImageReference[];
+  selectedKey: string | null;
+  onSelect: (key: string) => void;
+}) {
+  if (references.length === 0) {
+    return <p className="text-sm text-gray-500">No images in this section yet.</p>;
+  }
+
+  return (
+    <div className="grid max-h-96 grid-cols-3 gap-3 overflow-y-auto sm:grid-cols-4 md:grid-cols-5">
+      {references.map((ref) => (
+        <button
+          key={ref.storageKey}
+          onClick={() => onSelect(ref.storageKey)}
+          className={cn(
+            "overflow-hidden rounded-xl border-2 text-left transition",
+            selectedKey === ref.storageKey
+              ? "border-rose-500 ring-2 ring-rose-200"
+              : "border-transparent hover:border-gray-200"
+          )}
+        >
+          <div className="aspect-[4/5] bg-gray-100">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ref.publicUrl} alt={ref.name} className="h-full w-full object-cover" loading="lazy" />
+          </div>
+          <div className="p-2">
+            <p className="truncate text-xs font-semibold text-gray-900">{ref.name}</p>
+            <p className="truncate text-xs text-gray-500 capitalize">{ref.source}</p>
+          </div>
+        </button>
+      ))}
+    </div>
+  );
+}

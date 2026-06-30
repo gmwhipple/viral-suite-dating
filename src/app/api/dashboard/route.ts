@@ -3,8 +3,8 @@ import { verifyAuthToken } from "@/lib/auth";
 import { getOrCreateUser, getUserPhotos, getUserGenerations } from "@/lib/services/users";
 import { getUserActivity } from "@/lib/activity-log";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
-import type { EditJob } from "@/lib/firebase/types";
-import styleReferences from "@/data/style-references.json";
+import { listCatalogReferences, listCustomReferences } from "@/lib/reference-storage";
+import type { EditJob, ReferenceGender } from "@/lib/firebase/types";
 import { MAX_UPLOAD_PHOTOS, MAX_GENERATIONS_PER_USER } from "@/lib/constants";
 
 export async function GET(request: NextRequest) {
@@ -16,7 +16,13 @@ export async function GET(request: NextRequest) {
   const user = await getOrCreateUser(auth.uid, auth.email);
   const photos = await getUserPhotos(auth.uid);
   const generations = await getUserGenerations(auth.uid);
-  const activity = await getUserActivity(auth.uid, 30);
+  const recentActivity = await getUserActivity(auth.uid, 30);
+  const gender: ReferenceGender = user.referenceGender === "women" ? "women" : "men";
+
+  const [catalogReferences, customReferences] = await Promise.all([
+    listCatalogReferences(gender),
+    listCustomReferences(auth.uid),
+  ]);
 
   let edits: EditJob[] = [];
   if (isAdminConfigured()) {
@@ -34,8 +40,9 @@ export async function GET(request: NextRequest) {
     photos,
     generations,
     edits,
-    activity,
-    styleReferences,
+    recentActivity,
+    catalogReferences,
+    customReferences,
     limits: {
       maxPhotos: MAX_UPLOAD_PHOTOS,
       maxGenerations: MAX_GENERATIONS_PER_USER,
