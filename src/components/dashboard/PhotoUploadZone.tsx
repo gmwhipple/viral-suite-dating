@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { UserPhoto } from "@/lib/firebase/types";
+import type { UserPhoto, SoulJobStatus } from "@/lib/firebase/types";
 import { MIN_SOUL_TRAINING_PHOTOS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +18,7 @@ interface PhotoUploadZoneProps {
   onRefresh: () => Promise<void>;
   onStartTraining: () => Promise<void>;
   disabled?: boolean;
+  soulJobStatus?: SoulJobStatus;
 }
 
 export function PhotoUploadZone({
@@ -27,6 +28,7 @@ export function PhotoUploadZone({
   onRefresh,
   onStartTraining,
   disabled,
+  soulJobStatus,
 }: PhotoUploadZoneProps) {
   const [pendingFiles, setPendingFiles] = useState<PendingPhoto[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -140,6 +142,8 @@ export function PhotoUploadZone({
 
   const hasPending = pendingFiles.length > 0;
   const showTrainOnly = !hasPending && photos.length >= MIN_SOUL_TRAINING_PHOTOS;
+  const isTraining =
+    soulJobStatus === "training" || soulJobStatus === "pending_training";
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
@@ -154,6 +158,12 @@ export function PhotoUploadZone({
         Choose photos first — they stay on your device until you start training. Minimum{" "}
         {MIN_SOUL_TRAINING_PHOTOS} required.
       </p>
+
+      {isTraining && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Training is running — uploads are locked until your AI character is ready.
+        </div>
+      )}
 
       <div
         onDragOver={(e) => {

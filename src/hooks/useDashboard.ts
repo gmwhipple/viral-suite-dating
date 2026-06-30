@@ -47,9 +47,13 @@ export function useDashboard(token: string | null) {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      if (!res.ok) throw new Error("Failed to load dashboard");
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(
+          typeof json.error === "string" ? json.error : "Failed to load dashboard"
+        );
+      }
 
-      const json = await res.json();
       setData(json);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error loading dashboard");

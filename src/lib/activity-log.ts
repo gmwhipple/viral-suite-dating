@@ -40,11 +40,12 @@ export async function getUserActivity(
   const snap = await getAdminDb()
     .collection(COLLECTIONS.activity)
     .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
-    .limit(limit)
     .get();
 
-  return snap.docs.map((doc) => doc.data() as ActivityLogEntry);
+  return snap.docs
+    .map((doc) => doc.data() as ActivityLogEntry)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+    .slice(0, limit);
 }
 
 export async function getAllRecentActivity(limit = 100): Promise<ActivityLogEntry[]> {

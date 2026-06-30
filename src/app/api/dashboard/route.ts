@@ -13,44 +13,51 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
-  const photos = await getUserPhotos(auth.uid);
-  const generations = await getUserGenerations(auth.uid);
-  const recentActivity = await getUserActivity(auth.uid, 30);
-  const gender: ReferenceGender = user.referenceGender === "women" ? "women" : "men";
+  try {
+    const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
+    const photos = await getUserPhotos(auth.uid);
+    const generations = await getUserGenerations(auth.uid);
+    const recentActivity = await getUserActivity(auth.uid, 30);
+    const gender: ReferenceGender = user.referenceGender === "women" ? "women" : "men";
 
-  const [catalogReferences, customReferences] = await Promise.all([
-    listCatalogReferences(gender),
-    listCustomReferences(auth.uid),
-  ]);
+    const [catalogReferences, customReferences] = await Promise.all([
+      listCatalogReferences(gender),
+      listCustomReferences(auth.uid),
+    ]);
 
-  let edits: EditJob[] = [];
-  if (isAdminConfigured()) {
-    const snap = await getAdminDb()
-      .collection(COLLECTIONS.edits)
-      .where("userId", "==", auth.uid)
-      .orderBy("createdAt", "desc")
-      .limit(20)
-      .get();
-    edits = snap.docs.map((d) => d.data() as EditJob);
+    let edits: EditJob[] = [];
+    if (isAdminConfigured()) {
+      const snap = await getAdminDb()
+        .collection(COLLECTIONS.edits)
+        .where("userId", "==", auth.uid)
+        .get();
+      edits = snap.docs
+        .map((d) => d.data() as EditJob)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .slice(0, 20);
+    }
+
+    return NextResponse.json({
+      user,
+      photos,
+      generations,
+      edits,
+      recentActivity,
+      catalogReferences,
+      customReferences,
+      limits: {
+        maxPhotos: MAX_UPLOAD_PHOTOS,
+        maxGenerations: TESTING_BYPASS_PAYMENT
+          ? MAX_GENERATIONS_PER_USER
+          : user.generationsLimit,
+        generationsRemaining: TESTING_BYPASS_PAYMENT
+          ? Math.max(0, MAX_GENERATIONS_PER_USER - user.generationsUsed)
+          : Math.max(0, user.generationsLimit - user.generationsUsed),
+      },
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Dashboard load failed";
+    console.log("[dashboard] error", message, err);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-
-  return NextResponse.json({
-    user,
-    photos,
-    generations,
-    edits,
-    recentActivity,
-    catalogReferences,
-    customReferences,
-    limits: {
-      maxPhotos: MAX_UPLOAD_PHOTOS,
-      maxGenerations: TESTING_BYPASS_PAYMENT
-        ? MAX_GENERATIONS_PER_USER
-        : user.generationsLimit,
-      generationsRemaining: TESTING_BYPASS_PAYMENT
-        ? Math.max(0, MAX_GENERATIONS_PER_USER - user.generationsUsed)
-        : Math.max(0, user.generationsLimit - user.generationsUsed),
-    },
-  });
 }

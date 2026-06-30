@@ -27,12 +27,12 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; description:
   pending_training: {
     label: "Queued for training",
     color: "bg-amber-100 text-amber-800",
-    description: "Your character is in the queue",
+    description: "Your photos were sent to Higgsfield. Training will start shortly.",
   },
   training: {
-    label: "Training your AI character",
+    label: "Training in progress",
     color: "bg-amber-100 text-amber-800",
-    description: "Higgsfield Soul 2.0 is learning your face. This usually takes 1-2 hours.",
+    description: "Higgsfield Soul 2.0 is learning your face. This usually takes 1–2 hours.",
   },
   ready: {
     label: "Ready to generate",
@@ -65,6 +65,8 @@ export function JobStatusBanner({
   checkingOut,
 }: JobStatusBannerProps) {
   const config = STATUS_CONFIG[user.soulJobStatus] || STATUS_CONFIG.draft;
+  const isTraining =
+    user.soulJobStatus === "training" || user.soulJobStatus === "pending_training";
   const canTrain =
     photoCount >= MIN_SOUL_TRAINING_PHOTOS &&
     ["draft", "failed"].includes(user.soulJobStatus) &&
@@ -72,7 +74,25 @@ export function JobStatusBanner({
   const needsPayment = !TESTING_BYPASS_PAYMENT && user.plan !== "paid";
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+    <div
+      className={cn(
+        "rounded-2xl border bg-white p-6 shadow-sm",
+        isTraining ? "border-amber-300 ring-2 ring-amber-100" : "border-gray-200"
+      )}
+    >
+      {isTraining && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 p-4">
+          <div className="mt-0.5 h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-amber-600 border-t-transparent" />
+          <div>
+            <p className="font-semibold text-amber-900">AI training in progress</p>
+            <p className="mt-1 text-sm text-amber-800">
+              {photoCount} training photo{photoCount === 1 ? "" : "s"} submitted. You can leave
+              this page — we&apos;ll update automatically when your character is ready.
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <span className={cn("inline-block rounded-full px-3 py-1 text-xs font-semibold", config.color)}>
@@ -109,13 +129,13 @@ export function JobStatusBanner({
         </div>
       </div>
 
-      {(user.soulJobStatus === "training" || user.soulJobStatus === "pending_training") && (
+      {isTraining && (
         <div className="mt-4">
-          <div className="h-2 overflow-hidden rounded-full bg-gray-100">
-            <div className="h-full w-2/3 animate-pulse rounded-full bg-amber-400" />
+          <div className="h-2 overflow-hidden rounded-full bg-amber-100">
+            <div className="h-full w-2/3 animate-pulse rounded-full bg-amber-500" />
           </div>
-          <p className="mt-2 text-xs text-gray-500">
-            Waiting for Higgsfield API — this page auto-refreshes every 15 seconds
+          <p className="mt-2 text-xs text-amber-700">
+            Checking training status every 10 seconds…
           </p>
         </div>
       )}

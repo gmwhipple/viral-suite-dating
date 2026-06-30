@@ -70,10 +70,11 @@ export async function getUserPhotos(userId: string): Promise<UserPhoto[]> {
   const snap = await getAdminDb()
     .collection(COLLECTIONS.photos)
     .where("userId", "==", userId)
-    .orderBy("uploadedAt", "desc")
     .get();
 
-  return snap.docs.map((d) => d.data() as UserPhoto);
+  return snap.docs
+    .map((d) => d.data() as UserPhoto)
+    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
 }
 
 export async function countUserPhotos(userId: string): Promise<number> {
@@ -101,10 +102,11 @@ export async function getUserGenerations(userId: string): Promise<GenerationJob[
   const snap = await getAdminDb()
     .collection(COLLECTIONS.generations)
     .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
     .get();
 
-  return snap.docs.map((d) => d.data() as GenerationJob);
+  return snap.docs
+    .map((d) => d.data() as GenerationJob)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export function canUserGenerate(user: UserProfile): boolean {

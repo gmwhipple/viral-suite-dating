@@ -16,7 +16,7 @@ import { APP_NAME, SUPPORT_EMAIL, TESTING_BYPASS_PAYMENT } from "@/lib/constants
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading, token, logout } = useAuth();
-  const { data, loading, refresh } = useDashboard(token);
+  const { data, loading, error, refresh } = useDashboard(token);
   const [training, setTraining] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
 
@@ -25,6 +25,27 @@ export default function DashboardPage() {
       router.push("/login");
     }
   }, [authLoading, user, router]);
+
+  useEffect(() => {
+    if (!token) return;
+    const status = data.user.soulJobStatus;
+    if (status !== "training" && status !== "pending_training") return;
+
+    const pollTrainingStatus = async () => {
+      try {
+        await fetch("/api/soul/train", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        await refresh();
+      } catch {
+        // ignore poll errors
+      }
+    };
+
+    pollTrainingStatus();
+    const interval = setInterval(pollTrainingStatus, 10000);
+    return () => clearInterval(interval);
+  }, [token, data.user.soulJobStatus, refresh]);
 
   const startTraining = async () => {
     if (!token) return;
@@ -81,10 +102,35 @@ export default function DashboardPage() {
     await refresh();
   };
 
-  if (authLoading || loading || !user) {
+  if (authLoading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-rose-600 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (loading && !data.user.uid) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-rose-600 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (error && !data.user.uid) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+        <div className="max-w-md rounded-2xl border border-red-200 bg-white p-6 text-center shadow-sm">
+          <p className="font-semibold text-gray-900">Could not load dashboard</p>
+          <p className="mt-2 text-sm text-red-600">{error}</p>
+          <button
+            onClick={() => refresh()}
+            className="mt-4 rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white hover:bg-rose-700"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
@@ -112,6 +158,12 @@ export default function DashboardPage() {
       </header>
 
       <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+        {error && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            Dashboard refresh failed: {error}
+          </div>
+        )}
+
         <JobStatusBanner
           user={data.user}
           photoCount={data.photos.length}
@@ -130,6 +182,7 @@ export default function DashboardPage() {
           onRefresh={refresh}
           onStartTraining={startTraining}
           disabled={!canUpload}
+          soulJobStatus={data.user.soulJobStatus}
         />
 
         {canGenerate && (
