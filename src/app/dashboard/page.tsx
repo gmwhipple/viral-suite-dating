@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const { data, loading, error, refresh } = useDashboard(token, refreshToken);
   const [training, setTraining] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
+  const [generateNotice, setGenerateNotice] = useState<string | null>(null);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -122,6 +123,11 @@ export default function DashboardPage() {
       throw new Error(typeof json.error === "string" ? json.error : "Generation failed");
     }
     await refresh();
+    setGenerateNotice(
+      "Photo submitted successfully! It usually takes a few minutes — you'll see it processing in your gallery below."
+    );
+    window.setTimeout(() => setGenerateNotice(null), 10000);
+    document.getElementById("generated-photos")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   if (authLoading || !user) {
@@ -221,10 +227,11 @@ export default function DashboardPage() {
               initialGender={data.user.referenceGender === "women" ? "women" : "men"}
               onGenerate={generatePhoto}
               generationsRemaining={data.limits.generationsRemaining}
+              successMessage={generateNotice}
               disabled={!TESTING_BYPASS_PAYMENT && data.user.plan !== "paid"}
             />
 
-            <div>
+            <div id="generated-photos" className="scroll-mt-8">
               <h2 className="text-lg font-bold text-gray-900">Your generated photos</h2>
               <p className="text-sm text-gray-500">Tap the sparkle icon to AI edit a finished photo.</p>
               <GenerationGallery

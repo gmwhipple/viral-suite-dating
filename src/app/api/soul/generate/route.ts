@@ -102,7 +102,12 @@ export async function POST(request: NextRequest) {
 
     const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
 
-    if (user.soulJobStatus !== "ready" || !user.soulReferenceId) {
+    if (!user.soulReferenceId) {
+      return NextResponse.json({ error: "Character not ready yet" }, { status: 400 });
+    }
+
+    const allowedStatuses = new Set(["ready", "completed", "generating"]);
+    if (!allowedStatuses.has(user.soulJobStatus)) {
       return NextResponse.json({ error: "Character not ready yet" }, { status: 400 });
     }
 

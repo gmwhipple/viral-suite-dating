@@ -50,7 +50,7 @@ export async function completeGenerationFromUrl(
     updatedAt: new Date().toISOString(),
   });
 
-  await updateUser(generation.userId, { soulJobStatus: "completed" });
+  await updateUser(generation.userId, { soulJobStatus: "ready" });
 
   await logActivity(generation.userId, "generation_completed", {
     generationId: generation.id,

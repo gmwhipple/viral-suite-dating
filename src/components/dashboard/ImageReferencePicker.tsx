@@ -17,6 +17,7 @@ interface ImageReferencePickerProps {
   onGenerate: (payload: GenerateReferencePayload) => Promise<void>;
   generationsRemaining: number;
   disabled?: boolean;
+  successMessage?: string | null;
 }
 
 export function ImageReferencePicker({
@@ -25,6 +26,7 @@ export function ImageReferencePicker({
   onGenerate,
   generationsRemaining,
   disabled,
+  successMessage,
 }: ImageReferencePickerProps) {
   const [gender, setGender] = useState<ReferenceGender>(initialGender);
   const [catalogReferences, setCatalogReferences] = useState<ImageReference[]>([]);
@@ -126,9 +128,15 @@ export function ImageReferencePicker({
           disabled={!selected || disabled || generating || generationsRemaining <= 0}
           className="rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50 hover:bg-rose-700"
         >
-          {generating ? "Generating..." : "Generate photo"}
+          {generating ? "Submitting…" : "Generate photo"}
         </button>
       </div>
+
+      {successMessage && (
+        <div className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800">
+          ✓ {successMessage}
+        </div>
+      )}
 
       <div className="mt-4 flex flex-wrap gap-2">
         {(["men", "women"] as const).map((g) => (
