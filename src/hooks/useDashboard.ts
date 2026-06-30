@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import type { DashboardState } from "@/lib/firebase/types";
 import { MAX_GENERATIONS_PER_USER, MAX_UPLOAD_PHOTOS } from "@/lib/constants";
 
@@ -30,24 +30,43 @@ const emptyState: DashboardState & {
   },
 };
 
-export function useDashboard(token: string | null) {
+export function useDashboard(
+  token: string | null,
+  refreshToken?: () => Promise<string | null>
+) {
   const [data, setData] = useState(emptyState);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
 
   const fetchDashboard = useCallback(async () => {
-    if (!token) {
+    let authToken = tokenRef.current;
+    if (!authToken) {
       setLoading(false);
       return;
     }
 
+    const load = async (bearer: string) => {
+      const res = await fetch("/api/dashboard", {
+        headers: { Authorization: `Bearer ${bearer}` },
+      });
+      const json = await res.json().catch(() => ({}));
+      return { res, json };
+    };
+
     try {
       setError(null);
-      const res = await fetch("/api/dashboard", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      let { res, json } = await load(authToken);
 
-      const json = await res.json().catch(() => ({}));
+      if (res.status === 401 && refreshToken) {
+        const fresh = await refreshToken();
+        if (fresh) {
+          tokenRef.current = fresh;
+          ({ res, json } = await load(fresh));
+        }
+      }
+
       if (!res.ok) {
         throw new Error(
           typeof json.error === "string" ? json.error : "Failed to load dashboard"
@@ -60,13 +79,13 @@ export function useDashboard(token: string | null) {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [refreshToken]);
 
   useEffect(() => {
     fetchDashboard();
-    const interval = setInterval(fetchDashboard, 15000);
+    const interval = setInterval(fetchDashboard, 30000);
     return () => clearInterval(interval);
-  }, [fetchDashboard]);
+  }, [fetchDashboard, token]);
 
   return { data, loading, error, refresh: fetchDashboard };
 }

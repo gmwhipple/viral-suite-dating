@@ -1,15 +1,12 @@
 "use client";
 
 import type { ActivityLogEntry, UserProfile } from "@/lib/firebase/types";
-import { MAX_GENERATIONS_PER_USER, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 interface JobStatusBannerProps {
   user: UserProfile;
   photoCount: number;
   recentActivity: ActivityLogEntry[];
-  onCheckout: () => Promise<void>;
-  checkingOut: boolean;
 }
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; description: string }> = {
@@ -26,12 +23,12 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; description:
   pending_training: {
     label: "Queued for training",
     color: "bg-amber-100 text-amber-800",
-    description: "Your photos were sent to Higgsfield. Training will start shortly.",
+    description: "Your photos are queued. Training will start shortly.",
   },
   training: {
     label: "Training in progress",
     color: "bg-amber-100 text-amber-800",
-    description: "Higgsfield Soul 2.0 is learning your face. This usually takes 1–2 hours.",
+    description: "Our AI is learning your face. This usually takes 20–45 minutes.",
   },
   ready: {
     label: "Ready to generate",
@@ -75,14 +72,11 @@ export function JobStatusBanner({
   user,
   photoCount,
   recentActivity,
-  onCheckout,
-  checkingOut,
 }: JobStatusBannerProps) {
   const config = STATUS_CONFIG[user.soulJobStatus] || STATUS_CONFIG.draft;
   const isTraining =
     user.soulJobStatus === "training" || user.soulJobStatus === "pending_training";
   const isFailed = user.soulJobStatus === "failed";
-  const needsPayment = !TESTING_BYPASS_PAYMENT && user.plan !== "paid";
 
   const trainingTimeline = recentActivity.filter((entry) =>
     ["soul_training_started", "soul_training_failed", "photo_uploaded", "photo_deleted"].includes(
@@ -104,8 +98,9 @@ export function JobStatusBanner({
           <div>
             <p className="font-semibold text-amber-900">AI training in progress</p>
             <p className="mt-1 text-sm text-amber-800">
-              {photoCount} training photo{photoCount === 1 ? "" : "s"} submitted. This page
-              checks Higgsfield every 10 seconds and will update when ready.
+              {photoCount} training photo{photoCount === 1 ? "" : "s"} submitted. Training
+              typically takes 20–45 minutes — this page checks every 30 seconds and will update
+              when ready.
             </p>
           </div>
         </div>
@@ -115,38 +110,20 @@ export function JobStatusBanner({
         <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">
           <p className="font-semibold text-red-900">Previous training did not finish</p>
           {user.lastTrainingError && (
-            <p className="mt-2 font-mono text-xs text-red-900">{user.lastTrainingError}</p>
+            <p className="mt-2 text-xs text-red-900">{user.lastTrainingError}</p>
           )}
           <p className="mt-2">
             Your {photoCount} saved photo{photoCount === 1 ? "" : "s"} are still on your account.
-            Retry training below — image links now use direct Firebase URLs Higgsfield can fetch.
+            Retry training below when you are ready.
           </p>
         </div>
       )}
 
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <span className={cn("inline-block rounded-full px-3 py-1 text-xs font-semibold", config.color)}>
-            {config.label}
-          </span>
-          <p className="mt-2 text-sm text-gray-600">{config.description}</p>
-          {(user.plan === "paid" || TESTING_BYPASS_PAYMENT) && (
-            <p className="mt-1 text-xs text-gray-500">
-              Generations used: {user.generationsUsed} /{" "}
-              {TESTING_BYPASS_PAYMENT ? MAX_GENERATIONS_PER_USER : user.generationsLimit}
-            </p>
-          )}
-        </div>
-
-        {needsPayment && (
-          <button
-            onClick={onCheckout}
-            disabled={checkingOut}
-            className="rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
-          >
-            {checkingOut ? "Loading..." : "Unlock — $49"}
-          </button>
-        )}
+      <div>
+        <span className={cn("inline-block rounded-full px-3 py-1 text-xs font-semibold", config.color)}>
+          {config.label}
+        </span>
+        <p className="mt-2 text-sm text-gray-600">{config.description}</p>
       </div>
 
       <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50 p-4">
@@ -158,18 +135,6 @@ export function JobStatusBanner({
             <dt className="font-medium text-gray-900">Status:</dt>
             <dd>{config.label}</dd>
           </div>
-          {user.higgsfieldRequestId && (
-            <div className="flex flex-wrap gap-x-2">
-              <dt className="font-medium text-gray-900">Higgsfield job:</dt>
-              <dd className="font-mono text-xs">{user.higgsfieldRequestId}</dd>
-            </div>
-          )}
-          {user.soulReferenceId && (
-            <div className="flex flex-wrap gap-x-2">
-              <dt className="font-medium text-gray-900">Character ID:</dt>
-              <dd className="font-mono text-xs">{user.soulReferenceId}</dd>
-            </div>
-          )}
           <div className="flex flex-wrap gap-x-2">
             <dt className="font-medium text-gray-900">Saved training photos:</dt>
             <dd>{photoCount}</dd>
@@ -214,7 +179,7 @@ export function JobStatusBanner({
           <div className="h-2 overflow-hidden rounded-full bg-amber-100">
             <div className="h-full w-2/3 animate-pulse rounded-full bg-amber-500" />
           </div>
-          <p className="mt-2 text-xs text-amber-700">Polling Higgsfield for completion…</p>
+          <p className="mt-2 text-xs text-amber-700">Checking training status…</p>
         </div>
       )}
     </div>

@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: `${APP_NAME} — AI Dating Profile Photo Makeover`,
   description:
-    "Upload your selfies and get 100 professional AI dating profile photos. Powered by Higgsfield Soul 2.0.",
+    "Upload your selfies and get 100 professional AI dating profile photos that look like you.",
   openGraph: {
     title: APP_NAME,
     description: "Transform your dating profile with AI-generated photos that look like you.",

@@ -4,6 +4,7 @@ import { getOrCreateUser, canUserGenerate, incrementGenerationsUsed } from "@/li
 import { logActivity } from "@/lib/activity-log";
 import { generateSoulImage, isHiggsfieldConfigured } from "@/lib/higgsfield";
 import { resolveImageReference } from "@/lib/reference-storage";
+import { getExternalFetchUrl } from "@/lib/storage";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import styleReferences from "@/data/style-references.json";
 import type { GenerationJob } from "@/lib/firebase/types";
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!isHiggsfieldConfigured()) {
-    return NextResponse.json({ error: "Higgsfield not configured" }, { status: 503 });
+    return NextResponse.json({ error: "AI service not configured" }, { status: 503 });
   }
 
   try {
@@ -83,6 +84,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "imageReferenceUrl or storageKey required" }, { status: 400 });
     }
 
+    const externalReferenceUrl = resolvedStorageKey
+      ? await getExternalFetchUrl(resolvedStorageKey, baseUrl)
+      : resolvedUrl;
+
+    console.log("[soul/generate] starting", {
+      uid: auth.uid.slice(0, 8),
+      storageKey: resolvedStorageKey,
+      referenceHost: (() => {
+        try {
+          return new URL(externalReferenceUrl).host;
+        } catch {
+          return "invalid";
+        }
+      })(),
+    });
+
     const appUrl = baseUrl;
     const jobId = uuidv4();
 
@@ -106,7 +123,7 @@ export async function POST(request: NextRequest) {
     const job = await generateSoulImage({
       soulReferenceId: user.soulReferenceId,
       prompt: resolvedPrompt,
-      imageReferenceUrl: resolvedUrl,
+      imageReferenceUrl: externalReferenceUrl,
       webhookUrl: `${appUrl}/api/webhooks/higgsfield`,
     });
 
@@ -136,8 +153,11 @@ export async function POST(request: NextRequest) {
       generation: { ...generation, higgsfieldJobId: job.id, status: "processing" },
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Generation failed";
-    console.log("[soul/generate] error", message);
+    const message =
+      err instanceof Error
+        ? err.message.replace(/^Request failed with status code \d+$/, "Generation service error")
+        : "Generation failed";
+    console.log("[soul/generate] error", err instanceof Error ? err.message : err);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

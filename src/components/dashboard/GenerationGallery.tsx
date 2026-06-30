@@ -62,11 +62,30 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
     <div className="space-y-6">
       {pending.length > 0 && (
         <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
-          <p className="font-semibold text-amber-800">{pending.length} photo(s) processing</p>
-          <ul className="mt-2 space-y-1 text-sm text-amber-700">
+          <p className="font-semibold text-amber-800">
+            {pending.length} photo{pending.length === 1 ? "" : "s"} processing
+          </p>
+          <ul className="mt-3 space-y-3">
             {pending.map((g) => (
-              <li key={g.id}>
-                {g.referenceName} — <StatusBadge status={g.status} />
+              <li key={g.id} className="flex items-center gap-3">
+                {g.imageReferenceUrl ? (
+                  <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-amber-200 bg-white">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={g.imageReferenceUrl}
+                      alt="Selected style reference"
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border border-amber-200 bg-white text-xs text-amber-700">
+                    Ref
+                  </div>
+                )}
+                <div className="text-sm text-amber-800">
+                  <p className="font-medium">Using selected style reference</p>
+                  <StatusBadge status={g.status} />
+                </div>
               </li>
             ))}
           </ul>
@@ -78,10 +97,9 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
           <div key={gen.id} className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
             <div className="aspect-[3/4] bg-gray-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={gen.finalImageUrl!} alt={gen.referenceName} className="h-full w-full object-cover" />
+              <img src={gen.finalImageUrl!} alt="Generated photo" className="h-full w-full object-cover" />
             </div>
             <div className="p-4">
-              <p className="font-semibold text-gray-900">{gen.referenceName}</p>
               <p className="text-xs text-gray-500">{formatDate(gen.createdAt)}</p>
               <div className="mt-3 flex gap-2">
                 <a

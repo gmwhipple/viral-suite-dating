@@ -230,14 +230,14 @@ export function PhotoUploadZone({
           {photos.map((photo) => (
             <div key={photo.id} className="group relative aspect-square overflow-hidden rounded-lg bg-gray-100">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={photo.publicUrl} alt={photo.fileName} className="h-full w-full object-cover" />
+              <img src={photo.publicUrl} alt="Training photo" className="h-full w-full object-cover" />
               {!disabled && !uploading && (
                 <button
                   type="button"
                   onClick={() => deleteSavedPhoto(photo.id)}
                   disabled={deletingId === photo.id}
                   className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-xs text-white opacity-0 transition group-hover:opacity-100 disabled:opacity-100"
-                  aria-label={`Remove ${photo.fileName}`}
+                  aria-label="Remove photo"
                 >
                   {deletingId === photo.id ? "…" : "✕"}
                 </button>
@@ -250,13 +250,13 @@ export function PhotoUploadZone({
           {pendingFiles.map((pending) => (
             <div key={pending.id} className="group relative aspect-square overflow-hidden rounded-lg ring-2 ring-rose-300">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={pending.previewUrl} alt={pending.file.name} className="h-full w-full object-cover" />
+              <img src={pending.previewUrl} alt="New training photo" className="h-full w-full object-cover" />
               {!disabled && !uploading && (
                 <button
                   type="button"
                   onClick={() => removePending(pending.id)}
                   className="absolute right-1 top-1 rounded-full bg-black/60 px-1.5 py-0.5 text-xs text-white opacity-0 transition group-hover:opacity-100"
-                  aria-label={`Remove ${pending.file.name}`}
+                  aria-label="Remove photo"
                 >
                   ✕
                 </button>

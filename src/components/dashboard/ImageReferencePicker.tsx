@@ -105,6 +105,8 @@ export function ImageReferencePicker({
         name: selected.name,
         source: selected.source,
       });
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Generation failed");
     } finally {
       setGenerating(false);
     }
@@ -116,8 +118,7 @@ export function ImageReferencePicker({
         <div>
           <h2 className="text-lg font-bold text-gray-900">Pick a style reference image</h2>
           <p className="text-sm text-gray-600">
-            Choose from {gender === "men" ? "men's" : "women's"} catalog or upload your own ·{" "}
-            {generationsRemaining} generations left
+            Choose from {gender === "men" ? "men's" : "women's"} catalog or upload your own
           </p>
         </div>
         <button
@@ -218,24 +219,30 @@ function ReferenceGrid({
 
   return (
     <div className="grid max-h-96 grid-cols-3 gap-3 overflow-y-auto sm:grid-cols-4 md:grid-cols-5">
-      {references.map((ref) => (
+      {references.map((ref, index) => (
         <button
           key={ref.storageKey}
           onClick={() => onSelect(ref.storageKey)}
           className={cn(
-            "overflow-hidden rounded-xl border-2 text-left transition",
+            "overflow-hidden rounded-xl border-2 transition",
             selectedKey === ref.storageKey
               ? "border-rose-500 ring-2 ring-rose-200"
               : "border-transparent hover:border-gray-200"
           )}
         >
-          <div className="aspect-[4/5] bg-gray-100">
+          <div className="relative aspect-[4/5] bg-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ref.publicUrl} alt={ref.name} className="h-full w-full object-cover" loading="lazy" />
-          </div>
-          <div className="p-2">
-            <p className="truncate text-xs font-semibold text-gray-900">{ref.name}</p>
-            <p className="truncate text-xs text-gray-500 capitalize">{ref.source}</p>
+            <img
+              src={ref.publicUrl}
+              alt={`Style reference ${index + 1}`}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+            {selectedKey === ref.storageKey && (
+              <span className="absolute bottom-2 right-2 rounded-full bg-rose-600 px-2 py-0.5 text-[10px] font-semibold text-white">
+                Selected
+              </span>
+            )}
           </div>
         </button>
       ))}

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!isHiggsfieldConfigured()) {
-    return NextResponse.json({ error: "Higgsfield not configured" }, { status: 503 });
+    return NextResponse.json({ error: "AI service not configured" }, { status: 503 });
   }
 
   try {
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
       user.soulJobStatus = "ready";
       user.soulReferenceId = status.id;
     } else if (status?.status === "failed") {
-      const failMessage = `Higgsfield reported training failed for job ${user.higgsfieldRequestId}`;
+      const failMessage = "Training did not complete. Please try again.";
       await updateUser(auth.uid, {
         soulJobStatus: "failed",
         lastTrainingError: failMessage,

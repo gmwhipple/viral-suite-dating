@@ -39,8 +39,8 @@ export function LandingVariantA({ onCtaClick }: LandingProps) {
             that look like you
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
-            Upload your selfies. Our AI trains on your face using Higgsfield Soul 2.0, then generates
-            100 professional dating profile shots in styles proven to convert.
+            Upload your selfies. Our AI learns your face, then generates 100 professional dating
+            profile shots in styles proven to convert.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
@@ -225,7 +225,7 @@ function PricingSection({
 function FAQSection() {
   const faqs = [
     { q: "How many photos can I upload?", a: "Up to 100 training photos. We recommend at least 10 clear face shots." },
-    { q: "How long does it take?", a: "Character training takes 1-2 hours. Each generation completes in minutes." },
+    { q: "How long does it take?", a: "Character training takes 20–45 minutes. Each generation completes in minutes." },
     { q: "Can I edit the results?", a: "Yes! Change outfits, remove objects, or refine any photo with AI edits." },
     { q: "Is there a generation limit?", a: "Paid users get 100 AI photo generations included." },
   ];

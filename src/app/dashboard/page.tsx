@@ -10,13 +10,14 @@ import { PhotoUploadZone } from "@/components/dashboard/PhotoUploadZone";
 import { JobStatusBanner } from "@/components/dashboard/JobStatusBanner";
 import { ImageReferencePicker, type GenerateReferencePayload } from "@/components/dashboard/ImageReferencePicker";
 import { GenerationGallery } from "@/components/dashboard/GenerationGallery";
+import { PlanUsageBanner } from "@/components/dashboard/PlanUsageBanner";
 import { ActivityDebugPanel } from "@/components/dashboard/ActivityDebugPanel";
 import { APP_NAME, SUPPORT_EMAIL, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, loading: authLoading, token, logout } = useAuth();
-  const { data, loading, error, refresh } = useDashboard(token);
+  const { user, loading: authLoading, token, logout, refreshToken } = useAuth();
+  const { data, loading, error, refresh } = useDashboard(token, refreshToken);
   const [training, setTraining] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
 
@@ -28,24 +29,38 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!token) return;
-    const status = data.user.soulJobStatus;
-    if (status !== "training" && status !== "pending_training") return;
 
-    const pollTrainingStatus = async () => {
+    const status = data.user.soulJobStatus;
+    const pendingKey = data.generations
+      .filter((g) => g.status !== "completed" && g.status !== "failed")
+      .map((g) => `${g.id}:${g.status}`)
+      .join(",");
+
+    const shouldPoll =
+      status === "training" ||
+      status === "pending_training" ||
+      status === "generating" ||
+      pendingKey.length > 0;
+
+    if (!shouldPoll) return;
+
+    const pollStatus = async () => {
       try {
-        await fetch("/api/soul/train", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        if (status === "training" || status === "pending_training") {
+          await fetch("/api/soul/train", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        }
         await refresh();
       } catch {
         // ignore poll errors
       }
     };
 
-    pollTrainingStatus();
-    const interval = setInterval(pollTrainingStatus, 10000);
+    pollStatus();
+    const interval = setInterval(pollStatus, 30000);
     return () => clearInterval(interval);
-  }, [token, data.user.soulJobStatus, refresh]);
+  }, [token, data.user.soulJobStatus, data.generations, refresh]);
 
   const startTraining = async () => {
     if (!token) return;
@@ -98,7 +113,9 @@ export default function DashboardPage() {
       }),
     });
     const json = await res.json();
-    if (!res.ok) throw new Error(json.error);
+    if (!res.ok) {
+      throw new Error(typeof json.error === "string" ? json.error : "Generation failed");
+    }
     await refresh();
   };
 
@@ -158,6 +175,15 @@ export default function DashboardPage() {
       </header>
 
       <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
+        <PlanUsageBanner
+          generationsUsed={data.user.generationsUsed}
+          generationsRemaining={data.limits.generationsRemaining}
+          maxGenerations={data.limits.maxGenerations}
+          plan={data.user.plan}
+          onCheckout={checkout}
+          checkingOut={checkingOut}
+        />
+
         {error && (
           <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             Dashboard refresh failed: {error}
@@ -168,8 +194,6 @@ export default function DashboardPage() {
           user={data.user}
           photoCount={data.photos.length}
           recentActivity={data.recentActivity}
-          onCheckout={checkout}
-          checkingOut={checkingOut}
         />
 
         <ExamplePhotosGuide />
