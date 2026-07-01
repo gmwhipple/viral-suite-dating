@@ -17,6 +17,7 @@ const emptyState: DashboardState & {
     createdAt: "",
     updatedAt: "",
   },
+  characters: [],
   photos: [],
   generations: [],
   edits: [],

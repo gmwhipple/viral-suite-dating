@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken } from "@/lib/auth";
-import { getOrCreateUser, getUserPhotos, getUserGenerations } from "@/lib/services/users";
+import { getOrCreateUser, getUserPhotos, getUserGenerations, countUserPhotos } from "@/lib/services/users";
+import { ensureCharactersForUser } from "@/lib/services/characters";
 import { getUserActivity } from "@/lib/activity-log";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import { listCatalogReferences, listCustomReferences } from "@/lib/reference-storage";
@@ -23,6 +24,8 @@ export async function GET(request: NextRequest) {
       publicUrl: getStoragePublicUrl(photo.storageKey, baseUrl),
     }));
     const generations = await getUserGenerations(auth.uid);
+    const photoCount = await countUserPhotos(auth.uid);
+    const characters = await ensureCharactersForUser(user, photoCount);
     const recentActivity = await getUserActivity(auth.uid, 30);
     const gender: ReferenceGender = user.referenceGender === "women" ? "women" : "men";
 
@@ -45,6 +48,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({
       user,
+      characters,
       photos,
       generations,
       edits,

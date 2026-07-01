@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [training, setTraining] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [generateNotice, setGenerateNotice] = useState<string | null>(null);
+  const [selectingCharacter, setSelectingCharacter] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -106,6 +107,12 @@ export default function DashboardPage() {
 
   const generatePhoto = async (payload: GenerateReferencePayload) => {
     if (!token) return;
+    const characterId =
+      data.user.activeCharacterId ||
+      data.characters.find((c) => c.status === "ready")?.id;
+    if (!characterId) {
+      throw new Error("Select a ready character first");
+    }
     const res = await fetch("/api/soul/generate", {
       method: "POST",
       headers: {
@@ -116,6 +123,7 @@ export default function DashboardPage() {
         storageKey: payload.storageKey,
         imageReferenceUrl: payload.publicUrl,
         referenceName: payload.name,
+        characterId,
       }),
     });
     const json = await res.json();
@@ -163,8 +171,39 @@ export default function DashboardPage() {
     );
   }
 
+  const selectCharacter = async (characterId: string) => {
+    if (!token) return;
+    setSelectingCharacter(true);
+    try {
+      const res = await fetch("/api/characters", {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ characterId }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Could not select character");
+      await refresh();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Could not select character");
+    } finally {
+      setSelectingCharacter(false);
+    }
+  };
+
+  const activeCharacterId =
+    data.user.activeCharacterId || data.characters[0]?.id || null;
+  const hasReadyCharacter = data.characters.some(
+    (c) => c.status === "ready" && c.soulReferenceId
+  );
   const canUpload = !["training", "pending_training"].includes(data.user.soulJobStatus);
-  const canGenerate = data.user.soulJobStatus === "ready" || data.user.soulJobStatus === "completed" || data.user.soulJobStatus === "generating";
+  const canGenerate =
+    hasReadyCharacter ||
+    data.user.soulJobStatus === "ready" ||
+    data.user.soulJobStatus === "completed" ||
+    data.user.soulJobStatus === "generating";
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -225,6 +264,10 @@ export default function DashboardPage() {
             <ImageReferencePicker
               token={token!}
               initialGender={data.user.referenceGender === "women" ? "women" : "men"}
+              characters={data.characters}
+              activeCharacterId={activeCharacterId}
+              onSelectCharacter={selectCharacter}
+              selectingCharacter={selectingCharacter}
               onGenerate={generatePhoto}
               generationsRemaining={data.limits.generationsRemaining}
               successMessage={generateNotice}

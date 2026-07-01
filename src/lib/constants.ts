@@ -11,6 +11,12 @@ export const AB_TEST_COOKIE = "vs_ab_variant";
 export const DEFAULT_SOUL_GENERATION_PROMPT =
   "Professional dating profile photo, photorealistic, flattering natural lighting, confident expression, high quality portrait";
 
+export const SMILE_OPTIONS = [
+  { label: "Dimple Smile", serviceChoice: 11 },
+  { label: "Big Smile", serviceChoice: 12 },
+  { label: "Standard Smile", serviceChoice: 13 },
+] as const;
+
 export const REFERENCE_CATALOG_PATHS = {
   men: "references/men/",
   women: "references/women/",

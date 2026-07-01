@@ -42,11 +42,31 @@ export interface CatalogReferenceRecord {
   updatedAt: string;
 }
 
+export type CharacterStatus =
+  | "pending_training"
+  | "training"
+  | "ready"
+  | "failed";
+
+export interface UserCharacter {
+  id: string;
+  userId: string;
+  label: string;
+  status: CharacterStatus;
+  photoCount: number;
+  soulReferenceId?: string;
+  higgsfieldRequestId?: string;
+  lastTrainingError?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface UserProfile {
   uid: string;
   email: string;
   displayName?: string;
   referenceGender?: ReferenceGender;
+  activeCharacterId?: string;
   plan: UserPlan;
   stripeCustomerId?: string;
   generationsUsed: number;
@@ -81,6 +101,7 @@ export interface StyleReference {
 export interface GenerationJob {
   id: string;
   userId: string;
+  characterId?: string;
   referenceId: string;
   referenceName: string;
   prompt: string;
@@ -107,7 +128,7 @@ export interface EditJob {
   status: EditJobStatus;
   resultImageUrl?: string;
   storageKey?: string;
-  provider: "fal" | "openrouter";
+  provider: "fal" | "openrouter" | "ailab";
   error?: string;
   createdAt: string;
   updatedAt: string;
@@ -134,6 +155,7 @@ export interface ABTestEvent {
 
 export interface DashboardState {
   user: UserProfile;
+  characters: UserCharacter[];
   photos: UserPhoto[];
   generations: GenerationJob[];
   edits: EditJob[];

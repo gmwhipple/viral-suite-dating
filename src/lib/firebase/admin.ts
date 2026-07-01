@@ -73,4 +73,5 @@ export const COLLECTIONS = {
   activity: "activity_logs",
   abTests: "ab_test_events",
   referenceCatalog: "reference_catalog",
+  characters: "characters",
 } as const;

@@ -8,6 +8,7 @@ import {
   extractResultUrl,
   markGenerationFailed,
 } from "@/lib/generation-completion";
+import { getCharacter, isCharacterReady } from "@/lib/services/characters";
 import { resolveImageReference } from "@/lib/reference-storage";
 import { getExternalFetchUrl } from "@/lib/storage";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
@@ -92,24 +93,28 @@ export async function POST(request: NextRequest) {
       referenceName,
       prompt,
       referenceId,
+      characterId: bodyCharacterId,
     } = body as {
       storageKey?: string;
       imageReferenceUrl?: string;
       referenceName?: string;
       prompt?: string;
       referenceId?: string;
+      characterId?: string;
     };
 
     const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
-
-    if (!user.soulReferenceId) {
-      return NextResponse.json({ error: "Character not ready yet" }, { status: 400 });
+    const characterId = bodyCharacterId || user.activeCharacterId;
+    if (!characterId) {
+      return NextResponse.json({ error: "Select a character first" }, { status: 400 });
     }
 
-    const allowedStatuses = new Set(["ready", "completed", "generating"]);
-    if (!allowedStatuses.has(user.soulJobStatus)) {
-      return NextResponse.json({ error: "Character not ready yet" }, { status: 400 });
+    const character = await getCharacter(auth.uid, characterId);
+    if (!character || !isCharacterReady(character)) {
+      return NextResponse.json({ error: "Selected character is not ready yet" }, { status: 400 });
     }
+
+    const soulReferenceId = character.soulReferenceId!;
 
     if (!canUserGenerate(user)) {
       return NextResponse.json({
@@ -173,6 +178,7 @@ export async function POST(request: NextRequest) {
     const generation: GenerationJob = {
       id: jobId,
       userId: auth.uid,
+      characterId,
       referenceId: resolvedReferenceId,
       referenceName: resolvedName,
       prompt: resolvedPrompt,
@@ -188,7 +194,7 @@ export async function POST(request: NextRequest) {
     }
 
     const job = await generateSoulImage({
-      soulReferenceId: user.soulReferenceId,
+      soulReferenceId,
       prompt: resolvedPrompt,
       imageReferenceUrl: externalReferenceUrl,
       webhookUrl: `${appUrl}/api/webhooks/higgsfield`,

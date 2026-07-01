@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import type { GenerationJob } from "@/lib/firebase/types";
+import { SMILE_OPTIONS } from "@/lib/constants";
 import { formatDate, cn } from "@/lib/utils";
+import { Smile, Laugh, SmilePlus } from "lucide-react";
 
 interface GenerationGalleryProps {
   generations: GenerationJob[];
@@ -10,21 +12,60 @@ interface GenerationGalleryProps {
   onEditComplete: () => void;
 }
 
+const SMILE_ICONS = [SmilePlus, Laugh, Smile] as const;
+
 export function GenerationGallery({ generations, token, onEditComplete }: GenerationGalleryProps) {
-  const [editingGen, setEditingGen] = useState<GenerationJob | null>(null);
+  const [previewGen, setPreviewGen] = useState<GenerationJob | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [smileLoading, setSmileLoading] = useState<number | null>(null);
   const [prompt, setPrompt] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [textEditLoading, setTextEditLoading] = useState(false);
 
   const sorted = [...generations].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 
-  const submitEdit = async () => {
-    if (!editingGen || !prompt.trim() || !editingGen.finalImageUrl) return;
-    setLoading(true);
+  const openPreview = (gen: GenerationJob) => {
+    if (gen.status !== "completed" || !gen.finalImageUrl) return;
+    setPreviewGen(gen);
+    setPreviewUrl(gen.finalImageUrl);
+    setPrompt("");
+    setAttachment(null);
+  };
+
+  const applySmile = async (serviceChoice: number) => {
+    if (!previewGen?.finalImageUrl) return;
+    setSmileLoading(serviceChoice);
+    try {
+      const res = await fetch("/api/ailab/smile", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sourceImageUrl: previewUrl || previewGen.finalImageUrl,
+          serviceChoice,
+          generationId: previewGen.id,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Smile edit failed");
+      setPreviewUrl(json.imageUrl);
+      onEditComplete();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Smile edit failed");
+    } finally {
+      setSmileLoading(null);
+    }
+  };
+
+  const submitTextEdit = async () => {
+    if (!previewGen || !prompt.trim() || !previewUrl) return;
+    setTextEditLoading(true);
     try {
       const formData = new FormData();
       formData.append("prompt", prompt);
-      formData.append("sourceImageUrl", editingGen.finalImageUrl);
+      formData.append("sourceImageUrl", previewUrl);
       if (attachment) formData.append("attachment", attachment);
 
       const res = await fetch("/api/edit", {
@@ -34,18 +75,17 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
       });
 
       const json = await res.json();
-      if (!res.ok) {
-        throw new Error(json.error || "Edit failed");
-      }
+      if (!res.ok) throw new Error(json.error || "Edit failed");
 
-      setEditingGen(null);
+      setPreviewGen(null);
+      setPreviewUrl(null);
       setPrompt("");
       setAttachment(null);
       onEditComplete();
     } catch (err) {
       alert(err instanceof Error ? err.message : "AI editing is not available yet.");
     } finally {
-      setLoading(false);
+      setTextEditLoading(false);
     }
   };
 
@@ -59,62 +99,75 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {sorted.map((gen) => (
-          <GenerationTile
-            key={gen.id}
-            gen={gen}
-            onEdit={() => {
-              if (gen.status === "completed" && gen.finalImageUrl) {
-                setEditingGen(gen);
-                setPrompt("");
-                setAttachment(null);
-              }
-            }}
-          />
+          <GenerationTile key={gen.id} gen={gen} onOpen={() => openPreview(gen)} />
         ))}
       </div>
 
-      {editingGen && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+      {previewGen && previewUrl && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-4 sm:items-center">
+          <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-2xl bg-white p-6 shadow-xl">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h3 className="text-lg font-bold text-gray-900">AI Edit</h3>
-                <p className="mt-1 text-sm text-gray-600">
-                  Describe how you want to change this photo.
-                </p>
+                <h3 className="text-lg font-bold text-gray-900">Edit photo</h3>
+                <p className="mt-1 text-sm text-gray-600">Adjust your smile or describe other changes.</p>
               </div>
               <button
                 type="button"
-                onClick={() => setEditingGen(null)}
+                onClick={() => {
+                  setPreviewGen(null);
+                  setPreviewUrl(null);
+                }}
                 className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
                 aria-label="Close"
               >
-                <CloseIcon />
+                ✕
               </button>
             </div>
 
-            {editingGen.finalImageUrl && (
-              <div className="mt-4 overflow-hidden rounded-xl border border-gray-200">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={editingGen.finalImageUrl}
-                  alt="Photo to edit"
-                  className="aspect-[3/4] w-full object-cover"
-                />
-              </div>
-            )}
+            <div className="mt-4 overflow-hidden rounded-xl border border-gray-200">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={previewUrl} alt="Generated photo preview" className="aspect-[3/4] w-full object-cover" />
+            </div>
 
-            <div className="mt-4 space-y-3">
+            <div className="mt-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Smile styles</p>
+              <div className="mt-2 grid grid-cols-3 gap-2">
+                {SMILE_OPTIONS.map((option, index) => {
+                  const Icon = SMILE_ICONS[index] || Smile;
+                  const loading = smileLoading === option.serviceChoice;
+                  return (
+                    <button
+                      key={option.serviceChoice}
+                      type="button"
+                      disabled={smileLoading !== null}
+                      onClick={() => applySmile(option.serviceChoice)}
+                      className={cn(
+                        "flex flex-col items-center gap-2 rounded-xl border px-2 py-3 text-center transition",
+                        loading
+                          ? "border-violet-400 bg-violet-50"
+                          : "border-gray-200 bg-gray-50 hover:border-violet-300 hover:bg-violet-50"
+                      )}
+                    >
+                      <Icon className={cn("h-6 w-6", loading ? "text-violet-600" : "text-gray-700")} />
+                      <span className="text-xs font-semibold text-gray-900">{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-5 border-t border-gray-100 pt-5">
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Other AI edits</p>
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                placeholder='e.g. "Change my shirt to blue" or "Remove background clutter"'
-                className="w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
-                rows={3}
+                placeholder='e.g. "Change my shirt to blue"'
+                className="mt-2 w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
+                rows={2}
               />
-              <label className="block text-sm text-gray-600">
+              <label className="mt-2 block text-sm text-gray-600">
                 Reference image (optional)
                 <input
                   type="file"
@@ -125,13 +178,21 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
               </label>
               <button
                 type="button"
-                onClick={submitEdit}
-                disabled={loading || !prompt.trim()}
-                className="w-full rounded-full bg-violet-600 py-3 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+                onClick={submitTextEdit}
+                disabled={textEditLoading || !prompt.trim()}
+                className="mt-3 w-full rounded-full bg-violet-600 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
               >
-                {loading ? "Sending to AI editor…" : "Apply AI Edit"}
+                {textEditLoading ? "Applying…" : "Apply text edit"}
               </button>
             </div>
+
+            <a
+              href={previewUrl}
+              download
+              className="mt-4 block w-full rounded-full border border-gray-200 py-2.5 text-center text-sm font-semibold text-gray-800 hover:bg-gray-50"
+            >
+              Download current version
+            </a>
           </div>
         </div>
       )}
@@ -139,13 +200,7 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
   );
 }
 
-function GenerationTile({
-  gen,
-  onEdit,
-}: {
-  gen: GenerationJob;
-  onEdit: () => void;
-}) {
+function GenerationTile({ gen, onOpen }: { gen: GenerationJob; onOpen: () => void }) {
   const isPending = gen.status !== "completed" && gen.status !== "failed";
   const isFailed = gen.status === "failed";
   const previewUrl = gen.finalImageUrl || gen.imageReferenceUrl;
@@ -178,9 +233,6 @@ function GenerationTile({
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 px-3 text-center">
             <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
             <p className="mt-3 text-xs font-semibold text-white">Creating your photo…</p>
-            <p className="mt-1 text-[10px] text-white/80 capitalize">
-              {gen.status.replace(/_/g, " ")}
-            </p>
           </div>
         )}
 
@@ -191,62 +243,30 @@ function GenerationTile({
         )}
 
         {gen.status === "completed" && gen.finalImageUrl && (
-          <div className="absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-black/70 via-transparent to-black/40 p-3 opacity-0 transition group-hover:opacity-100">
-            <div className="flex justify-end gap-2">
-              <button
-                type="button"
-                onClick={onEdit}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-violet-600 shadow-lg backdrop-blur hover:bg-white"
-                aria-label="AI edit"
-                title="AI edit"
-              >
-                <SparkleEditIcon />
-              </button>
-            </div>
-            <div className="flex items-end justify-between gap-2">
-              <p className="text-[10px] text-white/90">{formatDate(gen.createdAt)}</p>
-              <a
-                href={gen.finalImageUrl}
-                download
-                className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-gray-900 shadow-lg hover:bg-gray-100"
-              >
-                Download
-              </a>
-            </div>
-          </div>
-        )}
-
-        {gen.status === "completed" && gen.finalImageUrl && (
-          <button
-            type="button"
-            onClick={onEdit}
-            className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-white shadow-md sm:hidden"
-            aria-label="AI edit"
-          >
-            <SparkleEditIcon className="h-4 w-4" />
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={onOpen}
+              className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition group-hover:opacity-100"
+            >
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-[10px] text-white/90">{formatDate(gen.createdAt)}</p>
+                <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-700">
+                  Edit
+                </span>
+              </div>
+            </button>
+            <button
+              type="button"
+              onClick={onOpen}
+              className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-white shadow-md"
+              aria-label="Edit photo"
+            >
+              <SmilePlus className="h-4 w-4" />
+            </button>
+          </>
         )}
       </div>
     </div>
-  );
-}
-
-function SparkleEditIcon({ className = "h-5 w-5" }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15 4l1.2 3.6L20 9l-3.8 1.4L15 14l-1.2-3.6L10 9l3.8-1.4L15 4zM5 14l.8 2.4L8 17l-2.2.8L5 20l-.8-2.2L2 17l2.2-.6L5 14z"
-      />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
-    </svg>
   );
 }

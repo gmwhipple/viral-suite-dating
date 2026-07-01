@@ -1,7 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import type { ImageReference, ReferenceGender } from "@/lib/firebase/types";
+import type { ImageReference, ReferenceGender, UserCharacter } from "@/lib/firebase/types";
+import { CharacterPicker } from "@/components/dashboard/CharacterPicker";
 import { cn } from "@/lib/utils";
 
 export interface GenerateReferencePayload {
@@ -14,6 +15,10 @@ export interface GenerateReferencePayload {
 interface ImageReferencePickerProps {
   token: string;
   initialGender?: ReferenceGender;
+  characters: UserCharacter[];
+  activeCharacterId: string | null;
+  onSelectCharacter: (characterId: string) => Promise<void>;
+  selectingCharacter?: boolean;
   onGenerate: (payload: GenerateReferencePayload) => Promise<void>;
   generationsRemaining: number;
   disabled?: boolean;
@@ -23,6 +28,10 @@ interface ImageReferencePickerProps {
 export function ImageReferencePicker({
   token,
   initialGender = "men",
+  characters,
+  activeCharacterId,
+  onSelectCharacter,
+  selectingCharacter = false,
   onGenerate,
   generationsRemaining,
   disabled,
@@ -96,6 +105,9 @@ export function ImageReferencePicker({
 
   const allReferences = [...customReferences, ...catalogReferences];
   const selected = allReferences.find((r) => r.storageKey === selectedKey) || null;
+  const activeCharacter = characters.find((c) => c.id === activeCharacterId) || null;
+  const characterReady =
+    activeCharacter?.status === "ready" && Boolean(activeCharacter.soulReferenceId);
 
   const handleGenerate = async () => {
     if (!selected || generating) return;
@@ -125,11 +137,29 @@ export function ImageReferencePicker({
         </div>
         <button
           onClick={handleGenerate}
-          disabled={!selected || disabled || generating || generationsRemaining <= 0}
+          disabled={
+            !selected || !characterReady || disabled || generating || generationsRemaining <= 0
+          }
           className="rounded-full bg-rose-600 px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-50 hover:bg-rose-700"
         >
           {generating ? "Submitting…" : "Generate photo"}
         </button>
+      </div>
+
+      <div className="mt-6 border-t border-gray-100 pt-6">
+        <CharacterPicker
+          characters={characters}
+          activeCharacterId={activeCharacterId}
+          onSelect={onSelectCharacter}
+          selecting={selectingCharacter}
+        />
+        {activeCharacter && !characterReady && (
+          <p className="mt-3 text-sm text-amber-700">
+            {activeCharacter.status === "training" || activeCharacter.status === "pending_training"
+              ? `This character is still training (${activeCharacter.photoCount} photos submitted).`
+              : "This character is not ready — select a ready character or train a new one."}
+          </p>
+        )}
       </div>
 
       {successMessage && (
