@@ -8,7 +8,8 @@
     "start": "next start -H 0.0.0.0 -p 3000",
     "lint": "eslint",
     "replit:fix": "git fetch origin main && git reset --hard origin/main && npm install",
-    "storage:setup": "node scripts/setup-firebase-storage.mjs"
+    "storage:setup": "node scripts/setup-firebase-storage.mjs",
+    "stripe:setup": "node scripts/setup-stripe.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.10.1",

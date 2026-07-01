@@ -7,6 +7,8 @@ interface PlanUsageBannerProps {
   generationsRemaining: number;
   maxGenerations: number;
   plan: "free" | "paid" | "expired";
+  checkoutPriceLabel?: string;
+  checkoutBlocked?: boolean;
   onCheckout?: () => Promise<void>;
   checkingOut?: boolean;
 }
@@ -16,6 +18,8 @@ export function PlanUsageBanner({
   generationsRemaining,
   maxGenerations,
   plan,
+  checkoutPriceLabel = "$199",
+  checkoutBlocked = false,
   onCheckout,
   checkingOut,
 }: PlanUsageBannerProps) {
@@ -48,10 +52,14 @@ export function PlanUsageBanner({
         {!hasAccess && onCheckout && (
           <button
             onClick={onCheckout}
-            disabled={checkingOut}
+            disabled={checkingOut || checkoutBlocked}
             className="rounded-full bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
           >
-            {checkingOut ? "Loading..." : "Unlock — $49"}
+            {checkoutBlocked
+              ? "Not available in your region"
+              : checkingOut
+                ? "Loading..."
+                : `Unlock — ${checkoutPriceLabel}`}
           </button>
         )}
       </div>

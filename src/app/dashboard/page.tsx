@@ -22,6 +22,20 @@ export default function DashboardPage() {
   const [checkingOut, setCheckingOut] = useState(false);
   const [generateNotice, setGenerateNotice] = useState<string | null>(null);
   const [selectingCharacter, setSelectingCharacter] = useState(false);
+  const [checkoutPriceLabel, setCheckoutPriceLabel] = useState("$199");
+  const [checkoutBlocked, setCheckoutBlocked] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/stripe/pricing")
+      .then((res) => res.json())
+      .then((json) => {
+        if (typeof json.label === "string") setCheckoutPriceLabel(json.label);
+        if (json.blocked === true) setCheckoutBlocked(true);
+      })
+      .catch(() => {
+        // keep defaults
+      });
+  }, []);
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -230,6 +244,8 @@ export default function DashboardPage() {
           generationsRemaining={data.limits.generationsRemaining}
           maxGenerations={data.limits.maxGenerations}
           plan={data.user.plan}
+          checkoutPriceLabel={checkoutPriceLabel}
+          checkoutBlocked={checkoutBlocked}
           onCheckout={checkout}
           checkingOut={checkingOut}
         />

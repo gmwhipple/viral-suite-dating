@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { APP_NAME, PRICING, SUPPORT_EMAIL } from "@/lib/constants";
+import { TIER_PRICES_USD } from "@/lib/stripe-pricing";
 import { cn } from "@/lib/utils";
 
 interface LandingProps {
@@ -50,7 +51,7 @@ export function LandingVariantA({ onCtaClick }: LandingProps) {
             >
               Transform My Profile — ${PRICING.price}
             </Link>
-            <p className="text-sm text-gray-500">100 photos · No subscription · Money-back guarantee</p>
+            <p className="text-sm text-gray-500">100 photos · No subscription · Localized pricing from ${TIER_PRICES_USD.tier3}</p>
           </div>
 
           <div className="mx-auto mt-16 grid max-w-4xl grid-cols-3 gap-8 text-center">
@@ -198,7 +199,9 @@ function PricingSection({
           )}
         >
           <div className="text-5xl font-black text-rose-600">${PRICING.price}</div>
-          <p className={cn("mt-2", dark ? "text-gray-400" : "text-gray-600")}>{PRICING.description}</p>
+          <p className={cn("mt-2", dark ? "text-gray-400" : "text-gray-600")}>
+            {PRICING.description} · from ${TIER_PRICES_USD.tier3} in select regions
+          </p>
           <ul className="mt-6 space-y-2 text-left text-sm">
             {PRICING.features.map((f) => (
               <li key={f} className={cn("flex gap-2", dark ? "text-gray-300" : "text-gray-700")}>

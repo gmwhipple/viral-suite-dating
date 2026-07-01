@@ -1,19 +1,28 @@
 import Stripe from "stripe";
-import { MAX_GENERATIONS_PER_USER } from "@/lib/constants";
+import { MAX_GENERATIONS_PER_USER, PRICING } from "@/lib/constants";
+import { getLocalizedPrice, type LocalizedPrice } from "@/lib/stripe-pricing";
 
 let stripe: Stripe | null = null;
 
+export function getStripeSecretKey(): string | undefined {
+  return (
+    process.env.STRIPE_SECRET_KEY?.trim() ||
+    process.env.STRIPE_SANDBOX_SECRET?.trim() ||
+    undefined
+  );
+}
+
 export function getStripe(): Stripe {
   if (!stripe) {
-    const key = process.env.STRIPE_SECRET_KEY;
-    if (!key) throw new Error("STRIPE_SECRET_KEY not configured");
+    const key = getStripeSecretKey();
+    if (!key) throw new Error("STRIPE_SECRET_KEY or STRIPE_SANDBOX_SECRET not configured");
     stripe = new Stripe(key);
   }
   return stripe;
 }
 
 export function isStripeConfigured(): boolean {
-  return Boolean(process.env.STRIPE_SECRET_KEY);
+  return Boolean(getStripeSecretKey());
 }
 
 export async function createCheckoutSession(params: {
@@ -21,20 +30,40 @@ export async function createCheckoutSession(params: {
   email: string;
   successUrl: string;
   cancelUrl: string;
+  countryCode: string | null;
+  localizedPrice: LocalizedPrice;
 }) {
-  const priceId = process.env.STRIPE_PRICE_ID;
-  if (!priceId) throw new Error("STRIPE_PRICE_ID not configured");
+  const { localizedPrice } = params;
 
   const session = await getStripe().checkout.sessions.create({
     mode: "payment",
     customer_email: params.email,
-    line_items: [{ price: priceId, quantity: 1 }],
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "usd",
+          unit_amount: localizedPrice.amountCents,
+          product_data: {
+            name: PRICING.name,
+            description: PRICING.description,
+            metadata: {
+              pricingTier: localizedPrice.tier,
+            },
+          },
+        },
+      },
+    ],
     success_url: params.successUrl,
     cancel_url: params.cancelUrl,
+    billing_address_collection: "required",
     metadata: {
       userId: params.userId,
       product: "profile-makeover-pro",
       generationsLimit: String(MAX_GENERATIONS_PER_USER),
+      pricingTier: localizedPrice.tier,
+      priceUsd: String(localizedPrice.amountUsd),
+      countryCode: params.countryCode || "unknown",
     },
   });
 

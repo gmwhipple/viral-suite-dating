@@ -24,7 +24,7 @@ export const REFERENCE_CATALOG_PATHS = {
 
 export const PRICING = {
   name: "Profile Makeover Pro",
-  price: 49,
+  price: 199,
   currency: "usd",
   description: "100 AI dating photos + unlimited edits",
   features: [
