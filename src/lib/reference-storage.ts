@@ -1,6 +1,8 @@
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import type { ImageReference, ReferenceGender } from "@/lib/firebase/types";
+import type { ImageReference, ReferenceGender, UserProfile } from "@/lib/firebase/types";
+import { FREE_CATALOG_REFERENCE_LIMIT } from "@/lib/constants";
+import { userHasCatalogAccess } from "@/lib/plan-access";
 import {
   downloadFromStorage,
   getStoragePublicUrl,
@@ -53,6 +55,55 @@ export async function listCatalogReferences(
     .map((storageKey) => toImageReference(storageKey, gender, "catalog", baseUrl));
 }
 
+export async function listCatalogReferencesForPlan(
+  gender: ReferenceGender,
+  plan: UserProfile["plan"],
+  baseUrl?: string
+): Promise<{
+  catalogReferences: ImageReference[];
+  catalogTotal: number;
+  catalogLockedCount: number;
+}> {
+  const all = await listCatalogReferences(gender, baseUrl);
+
+  if (userHasCatalogAccess(plan)) {
+    return {
+      catalogReferences: all,
+      catalogTotal: all.length,
+      catalogLockedCount: 0,
+    };
+  }
+
+  const visible = all.slice(0, FREE_CATALOG_REFERENCE_LIMIT);
+  return {
+    catalogReferences: visible,
+    catalogTotal: all.length,
+    catalogLockedCount: Math.max(0, all.length - visible.length),
+  };
+}
+
+function catalogGenderFromKey(storageKey: string): ReferenceGender | null {
+  if (storageKey.startsWith(CATALOG_PREFIX.men)) return "men";
+  if (storageKey.startsWith(CATALOG_PREFIX.women)) return "women";
+  return null;
+}
+
+export async function isCatalogReferenceAllowedForUser(
+  storageKey: string,
+  plan: UserProfile["plan"]
+): Promise<boolean> {
+  if (userHasCatalogAccess(plan)) return true;
+
+  const gender = catalogGenderFromKey(storageKey);
+  if (!gender) return true;
+
+  const all = await listCatalogReferences(gender);
+  const allowedKeys = new Set(
+    all.slice(0, FREE_CATALOG_REFERENCE_LIMIT).map((ref) => ref.storageKey)
+  );
+  return allowedKeys.has(storageKey);
+}
+
 export async function listCustomReferences(
   userId: string,
   baseUrl?: string
@@ -83,7 +134,7 @@ export async function uploadCustomReference(
     mimeType,
   });
 
-  return toImageReference(storageKey, "custom", "custom");
+  return toImageReference(storageKey, "custom", "custom", baseUrl);
 }
 
 export async function resolveImageReference(

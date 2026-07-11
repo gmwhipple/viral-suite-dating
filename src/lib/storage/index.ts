@@ -34,45 +34,90 @@ function useFirebase(): boolean {
   return !useB2() && isFirebaseStorageConfigured();
 }
 
-export function getStoragePublicUrl(storageKey: string, baseUrl?: string): string {
-  const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
-  const encoded = storageKey
+/** Cloudflare (or other CDN) base — B2 Bandwidth Alliance avoids B2 egress. */
+export function getStorageCdnBaseUrl(): string | undefined {
+  const cdn =
+    process.env.NEXT_PUBLIC_STORAGE_CDN_URL?.trim() ||
+    process.env.STORAGE_CDN_URL?.trim();
+  return cdn ? cdn.replace(/\/$/, "") : undefined;
+}
+
+export function encodeStorageKeyForUrl(storageKey: string): string {
+  return storageKey
     .split("/")
     .map((segment) => encodeURIComponent(segment))
     .join("/");
+}
+
+export function decodeStorageKeyFromUrl(encodedPath: string): string {
+  return encodedPath
+    .split("/")
+    .map((segment) => decodeURIComponent(segment))
+    .join("/");
+}
+
+export function getStoragePublicUrl(storageKey: string, baseUrl?: string): string {
+  const encoded = encodeStorageKeyForUrl(storageKey);
+  const cdnBase = getStorageCdnBaseUrl();
+  if (cdnBase) {
+    return `${cdnBase}/${encoded}`;
+  }
+
+  const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
   return `${base}/api/storage/${encoded}`;
 }
 
-/** Parse `/api/storage/...` app URLs back to a storage key. */
+function parseStorageKeyFromPathname(pathname: string): string | null {
+  const appMatch = pathname.match(/^\/api\/storage\/(.+)$/);
+  if (appMatch?.[1]) {
+    return decodeStorageKeyFromUrl(appMatch[1]);
+  }
+
+  const cdnMatch = pathname.match(/^\/(.+)$/);
+  if (cdnMatch?.[1]) {
+    return decodeStorageKeyFromUrl(cdnMatch[1]);
+  }
+
+  return null;
+}
+
+/** Parse app or CDN storage URLs back to a storage key. */
 export function getStorageKeyFromPublicUrl(
   publicUrl: string,
   baseUrl?: string
 ): string | null {
   try {
     const parsed = new URL(publicUrl);
-    const pathMatch = parsed.pathname.match(/^\/api\/storage\/(.+)$/);
-    if (pathMatch?.[1]) {
-      return pathMatch[1]
-        .split("/")
-        .map((segment) => decodeURIComponent(segment))
-        .join("/");
+    const cdnBase = getStorageCdnBaseUrl();
+    if (cdnBase) {
+      const cdn = new URL(cdnBase);
+      if (parsed.origin === cdn.origin) {
+        return parseStorageKeyFromPathname(parsed.pathname);
+      }
     }
+
+    const key = parseStorageKeyFromPathname(parsed.pathname);
+    if (key) return key;
   } catch {
     // fall through to prefix match
+  }
+
+  const cdnBase = getStorageCdnBaseUrl();
+  if (cdnBase && publicUrl.startsWith(`${cdnBase}/`)) {
+    return decodeStorageKeyFromUrl(publicUrl.slice(cdnBase.length + 1));
   }
 
   const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
   const prefix = `${base}/api/storage/`;
   if (!publicUrl.startsWith(prefix)) return null;
 
-  return publicUrl
-    .slice(prefix.length)
-    .split("/")
-    .map((segment) => decodeURIComponent(segment))
-    .join("/");
+  return decodeStorageKeyFromUrl(publicUrl.slice(prefix.length));
 }
 
-function isAppStorageUrl(url: string, baseUrl?: string): boolean {
+export function isStoragePublicUrl(url: string, baseUrl?: string): boolean {
+  const cdnBase = getStorageCdnBaseUrl();
+  if (cdnBase && url.startsWith(`${cdnBase}/`)) return true;
+
   const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
   return url.startsWith(`${base}/api/storage/`);
 }

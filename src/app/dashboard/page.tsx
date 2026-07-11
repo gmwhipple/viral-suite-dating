@@ -442,6 +442,8 @@ function DashboardContent() {
           generationsRemaining={data.limits.generationsRemaining}
           successMessage={generateNotice}
           disabled={!TESTING_BYPASS_PAYMENT && data.user.plan !== "paid"}
+          hasPaidAccess={data.user.plan === "paid"}
+          onUnlockReferences={checkout}
         />
 
         {canGenerate && (

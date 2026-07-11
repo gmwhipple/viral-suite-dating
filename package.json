@@ -12,7 +12,9 @@
     "storage:b2-test": "node scripts/test-b2-storage.mjs",
     "stripe:setup": "node scripts/setup-stripe.mjs",
     "match:translate": "node scripts/translate-match-image.mjs",
-    "match:translate:dry": "node scripts/translate-match-image.mjs --dry-run"
+    "match:translate:dry": "node scripts/translate-match-image.mjs --dry-run",
+    "worker:deploy": "cd workers/signatureswipe && npm run deploy",
+    "worker:dev": "cd workers/signatureswipe && npm run dev"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1077.0",

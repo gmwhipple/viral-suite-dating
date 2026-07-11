@@ -9,7 +9,7 @@ import {
   markGenerationFailed,
 } from "@/lib/generation-completion";
 import { getCharacter, isCharacterReady } from "@/lib/services/characters";
-import { resolveImageReference } from "@/lib/reference-storage";
+import { resolveImageReference, isCatalogReferenceAllowedForUser } from "@/lib/reference-storage";
 import { resolvePromptOnlySoulStyle } from "@/lib/soul-default-style";
 import { getExternalFetchUrl } from "@/lib/storage";
 import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
@@ -152,6 +152,14 @@ export async function POST(request: NextRequest) {
     const baseUrl = getAppBaseUrl(request);
 
     if (storageKey) {
+      const allowed = await isCatalogReferenceAllowedForUser(storageKey, user.plan);
+      if (!allowed) {
+        return NextResponse.json(
+          { error: "Upgrade to unlock the full style reference catalog" },
+          { status: 403 }
+        );
+      }
+
       const ref = await resolveImageReference(auth.uid, storageKey, baseUrl);
       if (!ref) {
         return NextResponse.json({ error: "Invalid reference image" }, { status: 400 });

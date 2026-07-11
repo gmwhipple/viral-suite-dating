@@ -49,6 +49,9 @@ export const REFERENCE_CATALOG_PATHS = {
   women: "references/women/",
 } as const;
 
+/** Free accounts can browse/use this many catalog style references per gender. */
+export const FREE_CATALOG_REFERENCE_LIMIT = 10;
+
 export const PRICING = {
   name: "Profile Makeover Pro",
   price: 199,

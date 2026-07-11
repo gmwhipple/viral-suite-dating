@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken, getClientIp } from "@/lib/auth";
 import { logActivity } from "@/lib/activity-log";
 import {
-  listCatalogReferences,
+  listCatalogReferencesForPlan,
   listCustomReferences,
   uploadCustomReference,
 } from "@/lib/reference-storage";
 import type { ReferenceGender } from "@/lib/firebase/types";
 import { getAppBaseUrl } from "@/lib/app-url";
-import { updateUser } from "@/lib/services/users";
+import { getOrCreateUser, updateUser } from "@/lib/services/users";
 
 const MAX_REFERENCE_SIZE = 15 * 1024 * 1024;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -25,15 +25,18 @@ export async function GET(request: NextRequest) {
 
   const gender = parseGender(request.nextUrl.searchParams.get("gender"));
   const baseUrl = getAppBaseUrl(request);
+  const user = await getOrCreateUser(auth.uid, auth.email);
 
-  const [catalogReferences, customReferences] = await Promise.all([
-    listCatalogReferences(gender, baseUrl),
+  const [catalogResult, customReferences] = await Promise.all([
+    listCatalogReferencesForPlan(gender, user.plan, baseUrl),
     listCustomReferences(auth.uid, baseUrl),
   ]);
 
   return NextResponse.json({
     gender,
-    catalogReferences,
+    catalogReferences: catalogResult.catalogReferences,
+    catalogTotal: catalogResult.catalogTotal,
+    catalogLockedCount: catalogResult.catalogLockedCount,
     customReferences,
     uploadPaths: {
       men: "references/men/",

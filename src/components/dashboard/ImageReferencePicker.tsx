@@ -6,7 +6,7 @@ import { GENERATION_PROMPT_PLACEHOLDER } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { CharacterPicker, type CharacterWithThumbnail } from "@/components/dashboard/CharacterPicker";
 import { CreditsLimitModal } from "@/components/dashboard/CreditsLimitModal";
-import { ImageIcon, Upload, X } from "lucide-react";
+import { ImageIcon, Lock, Upload, X } from "lucide-react";
 
 export interface GenerateReferencePayload {
   storageKey?: string;
@@ -30,11 +30,20 @@ interface ImageReferencePickerProps {
   generationsRemaining: number;
   disabled?: boolean;
   generationEnabled?: boolean;
+  hasPaidAccess?: boolean;
+  onUnlockReferences?: () => void;
   successMessage?: string | null;
 }
 
 type GenderReferenceCache = Partial<
-  Record<ReferenceGender, { catalogReferences: ImageReference[]; customReferences: ImageReference[] }>
+  Record<
+    ReferenceGender,
+    {
+      catalogReferences: ImageReference[];
+      customReferences: ImageReference[];
+      catalogLockedCount: number;
+    }
+  >
 >;
 
 export function ImageReferencePicker({
@@ -49,6 +58,8 @@ export function ImageReferencePicker({
   generationsRemaining,
   disabled,
   generationEnabled = true,
+  hasPaidAccess = true,
+  onUnlockReferences,
   successMessage,
 }: ImageReferencePickerProps) {
   const [gender, setGender] = useState<ReferenceGender>(initialGender);
@@ -84,6 +95,7 @@ export function ImageReferencePicker({
           [gender]: {
             catalogReferences: (json.catalogReferences || []) as ImageReference[],
             customReferences: (json.customReferences || []) as ImageReference[],
+            catalogLockedCount: Number(json.catalogLockedCount) || 0,
           },
         }));
       })
@@ -92,7 +104,7 @@ export function ImageReferencePicker({
         console.log("[ImageReferencePicker] load error", err);
         setReferenceCache((prev) => ({
           ...prev,
-          [gender]: { catalogReferences: [], customReferences: [] },
+          [gender]: { catalogReferences: [], customReferences: [], catalogLockedCount: 0 },
         }));
       })
       .finally(() => {
@@ -106,6 +118,7 @@ export function ImageReferencePicker({
 
   const cached = referenceCache[gender];
   const catalogReferences = cached?.catalogReferences ?? [];
+  const catalogLockedCount = cached?.catalogLockedCount ?? 0;
   const customReferences = cached?.customReferences ?? [];
   const allReferences = [...customReferences, ...catalogReferences];
   const selected = allReferences.find((r) => r.storageKey === selectedKey) || null;
@@ -144,7 +157,11 @@ export function ImageReferencePicker({
 
       const uploaded = json.reference as ImageReference;
       setReferenceCache((prev) => {
-        const current = prev[gender] || { catalogReferences: [], customReferences: [] };
+        const current = prev[gender] || {
+          catalogReferences: [],
+          customReferences: [],
+          catalogLockedCount: 0,
+        };
         return {
           ...prev,
           [gender]: {
@@ -425,6 +442,8 @@ export function ImageReferencePicker({
                     references={catalogReferences}
                     selectedKey={selectedKey}
                     onSelect={selectReference}
+                    lockedCount={!hasPaidAccess ? catalogLockedCount : 0}
+                    onUnlock={onUnlockReferences}
                   />
                 </section>
               </div>
@@ -442,12 +461,16 @@ function ReferenceGrid({
   references,
   selectedKey,
   onSelect,
+  lockedCount = 0,
+  onUnlock,
 }: {
   references: ImageReference[];
   selectedKey: string | null;
   onSelect: (key: string) => void;
+  lockedCount?: number;
+  onUnlock?: () => void;
 }) {
-  if (references.length === 0) {
+  if (references.length === 0 && lockedCount === 0) {
     return <p className="text-sm text-gray-500">No images in this section yet.</p>;
   }
 
@@ -483,6 +506,25 @@ function ReferenceGrid({
           </button>
         );
       })}
+
+      {lockedCount > 0 && (
+        <button
+          type="button"
+          onClick={onUnlock}
+          className="overflow-hidden rounded-xl border-2 border-dashed border-rose-200 bg-gradient-to-br from-rose-50 to-gray-100 ring-1 ring-rose-100 transition hover:border-rose-300 hover:from-rose-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500 focus-visible:ring-offset-2"
+          aria-label={`${lockedCount} more style references locked — upgrade to unlock`}
+        >
+          <div className="relative flex aspect-[3/4] flex-col items-center justify-center px-2 text-center">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/90 shadow-sm ring-1 ring-rose-200">
+              <Lock className="h-4 w-4 text-rose-600" />
+            </span>
+            <p className="mt-3 text-xs font-semibold text-gray-900">+{lockedCount} hidden</p>
+            <p className="mt-1 text-[10px] leading-snug text-gray-500">
+              Upgrade to unlock the full catalog
+            </p>
+          </div>
+        </button>
+      )}
     </div>
   );
 }

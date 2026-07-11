@@ -42,3 +42,7 @@ next-env.d.ts
 
 # local dev photo storage
 .local-storage/
+
+# cloudflare worker
+/workers/signatureswipe/node_modules/
+/workers/signatureswipe/.wrangler/

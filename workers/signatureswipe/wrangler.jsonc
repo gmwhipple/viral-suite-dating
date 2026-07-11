@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "signatureswipe",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-07-11",
+  "routes": [
+    {
+      "pattern": "cdn.signatureswipe.com/*",
+      "zone_name": "signatureswipe.com"
+    }
+  ],
+  "vars": {
+    "B2_BUCKET": "ai-dating-photos",
+    "B2_S3_ENDPOINT": "https://s3.us-east-005.backblazeb2.com",
+    "B2_REGION": "us-east-005"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
