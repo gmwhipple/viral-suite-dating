@@ -348,7 +348,14 @@ function DashboardContent() {
     data.user.modelStatus === "ready" ||
     data.user.modelStatus === "completed" ||
     data.user.modelStatus === "generating";
-  const showGenerationUi = canGenerate || data.characters.length > 0;
+  const reopenTraining = () => {
+    setShowTraining(true);
+    window.setTimeout(() => {
+      document
+        .getElementById("new-character-training")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -408,45 +415,48 @@ function DashboardContent() {
           />
         )}
 
-        {showGenerationUi && (
-          <>
-            <ImageReferencePicker
-              token={token!}
-              initialGender={data.user.referenceGender === "women" ? "women" : "men"}
-              activeCharacterId={activeCharacterId}
-              characters={data.characters}
-              onSelectCharacter={selectCharacter}
-              onAddTraining={() => {
-                setShowTraining(true);
-                window.setTimeout(() => {
-                  document
-                    .getElementById("new-character-training")
-                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
-                }, 50);
-              }}
-              selectingCharacter={selectingCharacter}
-              onGenerate={generatePhoto}
-              generationsRemaining={data.limits.generationsRemaining}
-              successMessage={generateNotice}
-              disabled={!TESTING_BYPASS_PAYMENT && data.user.plan !== "paid"}
-              generationEnabled={canGenerate}
-            />
+        {!showTraining && !hasReadyCharacter && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-5 py-4">
+            <p className="text-sm text-rose-900">
+              Train your AI character with photos to start generating dating profile shots.
+            </p>
+            <button
+              type="button"
+              onClick={reopenTraining}
+              className="shrink-0 rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700"
+            >
+              Open training
+            </button>
+          </div>
+        )}
 
-            {canGenerate && (
-              <div id="generated-photos" className="scroll-mt-8">
-                <h2 className="text-lg font-bold text-gray-900">Your generated photos</h2>
-                <p className="text-sm text-gray-500">Use Smile, Edit, or Save below each finished photo.</p>
-                <GenerationGallery
-                  generations={data.generations}
-                  photos={data.photos}
-                  token={token!}
-                  refreshToken={refreshToken}
-                  editsRemaining={data.limits.editsRemaining}
-                  onEditComplete={refresh}
-                />
-              </div>
-            )}
-          </>
+        <ImageReferencePicker
+          token={token!}
+          initialGender={data.user.referenceGender === "women" ? "women" : "men"}
+          activeCharacterId={activeCharacterId}
+          characters={data.characters}
+          onSelectCharacter={selectCharacter}
+          onAddTraining={reopenTraining}
+          selectingCharacter={selectingCharacter}
+          onGenerate={generatePhoto}
+          generationsRemaining={data.limits.generationsRemaining}
+          successMessage={generateNotice}
+          disabled={!TESTING_BYPASS_PAYMENT && data.user.plan !== "paid"}
+        />
+
+        {canGenerate && (
+          <div id="generated-photos" className="scroll-mt-8">
+            <h2 className="text-lg font-bold text-gray-900">Your generated photos</h2>
+            <p className="text-sm text-gray-500">Use Smile, Edit, or Save below each finished photo.</p>
+            <GenerationGallery
+              generations={data.generations}
+              photos={data.photos}
+              token={token!}
+              refreshToken={refreshToken}
+              editsRemaining={data.limits.editsRemaining}
+              onEditComplete={refresh}
+            />
+          </div>
         )}
       </main>
     </div>

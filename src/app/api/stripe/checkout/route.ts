@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
           },
           customData: {
             currency: localizedPrice.currency.toUpperCase(),
-            value: localizedPrice.amountUsd,
+            value: localizedPrice.amount,
             contentName: "Profile Makeover Pro",
           },
         },

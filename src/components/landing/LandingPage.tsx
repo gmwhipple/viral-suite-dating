@@ -754,7 +754,7 @@ function GazeSection({ t }: { t: Dictionary }) {
           </div>
         </div>
 
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:gap-4" key={gazeAudience}>
+        <div className="mt-10 grid grid-cols-4 gap-2 sm:gap-4" key={gazeAudience}>
           {photos.map((src, i) => (
             <div
               key={src}
@@ -764,7 +764,7 @@ function GazeSection({ t }: { t: Dictionary }) {
                 src={src}
                 alt={`${gazeAudience === "him" ? t.gaze.toggleForHim : t.gaze.toggleForHer} example ${i + 1}`}
                 fill
-                sizes="(max-width: 640px) 50vw, 400px"
+                sizes="(max-width: 640px) 25vw, 280px"
                 className="object-cover"
               />
             </div>

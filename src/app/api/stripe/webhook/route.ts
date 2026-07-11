@@ -115,6 +115,12 @@ export async function POST(request: NextRequest) {
         session.amount_total != null ? session.amount_total / 100 : Number(session.metadata?.priceUsd || 0);
       const purchaseCurrency = (session.currency || "usd").toUpperCase();
 
+      console.log("[meta/capi] Purchase payload", {
+        sessionId: session.id,
+        value: purchaseValue,
+        currency: purchaseCurrency,
+      });
+
       await sendMetaServerEvents([
         {
           eventName: "Purchase",

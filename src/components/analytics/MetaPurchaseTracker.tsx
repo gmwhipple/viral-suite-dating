@@ -16,10 +16,35 @@ export function MetaPurchaseTracker() {
     if (!sessionId) return;
 
     firedRef.current = true;
-    trackPurchase({
-      eventId: purchaseEventIdFromSession(sessionId),
-    });
-    console.log("[meta/pixel] Purchase tracked", { sessionId: sessionId.slice(0, 12) });
+
+    (async () => {
+      let value: number | undefined;
+      let currency: string | undefined;
+
+      try {
+        const res = await fetch(
+          `/api/stripe/session?session_id=${encodeURIComponent(sessionId)}`
+        );
+        if (res.ok) {
+          const data = (await res.json()) as { value?: number; currency?: string };
+          if (typeof data.value === "number") value = data.value;
+          if (typeof data.currency === "string") currency = data.currency;
+        }
+      } catch (err) {
+        console.log("[meta/pixel] session lookup failed", err);
+      }
+
+      trackPurchase({
+        eventId: purchaseEventIdFromSession(sessionId),
+        value,
+        currency,
+      });
+      console.log("[meta/pixel] Purchase tracked", {
+        sessionId: sessionId.slice(0, 12),
+        value,
+        currency,
+      });
+    })();
   }, [searchParams]);
 
   return null;
