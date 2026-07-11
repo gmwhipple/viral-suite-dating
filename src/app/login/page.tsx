@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
+import { MetaPurchaseTracker } from "@/components/analytics/MetaPurchaseTracker";
 
 function authErrorMessage(err: unknown): string {
   const code =
@@ -34,12 +35,21 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isSignup = searchParams.get("mode") === "signup";
-  const { login, signup, loginWithGoogle, isConfigured } = useAuth();
+  const wantsCheckout = searchParams.get("checkout") === "1";
+  const { login, signup, loginWithGoogle, isConfigured, user, loading: authLoading } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  const postAuthPath = wantsCheckout ? "/dashboard?checkout=1" : "/dashboard";
+
+  useEffect(() => {
+    if (!authLoading && user) {
+      router.replace(postAuthPath);
+    }
+  }, [authLoading, user, router, postAuthPath]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +62,7 @@ function LoginForm() {
       } else {
         await login(email, password);
       }
-      router.push("/dashboard");
+      router.push(postAuthPath);
     } catch (err) {
       setError(authErrorMessage(err));
     } finally {
@@ -66,13 +76,21 @@ function LoginForm() {
 
     try {
       await loginWithGoogle();
-      router.push("/dashboard");
+      router.push(postAuthPath);
     } catch (err) {
       setError(authErrorMessage(err));
     } finally {
       setLoading(false);
     }
   };
+
+  if (authLoading || user) {
+    return (
+      <div className="flex h-40 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-rose-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!isConfigured) {
     return (
@@ -160,17 +178,16 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 to-orange-50 px-4">
+      <Suspense fallback={null}>
+        <MetaPurchaseTracker />
+      </Suspense>
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <Link href="/" className="text-xl font-bold text-rose-600">
           {APP_NAME}
         </Link>
-        <h1 className="mt-6 text-2xl font-bold text-gray-900">Welcome back</h1>
-        <p className="mt-1 text-sm text-gray-600">
-          Need help?{" "}
-          <a href={`mailto:${SUPPORT_EMAIL}`} className="text-rose-600 underline">
-            {SUPPORT_EMAIL}
-          </a>
-        </p>
+        <Suspense fallback={<div className="mt-6 h-40 animate-pulse rounded-lg bg-gray-100" />}>
+          <LoginHeading />
+        </Suspense>
 
         <div className="mt-8">
           <Suspense fallback={<div className="h-40 animate-pulse rounded-lg bg-gray-100" />}>
@@ -189,5 +206,36 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+function LoginHeading() {
+  const searchParams = useSearchParams();
+  const isSignup = searchParams.get("mode") === "signup";
+  const paymentSuccess = searchParams.get("payment") === "success";
+
+  const heading = paymentSuccess
+    ? "Payment successful — create your account"
+    : isSignup
+      ? "Create your account"
+      : "Welcome back";
+  const subheading = paymentSuccess
+    ? "Use the same email you entered at checkout so we can link your purchase to your account."
+    : null;
+
+  return (
+    <>
+      <h1 className="mt-6 text-2xl font-bold text-gray-900">{heading}</h1>
+      {subheading ? (
+        <p className="mt-2 text-sm text-emerald-700">{subheading}</p>
+      ) : (
+        <p className="mt-1 text-sm text-gray-600">
+          Need help?{" "}
+          <a href={`mailto:${SUPPORT_EMAIL}`} className="text-rose-600 underline">
+            {SUPPORT_EMAIL}
+          </a>
+        </p>
+      )}
+    </>
   );
 }

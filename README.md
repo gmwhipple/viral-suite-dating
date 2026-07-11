@@ -29,3 +29,15 @@ Add secrets from `.env.example` under **Tools → Secrets**.
 See [REQUIREMENTS.md](./REQUIREMENTS.md) for full setup including Firebase, Stripe, Higgsfield, and FAL.
 
 **Support:** contact@viral-suite.com
+
+
+Run it again:
+
+node scripts/extend-image-edges.mjs "/path/to/input.jpg"
+Custom output or size:
+
+node scripts/extend-image-edges.mjs "/path/to/input.jpg" "/path/to/output.jpg" 1320 2868
+It uses sharp (already in your project) and only pads — it won’t downscale if the source is larger than the target.
+
+
+node scripts/extend-image-edges.mjs "/Users/G-Whiz/Downloads/Vh_JsvK2ubJYGM8n7_0Ti_bndCV9y9.png"

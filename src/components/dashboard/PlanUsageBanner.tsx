@@ -1,11 +1,14 @@
 "use client";
 
-import { MAX_GENERATIONS_PER_USER, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
+import { MAX_EDITS_PER_USER, MAX_GENERATIONS_PER_USER, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
 
 interface PlanUsageBannerProps {
   generationsUsed: number;
   generationsRemaining: number;
   maxGenerations: number;
+  editsUsed: number;
+  editsRemaining: number;
+  maxEdits: number;
   plan: "free" | "paid" | "expired";
   checkoutPriceLabel?: string;
   checkoutBlocked?: boolean;
@@ -17,6 +20,9 @@ export function PlanUsageBanner({
   generationsUsed,
   generationsRemaining,
   maxGenerations,
+  editsUsed,
+  editsRemaining,
+  maxEdits,
   plan,
   checkoutPriceLabel = "$199",
   checkoutBlocked = false,
@@ -24,36 +30,39 @@ export function PlanUsageBanner({
   checkingOut,
 }: PlanUsageBannerProps) {
   const hasAccess = TESTING_BYPASS_PAYMENT || plan === "paid";
-  const limit = TESTING_BYPASS_PAYMENT ? MAX_GENERATIONS_PER_USER : maxGenerations;
-  const used = generationsUsed;
-  const remaining = generationsRemaining;
-  const pct = limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+  const genLimit = TESTING_BYPASS_PAYMENT ? MAX_GENERATIONS_PER_USER : maxGenerations;
+  const editLimit = TESTING_BYPASS_PAYMENT ? MAX_EDITS_PER_USER : Math.min(maxEdits || MAX_EDITS_PER_USER, MAX_EDITS_PER_USER);
+  const genPct = genLimit > 0 ? Math.min(100, Math.round((generationsUsed / genLimit) * 100)) : 0;
+  const editPct = editLimit > 0 ? Math.min(100, Math.round((editsUsed / editLimit) * 100)) : 0;
+  const displayEditsRemaining = hasAccess ? editsRemaining : 0;
 
   return (
-    <div className="rounded-2xl border border-rose-200 bg-gradient-to-r from-rose-50 via-white to-orange-50 p-5 shadow-sm">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-rose-700">
-            Photo generations
-          </p>
-          <p className="mt-1 text-3xl font-extrabold text-gray-900">
-            {hasAccess ? remaining : 0}
-            <span className="ml-2 text-lg font-semibold text-gray-600">
-              of {limit} left
-            </span>
-          </p>
-          <p className="mt-1 text-sm text-gray-600">
-            {hasAccess
-              ? `${used} used · ${remaining} remaining`
-              : "Unlock your plan to start generating photos"}
-          </p>
+    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div className="grid flex-1 gap-4 sm:grid-cols-2">
+          <UsageCard
+            title="Photo generations"
+            remaining={hasAccess ? generationsRemaining : 0}
+            total={genLimit}
+            used={generationsUsed}
+            pct={genPct}
+            locked={!hasAccess}
+          />
+          <UsageCard
+            title="AI edits"
+            remaining={hasAccess ? Math.max(0, displayEditsRemaining) : 0}
+            total={editLimit}
+            used={editsUsed}
+            pct={editPct}
+            locked={!hasAccess}
+          />
         </div>
 
         {!hasAccess && onCheckout && (
           <button
             onClick={onCheckout}
             disabled={checkingOut || checkoutBlocked}
-            className="rounded-full bg-rose-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+            className="shrink-0 rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gray-800 disabled:opacity-50"
           >
             {checkoutBlocked
               ? "Not available in your region"
@@ -64,14 +73,52 @@ export function PlanUsageBanner({
         )}
       </div>
 
-      {hasAccess && (
-        <div className="mt-4">
-          <div className="h-2 overflow-hidden rounded-full bg-rose-100">
-            <div
-              className="h-full rounded-full bg-rose-500 transition-all"
-              style={{ width: `${pct}%` }}
-            />
-          </div>
+      {!hasAccess && (
+        <p className="mt-4 border-t border-gray-100 pt-4 text-sm text-gray-500">
+          Purchase a plan to start generating photos and applying edits.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function UsageCard({
+  title,
+  remaining,
+  total,
+  used,
+  pct,
+  locked,
+}: {
+  title: string;
+  remaining: number;
+  total: number;
+  used: number;
+  pct: number;
+  locked: boolean;
+}) {
+  return (
+    <div className="rounded-xl border border-gray-100 bg-gray-50/60 px-4 py-3.5">
+      <div className="flex items-baseline justify-between gap-3">
+        <p className="text-sm font-medium text-gray-700">{title}</p>
+        {!locked && (
+          <p className="text-xs text-gray-500">
+            {used} used
+          </p>
+        )}
+      </div>
+      <p className="mt-2 text-2xl font-semibold tracking-tight text-gray-900">
+        {locked ? "—" : remaining}
+        <span className="ml-1.5 text-sm font-normal text-gray-500">of {total}</span>
+      </p>
+      {locked ? (
+        <p className="mt-1 text-xs text-gray-500">Locked until purchase</p>
+      ) : (
+        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-gray-200">
+          <div
+            className="h-full rounded-full bg-gray-900 transition-all duration-500"
+            style={{ width: `${pct}%` }}
+          />
         </div>
       )}
     </div>

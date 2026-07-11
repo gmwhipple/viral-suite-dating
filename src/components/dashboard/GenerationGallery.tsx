@@ -1,95 +1,258 @@
 "use client";
 
-import { useState } from "react";
-import type { GenerationJob } from "@/lib/firebase/types";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import type { ClientGeneration } from "@/lib/client-sanitize";
+import type { UserPhoto } from "@/lib/firebase/types";
 import { SMILE_OPTIONS } from "@/lib/constants";
-import { formatDate, cn } from "@/lib/utils";
-import { Smile, Laugh, SmilePlus } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { UserPhotoPicker } from "@/components/dashboard/UserPhotoPicker";
+import { CreditsLimitModal } from "@/components/dashboard/CreditsLimitModal";
+import { Download, Loader2, Pencil, Smile, X, ImagePlus } from "lucide-react";
 
 interface GenerationGalleryProps {
-  generations: GenerationJob[];
+  generations: ClientGeneration[];
+  photos: UserPhoto[];
   token: string;
+  refreshToken?: () => Promise<string | null>;
+  editsRemaining: number;
   onEditComplete: () => void;
 }
 
-const SMILE_ICONS = [SmilePlus, Laugh, Smile] as const;
-
-export function GenerationGallery({ generations, token, onEditComplete }: GenerationGalleryProps) {
-  const [previewGen, setPreviewGen] = useState<GenerationJob | null>(null);
+export function GenerationGallery({
+  generations,
+  photos,
+  token,
+  refreshToken,
+  editsRemaining,
+  onEditComplete,
+}: GenerationGalleryProps) {
+  const [previewGen, setPreviewGen] = useState<ClientGeneration | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [smileLoading, setSmileLoading] = useState<number | null>(null);
+  const [smileLoadingId, setSmileLoadingId] = useState<string | null>(null);
+  const [smileError, setSmileError] = useState<string | null>(null);
+  const [smilePopoverId, setSmilePopoverId] = useState<string | null>(null);
   const [prompt, setPrompt] = useState("");
   const [attachment, setAttachment] = useState<File | null>(null);
-  const [textEditLoading, setTextEditLoading] = useState(false);
+  const [attachmentPhoto, setAttachmentPhoto] = useState<UserPhoto | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [textEditError, setTextEditError] = useState<string | null>(null);
+  const [pendingEdits, setPendingEdits] = useState<ClientGeneration[]>([]);
+  const [editError, setEditError] = useState<string | null>(null);
+  const [retextureSkin, setRetextureSkin] = useState(false);
+  const [creditsLimitOpen, setCreditsLimitOpen] = useState(false);
+  const tokenRef = useRef(token);
+  tokenRef.current = token;
 
-  const sorted = [...generations].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  const authorizedFetch = async (
+    path: string,
+    init: RequestInit
+  ): Promise<{ res: Response; json: Record<string, unknown> }> => {
+    let authToken = tokenRef.current;
+    const run = async (bearer: string) => {
+      const headers = new Headers(init.headers);
+      headers.set("Authorization", `Bearer ${bearer}`);
+      const res = await fetch(path, { ...init, headers });
+      const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
+      return { res, json };
+    };
 
-  const openPreview = (gen: GenerationJob) => {
-    if (gen.status !== "completed" || !gen.finalImageUrl) return;
-    setPreviewGen(gen);
-    setPreviewUrl(gen.finalImageUrl);
-    setPrompt("");
-    setAttachment(null);
+    let result = await run(authToken);
+    if (result.res.status === 401 && refreshToken) {
+      const fresh = await refreshToken();
+      if (fresh) {
+        tokenRef.current = fresh;
+        result = await run(fresh);
+      }
+    }
+    return result;
   };
 
-  const applySmile = async (serviceChoice: number) => {
-    if (!previewGen?.finalImageUrl) return;
-    setSmileLoading(serviceChoice);
+  const sorted = [...pendingEdits, ...generations].sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt)
+  );
+  const editsDisabled = editsRemaining <= 0;
+
+  const guardEdits = (): boolean => {
+    if (editsDisabled) {
+      setCreditsLimitOpen(true);
+      return false;
+    }
+    return true;
+  };
+
+  const getDisplayUrl = (gen: ClientGeneration) =>
+    gen.finalImageUrl || gen.imageReferenceUrl || "";
+
+  const imageUrlToBase64 = async (url: string): Promise<string> => {
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`Could not load image for smile edit (${res.status})`);
+    }
+    const blob = await res.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        if (typeof dataUrl !== "string" || !dataUrl.includes(",")) {
+          reject(new Error("Could not encode image for smile edit"));
+          return;
+        }
+        resolve(dataUrl.split(",")[1] || "");
+      };
+      reader.onerror = () => reject(new Error("Could not read image for smile edit"));
+      reader.readAsDataURL(blob);
+    });
+  };
+
+  const openEdit = (gen: ClientGeneration) => {
+    if (!guardEdits()) return;
+    if (gen.status !== "completed" || !getDisplayUrl(gen)) return;
+    setPreviewGen(gen);
+    setPreviewUrl(getDisplayUrl(gen));
+    setPrompt("");
+    setRetextureSkin(false);
+    setAttachment(null);
+    setAttachmentPhoto(null);
+    setSmilePopoverId(null);
+    setSmileError(null);
+    setEditError(null);
+  };
+
+  const applySmile = async (gen: ClientGeneration, serviceChoice: number) => {
+    if (!guardEdits()) return;
+    setSmileLoadingId(gen.id);
+    setSmilePopoverId(null);
+    setSmileError(null);
     try {
-      const res = await fetch("/api/ailab/smile", {
+      const displayUrl = getDisplayUrl(gen);
+      const imageBase64 = await imageUrlToBase64(displayUrl);
+      console.log("[GenerationGallery] smile payload bytes", imageBase64.length);
+
+      const { res, json } = await authorizedFetch("/api/photos/smile", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          sourceImageUrl: previewUrl || previewGen.finalImageUrl,
+          imageBase64,
           serviceChoice,
-          generationId: previewGen.id,
+          generationId: gen.id,
+          storageKey: gen.storageKey,
         }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Smile edit failed");
-      setPreviewUrl(json.imageUrl);
-      onEditComplete();
+      if (!res.ok) {
+        const errMsg = (json.error as string) || "Smile edit failed";
+        throw new Error(
+          res.status === 401 ? "Session expired — refresh the page and try again." : errMsg
+        );
+      }
+
+      await onEditComplete();
     } catch (err) {
-      alert(err instanceof Error ? err.message : "Smile edit failed");
+      const message = err instanceof Error ? err.message : "Smile edit failed";
+      setSmileError(message);
+      console.log("[GenerationGallery] smile error", message);
     } finally {
-      setSmileLoading(null);
+      setSmileLoadingId(null);
     }
   };
 
-  const submitTextEdit = async () => {
-    if (!previewGen || !prompt.trim() || !previewUrl) return;
-    setTextEditLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("prompt", prompt);
-      formData.append("sourceImageUrl", previewUrl);
-      if (attachment) formData.append("attachment", attachment);
-
-      const res = await fetch("/api/edit", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Edit failed");
-
-      setPreviewGen(null);
-      setPreviewUrl(null);
-      setPrompt("");
-      setAttachment(null);
-      onEditComplete();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "AI editing is not available yet.");
-    } finally {
-      setTextEditLoading(false);
-    }
+  const fileToBase64 = async (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        if (typeof dataUrl !== "string" || !dataUrl.includes(",")) {
+          reject(new Error("Could not read attachment file"));
+          return;
+        }
+        resolve(dataUrl.split(",")[1] || "");
+      };
+      reader.onerror = () => reject(new Error("Could not read attachment file"));
+      reader.readAsDataURL(file);
+    });
   };
 
-  if (generations.length === 0) {
+  const submitTextEdit = () => {
+    if (!guardEdits()) return;
+    const userPrompt = prompt.trim();
+    const canSubmit = Boolean(userPrompt || retextureSkin);
+    if (!previewGen || !canSubmit || !previewUrl) return;
+
+    const sourceGen = previewGen;
+    const sourceUrl = previewUrl;
+    const capturedRetexture = retextureSkin;
+    const capturedAttachment = attachment;
+    const capturedAttachmentPhoto = attachmentPhoto;
+    const pendingId = `pending-edit-${Date.now()}`;
+
+    setPendingEdits((prev) => [
+      {
+        id: pendingId,
+        userId: sourceGen.userId,
+        characterId: sourceGen.characterId,
+        referenceId: "edit",
+        referenceName: `${sourceGen.referenceName} · Edit`,
+        prompt: userPrompt || (capturedRetexture ? "Re-texture skin" : "Edit"),
+        imageReferenceUrl: sourceUrl,
+        sourceGenerationId: sourceGen.id,
+        status: "processing",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+
+    setPreviewGen(null);
+    setPreviewUrl(null);
+    setPrompt("");
+    setRetextureSkin(false);
+    setAttachment(null);
+    setAttachmentPhoto(null);
+    setEditError(null);
+    setTextEditError(null);
+
+    void (async () => {
+      try {
+        const sourceImageBase64 = await imageUrlToBase64(sourceUrl);
+        let attachmentBase64: string | undefined;
+        if (capturedAttachment) {
+          attachmentBase64 = await fileToBase64(capturedAttachment);
+        } else if (capturedAttachmentPhoto?.publicUrl) {
+          attachmentBase64 = await imageUrlToBase64(capturedAttachmentPhoto.publicUrl);
+        }
+
+        const { res, json } = await authorizedFetch("/api/photos/edit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            prompt: userPrompt,
+            retextureSkin: capturedRetexture,
+            sourceImageBase64,
+            generationId: sourceGen.id,
+            storageKey: sourceGen.storageKey,
+            attachmentBase64,
+          }),
+        });
+
+        if (!res.ok) {
+          const errMsg = (json.error as string) || "Edit failed";
+          throw new Error(
+            res.status === 401 ? "Session expired — refresh the page and try again." : errMsg
+          );
+        }
+
+        setPendingEdits((prev) => prev.filter((item) => item.id !== pendingId));
+        await onEditComplete();
+      } catch (err) {
+        setPendingEdits((prev) => prev.filter((item) => item.id !== pendingId));
+        const message = err instanceof Error ? err.message : "AI editing is not available yet.";
+        setTextEditError(message);
+        console.log("[GenerationGallery] edit error", message);
+      }
+    })();
+  };
+
+  if (generations.length === 0 && pendingEdits.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-12 text-center">
         <p className="text-gray-500">No generated photos yet. Pick a style reference above to get started.</p>
@@ -99,9 +262,56 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
 
   return (
     <>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <CreditsLimitModal
+        open={creditsLimitOpen}
+        onClose={() => setCreditsLimitOpen(false)}
+        type="edits"
+      />
+
+      {textEditError && (
+        <div className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+          Edit failed: {textEditError}
+          <button
+            type="button"
+            className="ml-2 text-xs underline"
+            onClick={() => setTextEditError(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      {smileError && (
+        <div className="mt-3 rounded-lg border border-gray-300 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+          Smile edit failed: {smileError}
+          <button
+            type="button"
+            className="ml-2 text-xs underline"
+            onClick={() => setSmileError(null)}
+          >
+            Dismiss
+          </button>
+        </div>
+      )}
+
+      <div className="mt-4 grid grid-cols-2 gap-3 overflow-visible sm:grid-cols-3 lg:grid-cols-4">
         {sorted.map((gen) => (
-          <GenerationTile key={gen.id} gen={gen} onOpen={() => openPreview(gen)} />
+          <GenerationTile
+            key={gen.id}
+            gen={gen}
+            displayUrl={getDisplayUrl(gen)}
+            editsDisabled={editsDisabled}
+            smileLoading={smileLoadingId === gen.id}
+            smileOpen={smilePopoverId === gen.id}
+            onToggleSmile={() => {
+              if (!guardEdits()) return;
+              setSmileError(null);
+              setSmilePopoverId((current) => (current === gen.id ? null : gen.id));
+            }}
+            onCloseSmile={() => setSmilePopoverId(null)}
+            onEdit={() => openEdit(gen)}
+            onApplySmile={(choice) => applySmile(gen, choice)}
+          />
         ))}
       </div>
 
@@ -111,7 +321,22 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Edit photo</h3>
-                <p className="mt-1 text-sm text-gray-600">Adjust your smile or describe other changes.</p>
+                <p className="mt-1 text-sm text-gray-600">
+                  {editsDisabled ? (
+                    <>
+                      You have used all AI edits on your plan.{" "}
+                      <button
+                        type="button"
+                        className="font-medium text-rose-600 underline hover:text-rose-700"
+                        onClick={() => setCreditsLimitOpen(true)}
+                      >
+                        Get more credits
+                      </button>
+                    </>
+                  ) : (
+                    `${editsRemaining} edits remaining`
+                  )}
+                </p>
               </div>
               <button
                 type="button"
@@ -122,7 +347,7 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
                 className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-700"
                 aria-label="Close"
               >
-                ✕
+                <X className="h-5 w-5" />
               </button>
             </div>
 
@@ -131,142 +356,326 @@ export function GenerationGallery({ generations, token, onEditComplete }: Genera
               <img src={previewUrl} alt="Generated photo preview" className="aspect-[3/4] w-full object-cover" />
             </div>
 
-            <div className="mt-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Smile styles</p>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {SMILE_OPTIONS.map((option, index) => {
-                  const Icon = SMILE_ICONS[index] || Smile;
-                  const loading = smileLoading === option.serviceChoice;
-                  return (
-                    <button
-                      key={option.serviceChoice}
-                      type="button"
-                      disabled={smileLoading !== null}
-                      onClick={() => applySmile(option.serviceChoice)}
-                      className={cn(
-                        "flex flex-col items-center gap-2 rounded-xl border px-2 py-3 text-center transition",
-                        loading
-                          ? "border-violet-400 bg-violet-50"
-                          : "border-gray-200 bg-gray-50 hover:border-violet-300 hover:bg-violet-50"
-                      )}
-                    >
-                      <Icon className={cn("h-6 w-6", loading ? "text-violet-600" : "text-gray-700")} />
-                      <span className="text-xs font-semibold text-gray-900">{option.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="mt-3">
+              <label
+                className={cn(
+                  "inline-flex cursor-pointer items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium transition",
+                  retextureSkin
+                    ? "border-gray-900 bg-gray-900 text-white"
+                    : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 hover:bg-gray-100",
+                  editsDisabled && "cursor-not-allowed opacity-50"
+                )}
+              >
+                <input
+                  type="checkbox"
+                  checked={retextureSkin}
+                  disabled={editsDisabled}
+                  onChange={(e) => setRetextureSkin(e.target.checked)}
+                  className="sr-only"
+                />
+                Re-texture skin
+              </label>
             </div>
 
-            <div className="mt-5 border-t border-gray-100 pt-5">
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">Other AI edits</p>
+            <div className="mt-5">
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder='e.g. "Change my shirt to blue"'
-                className="mt-2 w-full rounded-xl border border-gray-200 p-3 text-sm focus:border-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-100"
-                rows={2}
+                disabled={editsDisabled}
+                className="w-full rounded-lg border border-gray-200 p-3 text-sm placeholder:text-gray-400 focus:border-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 disabled:bg-gray-50"
+                rows={3}
               />
-              <label className="mt-2 block text-sm text-gray-600">
-                Reference image (optional)
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="mt-1 block w-full text-sm"
-                  onChange={(e) => setAttachment(e.target.files?.[0] || null)}
-                />
-              </label>
+
+              <div className="mt-3 space-y-2">
+                <p className="text-sm font-medium text-gray-700">Reference photo (optional)</p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={editsDisabled}
+                    onClick={() => setPickerOpen(true)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    <ImagePlus className="h-4 w-4" />
+                    Pick from uploads
+                  </button>
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+                    Upload file
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={editsDisabled}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0] || null;
+                        setAttachment(file);
+                        if (file) setAttachmentPhoto(null);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                </div>
+
+                {attachmentPhoto && (
+                  <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-2">
+                    <div className="h-14 w-11 overflow-hidden rounded bg-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={attachmentPhoto.publicUrl}
+                        alt={attachmentPhoto.fileName}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-gray-900">From your uploads</p>
+                      <p className="truncate text-xs text-gray-500">{attachmentPhoto.fileName}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setAttachmentPhoto(null)}
+                      className="rounded p-1 text-gray-500 hover:bg-gray-100"
+                      aria-label="Remove reference photo"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+
+                {attachment && !attachmentPhoto && (
+                  <p className="text-xs text-gray-500">Attached file: {attachment.name}</p>
+                )}
+              </div>
+
               <button
                 type="button"
                 onClick={submitTextEdit}
-                disabled={textEditLoading || !prompt.trim()}
-                className="mt-3 w-full rounded-full bg-violet-600 py-2.5 text-sm font-semibold text-white hover:bg-violet-700 disabled:opacity-50"
+                disabled={!prompt.trim() && !retextureSkin}
+                className="mt-4 w-full rounded-lg border border-gray-900 bg-gray-900 py-2.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
               >
-                {textEditLoading ? "Applying…" : "Apply text edit"}
+                Apply edit
               </button>
-            </div>
 
-            <a
-              href={previewUrl}
-              download
-              className="mt-4 block w-full rounded-full border border-gray-200 py-2.5 text-center text-sm font-semibold text-gray-800 hover:bg-gray-50"
-            >
-              Download current version
-            </a>
+              {editError && (
+                <p className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {editError}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       )}
+
+      <UserPhotoPicker
+        photos={photos}
+        open={pickerOpen}
+        onClose={() => setPickerOpen(false)}
+        onSelect={(photo) => {
+          setAttachmentPhoto(photo);
+          setAttachment(null);
+        }}
+        selectedPhotoId={attachmentPhoto?.id}
+      />
     </>
   );
 }
 
-function GenerationTile({ gen, onOpen }: { gen: GenerationJob; onOpen: () => void }) {
+function SmilePopover({
+  open,
+  anchorRef,
+  onClose,
+  onSelect,
+  loading,
+}: {
+  open: boolean;
+  anchorRef: React.RefObject<HTMLButtonElement | null>;
+  onClose: () => void;
+  onSelect: (serviceChoice: number) => void;
+  loading: boolean;
+}) {
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (!open || !anchorRef.current) return;
+
+    const updatePosition = () => {
+      const rect = anchorRef.current!.getBoundingClientRect();
+      setPosition({
+        top: rect.top - 8,
+        left: rect.left + rect.width / 2,
+      });
+    };
+
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [open, anchorRef]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (anchorRef.current?.contains(target) || popoverRef.current?.contains(target)) return;
+      onClose();
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open, onClose, anchorRef]);
+
+  if (!open || typeof document === "undefined") return null;
+
+  return createPortal(
+    <div
+      ref={popoverRef}
+      className="fixed z-[9999] w-44 -translate-x-1/2 -translate-y-full rounded-lg border border-gray-200 bg-white p-2 shadow-lg"
+      style={{ top: position.top, left: position.left }}
+    >
+      <p className="mb-2 px-1 text-[10px] font-medium uppercase tracking-wide text-gray-400">
+        Choose style
+      </p>
+      <div className="space-y-1">
+        {SMILE_OPTIONS.map((option) => (
+          <button
+            key={option.serviceChoice}
+            type="button"
+            disabled={loading}
+            onClick={() => onSelect(option.serviceChoice)}
+            className="w-full rounded-md px-2 py-2 text-left text-xs text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function GenerationTile({
+  gen,
+  displayUrl,
+  editsDisabled,
+  smileLoading,
+  smileOpen,
+  onToggleSmile,
+  onCloseSmile,
+  onEdit,
+  onApplySmile,
+}: {
+  gen: ClientGeneration;
+  displayUrl: string;
+  editsDisabled: boolean;
+  smileLoading: boolean;
+  smileOpen: boolean;
+  onToggleSmile: () => void;
+  onCloseSmile: () => void;
+  onEdit: () => void;
+  onApplySmile: (serviceChoice: number) => void;
+}) {
+  const smileButtonRef = useRef<HTMLButtonElement>(null);
   const isPending = gen.status !== "completed" && gen.status !== "failed";
   const isFailed = gen.status === "failed";
-  const previewUrl = gen.finalImageUrl || gen.imageReferenceUrl;
+  const isCompleted = gen.status === "completed" && Boolean(displayUrl);
 
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-2xl border bg-white shadow-sm transition hover:shadow-md",
+        "overflow-visible rounded-xl border bg-white",
         isFailed && "border-red-200",
-        isPending && "border-amber-200",
-        !isPending && !isFailed && "border-gray-200"
+        isPending && "border-gray-200",
+        isCompleted && "border-gray-200"
       )}
     >
-      <div className="relative aspect-[3/4] bg-gray-100">
-        {previewUrl ? (
+      <div className="relative aspect-[3/4] overflow-hidden rounded-t-xl bg-gray-100">
+        {displayUrl ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
-            src={previewUrl}
+            src={displayUrl}
             alt="Generated photo"
             className={cn(
               "h-full w-full object-cover",
-              isPending && "scale-105 blur-[2px] brightness-90"
+              isPending && "scale-105 blur-[2px] brightness-90",
+              smileLoading && "opacity-60"
             )}
           />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-gray-400">No preview</div>
-        )}
+        ) : null}
 
         {isPending && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/30 px-3 text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            <p className="mt-3 text-xs font-semibold text-white">Creating your photo…</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 px-3 text-center">
+            <Loader2 className="h-6 w-6 animate-spin text-gray-500" />
+            <p className="mt-2 text-xs text-gray-600">Creating image…</p>
+          </div>
+        )}
+
+        {smileLoading && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 px-3 text-center">
+            <Loader2 className="h-6 w-6 animate-spin text-gray-700" />
+            <p className="mt-2 text-xs font-medium text-gray-700">Applying smile…</p>
           </div>
         )}
 
         {isFailed && (
-          <div className="absolute inset-0 flex items-center justify-center bg-red-950/50 p-3 text-center">
-            <p className="text-xs font-semibold text-white">Generation failed</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/90 p-3 text-center">
+            <p className="text-xs text-gray-600">Generation failed</p>
           </div>
         )}
-
-        {gen.status === "completed" && gen.finalImageUrl && (
-          <>
-            <button
-              type="button"
-              onClick={onOpen}
-              className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/70 via-transparent to-transparent p-3 opacity-0 transition group-hover:opacity-100"
-            >
-              <div className="flex items-end justify-between gap-2">
-                <p className="text-[10px] text-white/90">{formatDate(gen.createdAt)}</p>
-                <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-violet-700">
-                  Edit
-                </span>
-              </div>
-            </button>
-            <button
-              type="button"
-              onClick={onOpen}
-              className="absolute right-2 top-2 flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 text-white shadow-md"
-              aria-label="Edit photo"
-            >
-              <SmilePlus className="h-4 w-4" />
-            </button>
-          </>
-        )}
       </div>
+
+      {isCompleted && (
+        <div className="grid grid-cols-3 border-t border-gray-100">
+          <button
+            ref={smileButtonRef}
+            type="button"
+            disabled={smileLoading}
+            onClick={onToggleSmile}
+            className={cn(
+              "flex flex-col items-center gap-1 border-r border-gray-100 py-3 text-gray-600 hover:bg-gray-50",
+              editsDisabled && "opacity-60"
+            )}
+            aria-label="Smile options"
+            aria-expanded={smileOpen}
+          >
+            <Smile className="h-4 w-4" />
+            <span className="text-[10px] font-medium">Smile</span>
+          </button>
+
+          <SmilePopover
+            open={smileOpen}
+            anchorRef={smileButtonRef}
+            onClose={onCloseSmile}
+            onSelect={onApplySmile}
+            loading={smileLoading}
+          />
+
+          <button
+            type="button"
+            disabled={smileLoading}
+            onClick={onEdit}
+            className={cn(
+              "flex flex-col items-center gap-1 border-r border-gray-100 py-3 text-gray-600 hover:bg-gray-50",
+              editsDisabled && "opacity-60"
+            )}
+            aria-label="Edit photo"
+          >
+            <Pencil className="h-4 w-4" />
+            <span className="text-[10px] font-medium">Edit</span>
+          </button>
+
+          <a
+            href={displayUrl}
+            download
+            className="flex flex-col items-center gap-1 py-3 text-gray-600 hover:bg-gray-50"
+            aria-label="Download photo"
+          >
+            <Download className="h-4 w-4" />
+            <span className="text-[10px] font-medium">Save</span>
+          </a>
+        </div>
+      )}
     </div>
   );
 }

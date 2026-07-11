@@ -1,8 +1,20 @@
-export const APP_NAME = "Viral Suite Dating";
+export const APP_NAME = "Signature Swipe";
 export const SUPPORT_EMAIL = "contact@viral-suite.com";
 export const MAX_UPLOAD_PHOTOS = 100;
-export const MAX_GENERATIONS_PER_USER = 100;
+export const MAX_GENERATIONS_PER_USER = 200;
+export const MAX_EDITS_PER_USER = 100;
 export const MIN_SOUL_TRAINING_PHOTOS = 5;
+/** Training quality tiers shown in the upload meter */
+export const TRAINING_QUALITY_EXCELLENT_MIN = 25;
+export const TRAINING_QUALITY_GOOD_MIN = 10;
+export const TRAINING_LOW_PHOTO_WARNING_THRESHOLD = 10;
+export const SKIN_RETEXTURE_EDIT_PROMPT =
+  "retexturize my skin so it looks less plastic and perfect, add pores and such";
+export const TRAINING_PHOTO_RETENTION_DAYS = 180;
+/** Generations loaded on dashboard (gallery); pending jobs sync separately */
+export const DASHBOARD_GALLERY_LIMIT = 48;
+/** Poll training/generation status only while work is in flight */
+export const DASHBOARD_ACTIVE_POLL_MS = 90_000;
 
 /** Set to false before launch — skips Stripe / paid-plan checks for testing. */
 export const TESTING_BYPASS_PAYMENT = true;
@@ -10,6 +22,21 @@ export const TESTING_BYPASS_PAYMENT = true;
 export const AB_TEST_COOKIE = "vs_ab_variant";
 export const DEFAULT_SOUL_GENERATION_PROMPT =
   "Professional dating profile photo, photorealistic, flattering natural lighting, confident expression, high quality portrait";
+
+export const SOUL_SUBJECT_REPLACEMENT_INSTRUCTION =
+  "Make sure only the main subject should be replaced with the character";
+
+export function withSoulSubjectInstruction(prompt: string): string {
+  const trimmed = prompt.trim();
+  if (!trimmed) return SOUL_SUBJECT_REPLACEMENT_INSTRUCTION;
+  if (trimmed.toLowerCase().includes(SOUL_SUBJECT_REPLACEMENT_INSTRUCTION.toLowerCase())) {
+    return trimmed;
+  }
+  return `${trimmed}. ${SOUL_SUBJECT_REPLACEMENT_INSTRUCTION}`;
+}
+
+export const GENERATION_PROMPT_PLACEHOLDER =
+  "remove the drink from their hand, remove their tattoos, have the main subject look a bit shorter";
 
 export const SMILE_OPTIONS = [
   { label: "Dimple Smile", serviceChoice: 11 },
@@ -26,16 +53,44 @@ export const PRICING = {
   name: "Profile Makeover Pro",
   price: 199,
   currency: "usd",
-  description: "100 AI dating photos + unlimited edits",
+  description: "200 AI dating photos + 100 AI edits",
   features: [
     "Upload up to 100 training photos",
-    "100 AI-generated dating profile shots",
+    "200 AI-generated dating profile shots",
+    "100 AI edits with reference photos",
     "Choose from 100 style references",
     "AI edits (outfit swaps, object removal)",
     "Watermark-free downloads",
     "Priority processing",
   ],
 };
+
+export const GENERATION_PROMPT_PRESETS = [
+  {
+    id: "professional",
+    label: "Professional portrait",
+    prompt:
+      "Professional dating profile photo, photorealistic, flattering natural lighting, confident expression, high quality portrait",
+  },
+  {
+    id: "outdoor",
+    label: "Outdoor casual",
+    prompt:
+      "Outdoor casual dating profile photo, natural daylight, relaxed confident smile, lifestyle portrait, photorealistic",
+  },
+  {
+    id: "evening",
+    label: "Evening date",
+    prompt:
+      "Smart evening date outfit, warm ambient lighting, confident approachable expression, photorealistic dating portrait",
+  },
+  {
+    id: "coffee",
+    label: "Coffee shop",
+    prompt:
+      "Coffee shop casual dating photo, soft window light, friendly natural expression, photorealistic portrait",
+  },
+] as const;
 
 export const EXAMPLE_GOOD_PHOTOS = [
   {

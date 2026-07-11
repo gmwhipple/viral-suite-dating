@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken, getClientIp } from "@/lib/auth";
 import { uploadUserPhoto, deleteFromStorage } from "@/lib/storage";
-import {
-  saveUserPhoto,
-  getOrCreateUser,
-  deleteUserPhoto,
-  countUserPhotos,
-  updateUser,
-} from "@/lib/services/users";
+import { saveUserPhoto, getOrCreateUser, deleteUserPhoto, purgeExpiredTrainingPhotos, countUserPhotos, updateUser, trainingPhotoRetentionExpiresAt } from "@/lib/services/users";
 import { logActivity } from "@/lib/activity-log";
 import { v4 as uuidv4 } from "uuid";
 import { MAX_UPLOAD_PHOTOS } from "@/lib/constants";
@@ -47,6 +41,7 @@ export async function POST(request: NextRequest) {
     const baseUrl = getAppBaseUrl(request);
     const stored = await uploadUserPhoto(auth.uid, file.name, buffer, file.type, baseUrl);
 
+    const uploadedAt = new Date().toISOString();
     const photo = {
       id: uuidv4(),
       userId: auth.uid,
@@ -55,10 +50,13 @@ export async function POST(request: NextRequest) {
       fileName: file.name,
       fileSize: file.size,
       mimeType: file.type,
-      uploadedAt: new Date().toISOString(),
+      uploadedAt,
+      retentionExpiresAt: trainingPhotoRetentionExpiresAt(uploadedAt),
     };
 
     await saveUserPhoto(photo);
+
+    await purgeExpiredTrainingPhotos(auth.uid);
 
     await logActivity(auth.uid, "photo_uploaded", {
       photoId: photo.id,

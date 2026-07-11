@@ -1,18 +1,14 @@
 "use client";
 
 import { useABTest } from "@/hooks/useABTest";
-import { LandingVariantA, LandingVariantB } from "@/components/landing/LandingVariants";
+import { LandingPage } from "@/components/landing/LandingPage";
 
 export default function HomePage() {
-  const { variant, trackEvent } = useABTest();
+  const { trackEvent } = useABTest();
 
   const handleCtaClick = () => {
     trackEvent("cta_click");
   };
 
-  return variant === "B" ? (
-    <LandingVariantB onCtaClick={handleCtaClick} />
-  ) : (
-    <LandingVariantA onCtaClick={handleCtaClick} />
-  );
+  return <LandingPage onCtaClick={handleCtaClick} />;
 }

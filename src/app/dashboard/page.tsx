@@ -1,98 +1,138 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
-import { ExamplePhotosGuide } from "@/components/dashboard/ExamplePhotosGuide";
-import { PhotoUploadZone } from "@/components/dashboard/PhotoUploadZone";
-import { JobStatusBanner } from "@/components/dashboard/JobStatusBanner";
+import { CharacterTrainingPanel } from "@/components/dashboard/CharacterTrainingPanel";
+import { MetaPurchaseTracker } from "@/components/analytics/MetaPurchaseTracker";
+import {
+  createCheckoutClickEventId,
+  getMetaCheckoutAttribution,
+  trackInitiateCheckout,
+} from "@/lib/meta-browser";
 import { ImageReferencePicker, type GenerateReferencePayload } from "@/components/dashboard/ImageReferencePicker";
 import { GenerationGallery } from "@/components/dashboard/GenerationGallery";
 import { PlanUsageBanner } from "@/components/dashboard/PlanUsageBanner";
-import { ActivityDebugPanel } from "@/components/dashboard/ActivityDebugPanel";
-import { APP_NAME, SUPPORT_EMAIL, TESTING_BYPASS_PAYMENT } from "@/lib/constants";
+import { DashboardHelpButton, DashboardHelpModal } from "@/components/dashboard/DashboardHelpModal";
+import { APP_NAME, SUPPORT_EMAIL, TESTING_BYPASS_PAYMENT, DASHBOARD_ACTIVE_POLL_MS } from "@/lib/constants";
+import { useLocalizedPricing } from "@/hooks/useLocalizedPricing";
+import { useDashboardHelp } from "@/hooks/useDashboardHelp";
+import { detectClientLocale } from "@/lib/i18n/locale-detection";
 
 export default function DashboardPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-50">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-rose-600 border-t-transparent" />
+        </div>
+      }
+    >
+      <DashboardContent />
+    </Suspense>
+  );
+}
+
+function DashboardContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const wantsCheckout = searchParams.get("checkout") === "1";
   const { user, loading: authLoading, token, logout, refreshToken } = useAuth();
-  const { data, loading, error, refresh } = useDashboard(token, refreshToken);
+  const { data, loading, error, refresh, syncDashboard } = useDashboard(token, refreshToken);
+  const dataRef = useRef(data);
+  dataRef.current = data;
+
+  const shouldPoll = useMemo(() => {
+    const status = data.user.modelStatus;
+    const hasTrainingJob =
+      status === "training" ||
+      data.characters.some((c) => c.status === "training");
+    const hasRemotePendingGenerations = data.generations.some(
+      (g) => g.status === "queued" || g.status === "processing"
+    );
+    const hasLocalPendingGenerations = data.generations.some(
+      (g) => g.status === "watermark_removal"
+    );
+
+    return hasTrainingJob || hasRemotePendingGenerations || hasLocalPendingGenerations;
+  }, [data.user.modelStatus, data.characters, data.generations]);
   const [training, setTraining] = useState(false);
   const [checkingOut, setCheckingOut] = useState(false);
   const [generateNotice, setGenerateNotice] = useState<string | null>(null);
   const [selectingCharacter, setSelectingCharacter] = useState(false);
-  const [checkoutPriceLabel, setCheckoutPriceLabel] = useState("$199");
+  const [showTraining, setShowTraining] = useState(false);
+  const trainingDefaultSetRef = useRef(false);
   const [checkoutBlocked, setCheckoutBlocked] = useState(false);
+  const [locale, setLocale] = useState("en");
+  const checkoutStartedRef = useRef(false);
+  const { prices, blocked: pricingBlocked } = useLocalizedPricing(locale);
+  const checkoutPriceLabel = prices.productLabel;
+  const { open: helpOpen, openHelp, closeHelp } = useDashboardHelp(user?.uid);
 
   useEffect(() => {
-    fetch("/api/stripe/pricing")
-      .then((res) => res.json())
-      .then((json) => {
-        if (typeof json.label === "string") setCheckoutPriceLabel(json.label);
-        if (json.blocked === true) setCheckoutBlocked(true);
-      })
-      .catch(() => {
-        // keep defaults
-      });
+    setLocale(detectClientLocale());
   }, []);
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push("/login");
-    }
-  }, [authLoading, user, router]);
+    setCheckoutBlocked(pricingBlocked);
+  }, [pricingBlocked]);
 
   useEffect(() => {
-    if (!token) return;
+    if (!data.user.uid) return;
 
-    const status = data.user.soulJobStatus;
-    const pendingKey = data.generations
-      .filter((g) => g.status !== "completed" && g.status !== "failed")
-      .map((g) => `${g.id}:${g.status}`)
-      .join(",");
+    const hasReady = data.characters.some((c) => c.status === "ready");
+    if (hasReady) {
+      setShowTraining(false);
+      return;
+    }
 
-    const shouldPoll =
-      status === "training" ||
-      status === "pending_training" ||
-      status === "generating" ||
-      pendingKey.length > 0;
+    if (!trainingDefaultSetRef.current) {
+      trainingDefaultSetRef.current = true;
+      setShowTraining(true);
+    }
+  }, [data.user.uid, data.characters]);
 
-    if (!shouldPoll) return;
+  useEffect(() => {
+    if (!authLoading && !user) {
+      const loginPath = wantsCheckout ? "/login?mode=signup&checkout=1" : "/login";
+      router.push(loginPath);
+    }
+  }, [authLoading, user, router, wantsCheckout]);
+
+  useEffect(() => {
+    if (!token || !shouldPoll) return;
 
     const pollStatus = async () => {
-      try {
-        if (status === "training" || status === "pending_training") {
-          await fetch("/api/soul/train", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-        }
-        if (pendingKey.length > 0) {
-          await fetch("/api/soul/generate", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-        }
+      const changed = await syncDashboard();
+      if (changed) return;
+
+      const snapshot = dataRef.current;
+      const hasLocalPendingGenerations = snapshot.generations.some(
+        (g) => g.status === "watermark_removal"
+      );
+      if (hasLocalPendingGenerations) {
         await refresh();
-      } catch {
-        // ignore poll errors
       }
     };
 
     pollStatus();
-    const interval = setInterval(pollStatus, 30000);
+    const interval = setInterval(pollStatus, DASHBOARD_ACTIVE_POLL_MS);
     return () => clearInterval(interval);
-  }, [token, data.user.soulJobStatus, data.generations, refresh]);
+  }, [token, shouldPoll, syncDashboard, refresh]);
 
   const startTraining = async () => {
     if (!token) return;
     setTraining(true);
     try {
-      const res = await fetch("/api/soul/train", {
+      const res = await fetch("/api/characters/train", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
+      setShowTraining(false);
       await refresh();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Training failed");
@@ -105,9 +145,29 @@ export default function DashboardPage() {
     if (!token) return;
     setCheckingOut(true);
     try {
+      const checkoutEventId = createCheckoutClickEventId();
+      const attribution = getMetaCheckoutAttribution(checkoutEventId);
+      const checkoutValue = Number(checkoutPriceLabel.replace(/[^\d.]/g, "")) || 199;
+
+      trackInitiateCheckout({
+        value: checkoutValue,
+        currency: prices.currency.toUpperCase(),
+        eventId: checkoutEventId,
+      });
+
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          locale,
+          fbc: attribution.fbc,
+          fbp: attribution.fbp,
+          sourceUrl: attribution.sourceUrl,
+          checkoutEventId: attribution.eventId,
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
@@ -119,30 +179,83 @@ export default function DashboardPage() {
     }
   };
 
+  useEffect(() => {
+    if (!wantsCheckout || checkoutStartedRef.current) return;
+    if (authLoading || loading || !token || !user || !data.user.uid) return;
+
+    const hasAccess = TESTING_BYPASS_PAYMENT || data.user.plan === "paid";
+    if (hasAccess) {
+      router.replace("/dashboard");
+      return;
+    }
+    if (checkoutBlocked) return;
+
+    checkoutStartedRef.current = true;
+    router.replace("/dashboard");
+    checkout();
+  }, [
+    wantsCheckout,
+    authLoading,
+    loading,
+    token,
+    user,
+    data.user.uid,
+    data.user.plan,
+    checkoutBlocked,
+    router,
+  ]);
+
   const generatePhoto = async (payload: GenerateReferencePayload) => {
     if (!token) return;
     const characterId =
+      payload.characterId ||
       data.user.activeCharacterId ||
       data.characters.find((c) => c.status === "ready")?.id;
     if (!characterId) {
       throw new Error("Select a ready character first");
     }
-    const res = await fetch("/api/soul/generate", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        storageKey: payload.storageKey,
-        imageReferenceUrl: payload.publicUrl,
-        referenceName: payload.name,
-        characterId,
-      }),
-    });
-    const json = await res.json();
+
+    const selectedCharacter = data.characters.find((c) => c.id === characterId);
+    if (!selectedCharacter || selectedCharacter.status !== "ready") {
+      throw new Error("Selected character is not ready yet");
+    }
+
+    const run = async (bearer: string) => {
+      const res = await fetch("/api/photos/generate", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${bearer}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          storageKey: payload.storageKey,
+          imageReferenceUrl: payload.publicUrl,
+          referenceName: payload.name,
+          prompt: payload.prompt,
+          enhancePrompt: payload.enhancePrompt,
+          characterId,
+        }),
+      });
+      const json = await res.json();
+      return { res, json };
+    };
+
+    let { res, json } = await run(token);
+    if (res.status === 401 && refreshToken) {
+      const fresh = await refreshToken();
+      if (fresh) {
+        ({ res, json } = await run(fresh));
+      }
+    }
+
     if (!res.ok) {
-      throw new Error(typeof json.error === "string" ? json.error : "Generation failed");
+      throw new Error(
+        res.status === 401
+          ? "Session expired — refresh the page and try again."
+          : typeof json.error === "string"
+            ? json.error
+            : "Generation failed"
+      );
     }
     await refresh();
     setGenerateNotice(
@@ -185,20 +298,41 @@ export default function DashboardPage() {
     );
   }
 
+  const activeCharacterId =
+    data.user.activeCharacterId || data.characters[0]?.id || null;
+
   const selectCharacter = async (characterId: string) => {
-    if (!token) return;
+    if (!token || characterId === activeCharacterId) return;
     setSelectingCharacter(true);
     try {
-      const res = await fetch("/api/characters", {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ characterId }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Could not select character");
+      const run = async (bearer: string) => {
+        const res = await fetch("/api/characters", {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${bearer}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ characterId }),
+        });
+        const json = await res.json();
+        return { res, json };
+      };
+
+      let { res, json } = await run(token);
+      if (res.status === 401 && refreshToken) {
+        const fresh = await refreshToken();
+        if (fresh) {
+          ({ res, json } = await run(fresh));
+        }
+      }
+
+      if (!res.ok) {
+        throw new Error(
+          res.status === 401
+            ? "Session expired — refresh the page and try again."
+            : json.error || "Could not select character"
+        );
+      }
       await refresh();
     } catch (err) {
       alert(err instanceof Error ? err.message : "Could not select character");
@@ -207,20 +341,20 @@ export default function DashboardPage() {
     }
   };
 
-  const activeCharacterId =
-    data.user.activeCharacterId || data.characters[0]?.id || null;
-  const hasReadyCharacter = data.characters.some(
-    (c) => c.status === "ready" && c.soulReferenceId
-  );
-  const canUpload = !["training", "pending_training"].includes(data.user.soulJobStatus);
+  const hasReadyCharacter = data.characters.some((c) => c.status === "ready");
+  const canUpload = !["training", "pending_training"].includes(data.user.modelStatus);
   const canGenerate =
     hasReadyCharacter ||
-    data.user.soulJobStatus === "ready" ||
-    data.user.soulJobStatus === "completed" ||
-    data.user.soulJobStatus === "generating";
+    data.user.modelStatus === "ready" ||
+    data.user.modelStatus === "completed" ||
+    data.user.modelStatus === "generating";
+  const showGenerationUi = canGenerate || data.characters.length > 0;
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <MetaPurchaseTracker />
+      <DashboardHelpModal open={helpOpen} onClose={closeHelp} />
+
       <header className="border-b border-gray-200 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-lg font-bold text-rose-600">
@@ -228,6 +362,7 @@ export default function DashboardPage() {
           </Link>
           <div className="flex items-center gap-4">
             <span className="hidden text-sm text-gray-600 sm:inline">{user.email}</span>
+            <DashboardHelpButton onClick={openHelp} />
             <a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm text-gray-500 hover:text-rose-600">
               Support
             </a>
@@ -240,9 +375,12 @@ export default function DashboardPage() {
 
       <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
         <PlanUsageBanner
-          generationsUsed={data.user.generationsUsed}
+          generationsUsed={data.user.generationsUsed || 0}
           generationsRemaining={data.limits.generationsRemaining}
           maxGenerations={data.limits.maxGenerations}
+          editsUsed={data.user.editsUsed || 0}
+          editsRemaining={data.limits.editsRemaining}
+          maxEdits={data.limits.maxEdits}
           plan={data.user.plan}
           checkoutPriceLabel={checkoutPriceLabel}
           checkoutBlocked={checkoutBlocked}
@@ -256,53 +394,60 @@ export default function DashboardPage() {
           </div>
         )}
 
-        <JobStatusBanner
-          user={data.user}
-          photoCount={data.photos.length}
-          recentActivity={data.recentActivity}
-        />
+        {showTraining && (
+          <CharacterTrainingPanel
+            photos={data.photos}
+            maxPhotos={data.limits.maxPhotos}
+            token={token!}
+            onRefresh={refresh}
+            onStartTraining={startTraining}
+            onClose={() => setShowTraining(false)}
+            disabled={!canUpload}
+            modelStatus={data.user.modelStatus}
+            training={training}
+          />
+        )}
 
-        <ExamplePhotosGuide />
-
-        <PhotoUploadZone
-          photos={data.photos}
-          maxPhotos={data.limits.maxPhotos}
-          token={token!}
-          onRefresh={refresh}
-          onStartTraining={startTraining}
-          disabled={!canUpload}
-          soulJobStatus={data.user.soulJobStatus}
-          training={training}
-        />
-
-        {canGenerate && (
+        {showGenerationUi && (
           <>
             <ImageReferencePicker
               token={token!}
               initialGender={data.user.referenceGender === "women" ? "women" : "men"}
-              characters={data.characters}
               activeCharacterId={activeCharacterId}
+              characters={data.characters}
               onSelectCharacter={selectCharacter}
+              onAddTraining={() => {
+                setShowTraining(true);
+                window.setTimeout(() => {
+                  document
+                    .getElementById("new-character-training")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                }, 50);
+              }}
               selectingCharacter={selectingCharacter}
               onGenerate={generatePhoto}
               generationsRemaining={data.limits.generationsRemaining}
               successMessage={generateNotice}
               disabled={!TESTING_BYPASS_PAYMENT && data.user.plan !== "paid"}
+              generationEnabled={canGenerate}
             />
 
-            <div id="generated-photos" className="scroll-mt-8">
-              <h2 className="text-lg font-bold text-gray-900">Your generated photos</h2>
-              <p className="text-sm text-gray-500">Tap the sparkle icon to AI edit a finished photo.</p>
-              <GenerationGallery
-                generations={data.generations}
-                token={token!}
-                onEditComplete={refresh}
-              />
-            </div>
+            {canGenerate && (
+              <div id="generated-photos" className="scroll-mt-8">
+                <h2 className="text-lg font-bold text-gray-900">Your generated photos</h2>
+                <p className="text-sm text-gray-500">Use Smile, Edit, or Save below each finished photo.</p>
+                <GenerationGallery
+                  generations={data.generations}
+                  photos={data.photos}
+                  token={token!}
+                  refreshToken={refreshToken}
+                  editsRemaining={data.limits.editsRemaining}
+                  onEditComplete={refresh}
+                />
+              </div>
+            )}
           </>
         )}
-
-        <ActivityDebugPanel activity={data.recentActivity} />
       </main>
     </div>
   );

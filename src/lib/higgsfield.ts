@@ -1,11 +1,9 @@
 import { HiggsfieldClient, InputImageType } from "@higgsfield/client";
-import { createHiggsfieldClient } from "@higgsfield/client/v2";
 
 const HIGGSFIELD_BASE_URL = "https://platform.higgsfield.ai";
 export const SOUL_CHARACTER_ENDPOINT = "/higgsfield-ai/soul/character";
 
 let client: HiggsfieldClient | null = null;
-let v2Client: ReturnType<typeof createHiggsfieldClient> | null = null;
 
 function getCredentials() {
   const apiKey = process.env.HIGGSFIELD_API_KEY;
@@ -35,14 +33,6 @@ export function getHiggsfieldClient(): HiggsfieldClient {
   return client;
 }
 
-function getV2Client() {
-  if (!v2Client) {
-    const { apiKey, apiSecret } = getCredentials();
-    v2Client = createHiggsfieldClient({ apiKey, apiSecret });
-  }
-  return v2Client;
-}
-
 export function isHiggsfieldConfigured(): boolean {
   return Boolean(process.env.HIGGSFIELD_API_KEY && process.env.HIGGSFIELD_API_SECRET);
 }
@@ -52,11 +42,20 @@ export interface SoulTrainingInput {
   imageUrls: string[];
 }
 
+export interface SoulStyle {
+  id: string;
+  name: string;
+  description?: string | null;
+  preview_url: string;
+}
+
 export interface SoulGenerationInput {
   soulReferenceId: string;
   prompt: string;
-  imageReferenceUrl: string;
-  webhookUrl?: string;
+  imageReferenceUrl?: string;
+  styleId?: string;
+  enhancePrompt?: boolean;
+  customReferenceStrength?: number;
 }
 
 export interface HiggsfieldQueuedJob {
@@ -89,41 +88,52 @@ export async function createSoulCharacter(input: SoulTrainingInput) {
   return soulId;
 }
 
-/** Generate from Soul ID + style image reference (POST /higgsfield-ai/soul/character). */
+/** Generate from Soul ID + optional style image reference (POST /higgsfield-ai/soul/character). */
 export async function generateSoulImage(input: SoulGenerationInput): Promise<HiggsfieldQueuedJob> {
-  const hf = getV2Client();
-  const webhookSecret = process.env.HIGGSFIELD_WEBHOOK_SECRET || "";
+  const { apiKey, apiSecret } = getCredentials();
 
-  const response = await hf.subscribe(SOUL_CHARACTER_ENDPOINT, {
-    input: {
+  const response = await fetch(`${HIGGSFIELD_BASE_URL}${SOUL_CHARACTER_ENDPOINT}`, {
+    method: "POST",
+    headers: {
+      ...getAuthHeaders(),
+      Authorization: `Key ${apiKey}:${apiSecret}`,
+    },
+    body: JSON.stringify({
       prompt: input.prompt,
       custom_reference_id: input.soulReferenceId,
-      custom_reference_strength: 1,
-      image_reference_url: input.imageReferenceUrl,
+      custom_reference_strength: input.customReferenceStrength ?? 1,
+      ...(input.imageReferenceUrl ? { image_reference_url: input.imageReferenceUrl } : {}),
+      ...(input.styleId ? { style_id: input.styleId } : {}),
       aspect_ratio: "3:4",
       resolution: "1080p",
-      enhance_prompt: true,
+      enhance_prompt: input.enhancePrompt !== false,
       batch_size: 1,
-      ...(webhookSecret ? { webhook_secret: webhookSecret } : {}),
-    },
-    withPolling: false,
-    webhook: input.webhookUrl
-      ? {
-          url: input.webhookUrl,
-          secret: webhookSecret,
-        }
-      : undefined,
+    }),
+    cache: "no-store",
   });
 
-  const job: HiggsfieldQueuedJob = {
-    id: response.request_id,
-    status: response.status,
-    statusUrl: response.status_url,
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    console.log("[higgsfield] generation submit failed", response.status, detail.slice(0, 200));
+    throw new Error("Generation request failed");
+  }
+
+  const data = (await response.json()) as {
+    request_id: string;
+    status?: string;
+    status_url?: string;
   };
 
-  console.log("[higgsfield] soul/character queued", {
+  const job: HiggsfieldQueuedJob = {
+    id: data.request_id,
+    status: data.status,
+    statusUrl: data.status_url,
+  };
+
+  console.log("[higgsfield] generation queued (poll for completion)", {
     soulReferenceId: input.soulReferenceId,
-    imageReferenceUrl: input.imageReferenceUrl,
+    imageReferenceUrl: input.imageReferenceUrl ?? null,
+    styleId: input.styleId ?? null,
     requestId: job.id,
     status: job.status,
   });
@@ -168,6 +178,24 @@ export async function pollSoulIdStatus(soulId: string) {
   }
 
   return response.json() as Promise<{ id: string; status: string; name?: string }>;
+}
+
+/** List Soul text-to-image styles (GET /v1/text2image/soul-styles). */
+export async function listSoulStyles(): Promise<SoulStyle[]> {
+  const response = await fetch(`${HIGGSFIELD_BASE_URL}/v1/text2image/soul-styles`, {
+    headers: getAuthHeaders(),
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    const detail = await response.text().catch(() => "");
+    console.log("[higgsfield] list soul styles failed", response.status, detail.slice(0, 200));
+    throw new Error("Failed to load soul styles");
+  }
+
+  const styles = (await response.json()) as SoulStyle[];
+  console.log("[higgsfield] soul styles loaded", { count: styles.length });
+  return styles;
 }
 
 /** List Soul IDs (GET /v1/custom-references/list). */

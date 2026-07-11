@@ -2,6 +2,15 @@ import { promises as fs } from "fs";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 import {
+  downloadFromB2Storage,
+  deleteFromB2Storage,
+  existsInB2Storage,
+  getB2PresignedReadUrl,
+  isB2StorageConfigured,
+  listB2StoragePrefix,
+  uploadToB2Storage,
+} from "@/lib/b2/storage";
+import {
   downloadFromFirebaseStorage,
   isFirebaseStorageConfigured,
   listFirebaseStoragePrefix,
@@ -17,6 +26,14 @@ export interface StorageResult {
   publicUrl: string;
 }
 
+function useB2(): boolean {
+  return isB2StorageConfigured();
+}
+
+function useFirebase(): boolean {
+  return !useB2() && isFirebaseStorageConfigured();
+}
+
 export function getStoragePublicUrl(storageKey: string, baseUrl?: string): string {
   const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
   const encoded = storageKey
@@ -24,6 +41,40 @@ export function getStoragePublicUrl(storageKey: string, baseUrl?: string): strin
     .map((segment) => encodeURIComponent(segment))
     .join("/");
   return `${base}/api/storage/${encoded}`;
+}
+
+/** Parse `/api/storage/...` app URLs back to a storage key. */
+export function getStorageKeyFromPublicUrl(
+  publicUrl: string,
+  baseUrl?: string
+): string | null {
+  try {
+    const parsed = new URL(publicUrl);
+    const pathMatch = parsed.pathname.match(/^\/api\/storage\/(.+)$/);
+    if (pathMatch?.[1]) {
+      return pathMatch[1]
+        .split("/")
+        .map((segment) => decodeURIComponent(segment))
+        .join("/");
+    }
+  } catch {
+    // fall through to prefix match
+  }
+
+  const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
+  const prefix = `${base}/api/storage/`;
+  if (!publicUrl.startsWith(prefix)) return null;
+
+  return publicUrl
+    .slice(prefix.length)
+    .split("/")
+    .map((segment) => decodeURIComponent(segment))
+    .join("/");
+}
+
+function isAppStorageUrl(url: string, baseUrl?: string): boolean {
+  const base = (baseUrl || getAppBaseUrl()).replace(/\/$/, "");
+  return url.startsWith(`${base}/api/storage/`);
 }
 
 async function ensureLocalDir(subdir: string): Promise<string> {
@@ -43,9 +94,9 @@ async function uploadLocal(
   return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
 }
 
-function userPhotoKey(userId: string, fileName: string): string {
+function userTrainingPhotoKey(userId: string, fileName: string): string {
   const ext = path.extname(fileName) || ".jpg";
-  return `users/${userId}/photos/${uuidv4()}${ext}`;
+  return `users/${userId}/training/${uuidv4()}${ext}`;
 }
 
 export async function uploadUserPhoto(
@@ -55,9 +106,14 @@ export async function uploadUserPhoto(
   mimeType: string,
   baseUrl?: string
 ): Promise<StorageResult> {
-  const storageKey = userPhotoKey(userId, fileName);
+  const storageKey = userTrainingPhotoKey(userId, fileName);
 
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    await uploadToB2Storage(storageKey, buffer, mimeType);
+    return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
+  }
+
+  if (useFirebase()) {
     await uploadToFirebaseStorage(storageKey, buffer, mimeType);
     return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
   }
@@ -71,7 +127,12 @@ export async function uploadAtPath(
   mimeType: string,
   baseUrl?: string
 ): Promise<StorageResult> {
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    await uploadToB2Storage(storageKey, buffer, mimeType);
+    return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
+  }
+
+  if (useFirebase()) {
     await uploadToFirebaseStorage(storageKey, buffer, mimeType);
     return { storageKey, publicUrl: getStoragePublicUrl(storageKey, baseUrl) };
   }
@@ -80,7 +141,11 @@ export async function uploadAtPath(
 }
 
 export async function downloadFromStorage(storageKey: string): Promise<Buffer> {
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    return downloadFromB2Storage(storageKey);
+  }
+
+  if (useFirebase()) {
     return downloadFromFirebaseStorage(storageKey);
   }
 
@@ -89,7 +154,11 @@ export async function downloadFromStorage(storageKey: string): Promise<Buffer> {
 }
 
 export async function listStoragePrefix(prefix: string): Promise<string[]> {
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    return listB2StoragePrefix(prefix);
+  }
+
+  if (useFirebase()) {
     return listFirebaseStoragePrefix(prefix);
   }
 
@@ -104,7 +173,11 @@ export async function listStoragePrefix(prefix: string): Promise<string[]> {
 }
 
 export async function storageObjectExists(storageKey: string): Promise<boolean> {
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    return existsInB2Storage(storageKey);
+  }
+
+  if (useFirebase()) {
     return existsInFirebaseStorage(storageKey);
   }
 
@@ -117,7 +190,12 @@ export async function storageObjectExists(storageKey: string): Promise<boolean> 
 }
 
 export async function deleteFromStorage(storageKey: string): Promise<void> {
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    await deleteFromB2Storage(storageKey);
+    return;
+  }
+
+  if (useFirebase()) {
     const { deleteFromFirebaseStorage } = await import("@/lib/firebase/storage");
     await deleteFromFirebaseStorage(storageKey);
     return;
@@ -139,18 +217,74 @@ export async function uploadProcessedImage(
   return uploadAtPath(storageKey, buffer, "image/png");
 }
 
-export function usesFirebaseStorage(): boolean {
-  return isFirebaseStorageConfigured();
+export function usesCloudStorage(): boolean {
+  return useB2() || isFirebaseStorageConfigured();
 }
 
-/** URL for external services (Higgsfield) to download a user file. */
+/** @deprecated Prefer usesCloudStorage */
+export function usesFirebaseStorage(): boolean {
+  return useFirebase();
+}
+
+export function getActiveStorageProvider(): "b2" | "firebase" | "local" {
+  if (useB2()) return "b2";
+  if (useFirebase()) return "firebase";
+  return "local";
+}
+
+/** URL for external services (Higgsfield, FAL) to download a user file. */
 export async function getExternalFetchUrl(
   storageKey: string,
   baseUrl?: string
 ): Promise<string> {
-  if (isFirebaseStorageConfigured()) {
+  if (useB2()) {
+    return getB2PresignedReadUrl(storageKey);
+  }
+
+  if (useFirebase()) {
     const { getFirebaseSignedReadUrl } = await import("@/lib/firebase/storage");
     return getFirebaseSignedReadUrl(storageKey);
   }
+
   return getStoragePublicUrl(storageKey, baseUrl);
+}
+
+/** Resolve a stored image to a data URI FAL can always consume. */
+export async function getFalImageUrl(
+  storageKey: string,
+  _baseUrl?: string,
+  mimeType = "image/png"
+): Promise<string> {
+  const buffer = await downloadFromStorage(storageKey);
+  return `data:${mimeType};base64,${buffer.toString("base64")}`;
+}
+
+function inferMimeType(storageKey: string, fallback = "image/png"): string {
+  const ext = storageKey.split(".").pop()?.toLowerCase();
+  if (ext === "jpg" || ext === "jpeg") return "image/jpeg";
+  if (ext === "webp") return "image/webp";
+  if (ext === "png") return "image/png";
+  return fallback;
+}
+
+/** Resolve a public app URL, storage key, or external URL for FAL image editing. */
+export async function resolveFalImageUrl(
+  publicUrl: string,
+  baseUrl?: string,
+  mimeType = "image/png"
+): Promise<string> {
+  if (publicUrl.startsWith("data:")) return publicUrl;
+
+  const storageKey = getStorageKeyFromPublicUrl(publicUrl, baseUrl);
+  if (storageKey) {
+    return getFalImageUrl(storageKey, baseUrl, inferMimeType(storageKey, mimeType));
+  }
+
+  const { fetchImageBuffer } = await import("@/lib/watermark");
+  const buffer = await fetchImageBuffer(publicUrl);
+  return `data:${mimeType};base64,${buffer.toString("base64")}`;
+}
+
+export function bufferToDataUri(buffer: Buffer, mimeType: string): string {
+  return `data:${mimeType};base64,${buffer.toString("base64")}`;
 }

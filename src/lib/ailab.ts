@@ -1,5 +1,4 @@
 import sharp from "sharp";
-import { fetchImageBuffer } from "@/lib/watermark";
 import { SMILE_OPTIONS } from "@/lib/constants";
 
 export { SMILE_OPTIONS };
@@ -9,16 +8,41 @@ const AILAB_EMOTION_URL = "https://www.ailabapi.com/api/portrait/effects/emotion
 const MAX_DIMENSION = 4096;
 const MAX_BYTES = 5 * 1024 * 1024;
 
+export function getAILabApiKey(): string | undefined {
+  return (
+    process.env.AI_LABS_KEY?.trim() ||
+    process.env.AILAB_API_KEY?.trim() ||
+    undefined
+  );
+}
+
 export function isAILabConfigured(): boolean {
-  return Boolean(process.env.AI_LABS_KEY?.trim());
+  return Boolean(getAILabApiKey());
 }
 
 interface AILabResponse {
   error_code?: number;
   error_message?: string;
+  error_msg?: string;
   error_code_str?: string;
+  error_detail?: {
+    code?: string;
+    code_message?: string;
+    message?: string;
+  };
   data?: { image?: string };
   request_id?: string;
+}
+
+function formatAILabError(result: AILabResponse): string {
+  return (
+    result.error_detail?.code_message ||
+    result.error_detail?.message ||
+    result.error_msg ||
+    result.error_message ||
+    result.error_code_str ||
+    (result.error_code ? `AI Labs error ${result.error_code}` : "AI Labs returned no image")
+  );
 }
 
 async function prepareJpegBuffer(source: Buffer): Promise<Buffer> {
@@ -47,17 +71,15 @@ async function prepareJpegBuffer(source: Buffer): Promise<Buffer> {
 }
 
 export async function applyEmotionEdit(
-  imageSource: Buffer | string,
+  imageSource: Buffer,
   serviceChoice: SmileServiceChoice
 ): Promise<{ imageBuffer: Buffer; requestId?: string }> {
-  const apiKey = process.env.AI_LABS_KEY?.trim();
+  const apiKey = getAILabApiKey();
   if (!apiKey) {
-    throw new Error("AI Labs is not configured");
+    throw new Error("AI Labs is not configured (set AI_LABS_KEY in .env)");
   }
 
-  const rawBuffer =
-    typeof imageSource === "string" ? await fetchImageBuffer(imageSource) : imageSource;
-  const jpegBuffer = await prepareJpegBuffer(rawBuffer);
+  const jpegBuffer = await prepareJpegBuffer(imageSource);
 
   const formData = new FormData();
   formData.append(
@@ -82,7 +104,7 @@ export async function applyEmotionEdit(
 
   const result = (await response.json()) as AILabResponse;
   if (result.error_code !== 0 || !result.data?.image) {
-    throw new Error(result.error_message || result.error_code_str || "AI Labs returned no image");
+    throw new Error(formatAILabError(result));
   }
 
   const imageBuffer = Buffer.from(result.data.image, "base64");

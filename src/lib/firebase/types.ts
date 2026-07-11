@@ -54,6 +54,7 @@ export interface UserCharacter {
   label: string;
   status: CharacterStatus;
   photoCount: number;
+  thumbnailStorageKey?: string;
   soulReferenceId?: string;
   higgsfieldRequestId?: string;
   lastTrainingError?: string;
@@ -71,6 +72,8 @@ export interface UserProfile {
   stripeCustomerId?: string;
   generationsUsed: number;
   generationsLimit: number;
+  editsUsed: number;
+  editsLimit: number;
   soulReferenceId?: string;
   soulJobStatus: SoulJobStatus;
   higgsfieldRequestId?: string;
@@ -88,6 +91,7 @@ export interface UserPhoto {
   fileSize: number;
   mimeType: string;
   uploadedAt: string;
+  retentionExpiresAt?: string;
 }
 
 export interface StyleReference {
@@ -107,12 +111,15 @@ export interface GenerationJob {
   prompt: string;
   imageReferenceUrl?: string;
   imageReferenceKey?: string;
+  soulStyleId?: string;
+  soulStyleName?: string;
   status: GenerationStatus;
   higgsfieldJobId?: string;
   higgsfieldStatusUrl?: string;
   rawImageUrl?: string;
   finalImageUrl?: string;
   storageKey?: string;
+  sourceGenerationId?: string;
   error?: string;
   createdAt: string;
   updatedAt: string;
@@ -158,8 +165,11 @@ export interface DashboardState {
   characters: UserCharacter[];
   photos: UserPhoto[];
   generations: GenerationJob[];
-  edits: EditJob[];
-  recentActivity: ActivityLogEntry[];
-  catalogReferences: ImageReference[];
-  customReferences: ImageReference[];
+  limits?: {
+    maxPhotos: number;
+    maxGenerations: number;
+    generationsRemaining: number;
+    maxEdits: number;
+    editsRemaining: number;
+  };
 }

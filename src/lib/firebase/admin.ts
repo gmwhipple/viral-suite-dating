@@ -2,9 +2,21 @@ import { initializeApp, getApps, cert, App } from "firebase-admin/app";
 import { getAuth, Auth } from "firebase-admin/auth";
 import { getFirestore, Firestore } from "firebase-admin/firestore";
 
-let adminApp: App;
-let adminAuth: Auth;
-let adminDb: Firestore;
+type AdminCache = {
+  adminApp?: App;
+  adminAuth?: Auth;
+  adminDb?: Firestore;
+  firestoreSettingsApplied?: boolean;
+};
+
+const globalCache = globalThis as typeof globalThis & { __firebaseAdmin?: AdminCache };
+
+function cache(): AdminCache {
+  if (!globalCache.__firebaseAdmin) {
+    globalCache.__firebaseAdmin = {};
+  }
+  return globalCache.__firebaseAdmin;
+}
 
 function getPrivateKey(): string {
   const key = process.env.FIREBASE_PRIVATE_KEY;
@@ -13,11 +25,15 @@ function getPrivateKey(): string {
 }
 
 export function getAdminApp(): App {
+  const store = cache();
+  if (store.adminApp) return store.adminApp;
+
   if (getApps().length) {
-    return getApps()[0];
+    store.adminApp = getApps()[0];
+    return store.adminApp;
   }
 
-  adminApp = initializeApp({
+  store.adminApp = initializeApp({
     credential: cert({
       projectId: process.env.FIREBASE_PROJECT_ID,
       clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
@@ -28,14 +44,15 @@ export function getAdminApp(): App {
       process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   });
 
-  return adminApp;
+  return store.adminApp;
 }
 
 export function getAdminAuth(): Auth {
-  if (!adminAuth) {
-    adminAuth = getAuth(getAdminApp());
+  const store = cache();
+  if (!store.adminAuth) {
+    store.adminAuth = getAuth(getAdminApp());
   }
-  return adminAuth;
+  return store.adminAuth;
 }
 
 export function omitUndefined<T extends object>(data: T): Partial<T> {
@@ -50,11 +67,21 @@ export function omitUndefined<T extends object>(data: T): Partial<T> {
 }
 
 export function getAdminDb(): Firestore {
-  if (!adminDb) {
-    adminDb = getFirestore(getAdminApp());
-    adminDb.settings({ ignoreUndefinedProperties: true });
+  const store = cache();
+  if (store.adminDb) return store.adminDb;
+
+  store.adminDb = getFirestore(getAdminApp());
+
+  if (!store.firestoreSettingsApplied) {
+    try {
+      store.adminDb.settings({ ignoreUndefinedProperties: true });
+    } catch {
+      // Next.js dev HMR can re-import this module after Firestore is already in use.
+    }
+    store.firestoreSettingsApplied = true;
   }
-  return adminDb;
+
+  return store.adminDb;
 }
 
 export function isAdminConfigured(): boolean {
@@ -74,4 +101,5 @@ export const COLLECTIONS = {
   abTests: "ab_test_events",
   referenceCatalog: "reference_catalog",
   characters: "characters",
+  pendingPurchases: "pending_purchases",
 } as const;

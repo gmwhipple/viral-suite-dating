@@ -3,6 +3,20 @@ import { getAdminDb, COLLECTIONS, isAdminConfigured, omitUndefined } from "@/lib
 import type { SoulJobStatus, UserCharacter, UserProfile } from "@/lib/firebase/types";
 import { updateUser } from "@/lib/services/users";
 
+export async function listTrainingCharacters(userId: string): Promise<UserCharacter[]> {
+  if (!isAdminConfigured()) return [];
+
+  const snap = await getAdminDb()
+    .collection(COLLECTIONS.characters)
+    .where("userId", "==", userId)
+    .where("status", "in", ["training", "pending_training"])
+    .get();
+
+  return snap.docs
+    .map((d) => d.data() as UserCharacter)
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+}
+
 export async function listUserCharacters(userId: string): Promise<UserCharacter[]> {
   if (!isAdminConfigured()) return [];
 
@@ -40,6 +54,7 @@ export async function createCharacter(
     label: data.label,
     status: data.status,
     photoCount: data.photoCount,
+    thumbnailStorageKey: data.thumbnailStorageKey,
     soulReferenceId: data.soulReferenceId,
     higgsfieldRequestId: data.higgsfieldRequestId,
     lastTrainingError: data.lastTrainingError,

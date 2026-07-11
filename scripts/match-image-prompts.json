@@ -1,0 +1,235 @@
+{
+  "sourceImage": "public/landing/its-a-match.png",
+  "outputDir": "public/landing/match-localized",
+  "batchSize": 5,
+  "falModel": "openai/gpt-image-2/edit",
+  "defaultPrompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into {languageName}. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+  "fullCoveragePrompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"{screenText}\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"{screenText}\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"{bubbleText}\"\n\nWrite all replacement text in {languageName}. {matchRule}\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+  "locales": {
+    "en": {
+      "languageName": "English",
+      "skip": true,
+      "prompt": ""
+    },
+    "es": {
+      "languageName": "Spanish",
+      "prompt": ""
+    },
+    "fr": {
+      "languageName": "French",
+      "prompt": ""
+    },
+    "de": {
+      "languageName": "German",
+      "prompt": ""
+    },
+    "it": {
+      "languageName": "Italian",
+      "prompt": ""
+    },
+    "pt": {
+      "languageName": "Portuguese",
+      "prompt": ""
+    },
+    "nl": {
+      "languageName": "Dutch",
+      "prompt": ""
+    },
+    "pl": {
+      "languageName": "Polish",
+      "screenText": "TO JEST MATCH!",
+      "bubbleText": "To jest Match!",
+      "matchRule": "Keep MATCH as a familiar dating-app loanword in Latin letters.",
+      "prompt": ""
+    },
+    "ru": {
+      "languageName": "Russian",
+      "targetText": "ЭТО ПАРА!",
+      "prompt": ""
+    },
+    "ja": {
+      "languageName": "Japanese",
+      "targetText": "マッチしました！",
+      "prompt": ""
+    },
+    "ko": {
+      "languageName": "Korean",
+      "screenText": "매치되었어요!",
+      "bubbleText": "매치되었어요!",
+      "matchRule": "Use native Korean script (Hangul) only — no English letters.",
+      "prompt": ""
+    },
+    "zh": {
+      "languageName": "Simplified Chinese",
+      "targetText": "配对成功！",
+      "prompt": ""
+    },
+    "zh-TW": {
+      "languageName": "Traditional Chinese",
+      "targetText": "配對成功！",
+      "prompt": ""
+    },
+    "ar": {
+      "languageName": "Arabic",
+      "targetText": "تطابَقتم!",
+      "prompt": ""
+    },
+    "hi": {
+      "languageName": "Hindi",
+      "targetText": "मिलान हुआ!",
+      "prompt": ""
+    },
+    "tr": {
+      "languageName": "Turkish",
+      "targetText": "EŞLEŞTİNİZ!",
+      "prompt": ""
+    },
+    "vi": {
+      "languageName": "Vietnamese",
+      "targetText": "ĐÃ GHÉP ĐÔI!",
+      "prompt": ""
+    },
+    "th": {
+      "languageName": "Thai",
+      "targetText": "จับคู่แล้ว!",
+      "prompt": ""
+    },
+    "id": {
+      "languageName": "Indonesian",
+      "targetText": "KALIAN COCOK!",
+      "prompt": ""
+    },
+    "sv": {
+      "languageName": "Swedish",
+      "prompt": ""
+    },
+    "da": {
+      "languageName": "Danish",
+      "prompt": ""
+    },
+    "nb": {
+      "languageName": "Norwegian",
+      "prompt": ""
+    },
+    "fi": {
+      "languageName": "Finnish",
+      "prompt": ""
+    },
+    "cs": {
+      "languageName": "Czech",
+      "prompt": ""
+    },
+    "hu": {
+      "languageName": "Hungarian",
+      "screenText": "EZ EGY MATCH!",
+      "bubbleText": "Ez egy Match!",
+      "matchRule": "Keep MATCH as a familiar dating-app loanword in Latin letters.",
+      "prompt": ""
+    },
+    "ro": {
+      "languageName": "Romanian",
+      "screenText": "E UN MATCH!",
+      "bubbleText": "E un Match!",
+      "matchRule": "Keep MATCH as a familiar dating-app loanword in Latin letters.",
+      "prompt": ""
+    },
+    "el": {
+      "languageName": "Greek",
+      "targetText": "ΕΙΝΑΙ ΤΑΙΡΙΑΣΜΑ!",
+      "prompt": ""
+    },
+    "he": {
+      "languageName": "Hebrew",
+      "screenText": "יש התאמה!",
+      "bubbleText": "יש התאמה!",
+      "matchRule": "Use Hebrew script only — translate match fully, no English.",
+      "prompt": ""
+    },
+    "uk": {
+      "languageName": "Ukrainian",
+      "targetText": "ЦЕ ПАРА!",
+      "prompt": ""
+    },
+    "ms": {
+      "languageName": "Malay",
+      "targetText": "ANDA SEPADAN!",
+      "prompt": ""
+    },
+    "fil": {
+      "languageName": "Filipino",
+      "targetText": "MAGKATUGMA KAYO!",
+      "prompt": ""
+    },
+    "bn": {
+      "languageName": "Bengali",
+      "screenText": "মিলে গেছে!",
+      "bubbleText": "মিলে গেছে!",
+      "matchRule": "Use Bengali script only — translate match fully, no English.",
+      "prompt": ""
+    },
+    "ur": {
+      "languageName": "Urdu",
+      "targetText": "آپ مل گئے!",
+      "prompt": ""
+    },
+    "fa": {
+      "languageName": "Persian",
+      "targetText": "هم‌خوانی شد!",
+      "prompt": ""
+    },
+    "af": {
+      "languageName": "Afrikaans",
+      "screenText": "DIT IS 'N MATCH!",
+      "bubbleText": "Dis 'n Match!",
+      "matchRule": "Keep MATCH as a familiar dating-app loanword in Latin letters.",
+      "prompt": ""
+    },
+    "ca": {
+      "languageName": "Catalan",
+      "prompt": ""
+    },
+    "sk": {
+      "languageName": "Slovak",
+      "prompt": ""
+    },
+    "hr": {
+      "languageName": "Croatian",
+      "prompt": ""
+    },
+    "bg": {
+      "languageName": "Bulgarian",
+      "screenText": "ТОВА Е СЪВПАДЕНИЕ!",
+      "bubbleText": "Това е съвпадение!",
+      "matchRule": "Use Cyrillic Bulgarian only — translate match fully, no English.",
+      "prompt": ""
+    },
+    "sr": {
+      "languageName": "Serbian",
+      "prompt": ""
+    },
+    "sl": {
+      "languageName": "Slovenian",
+      "prompt": ""
+    },
+    "lt": {
+      "languageName": "Lithuanian",
+      "prompt": "Edit this Tinder dating app screenshot. Change ONLY the headline \"It's a Match!\" to \"TAI MATCH!\" using Lithuanian grammar (Tai = It is). Keep the English loanword MATCH in Latin letters like other European dating apps. Keep Tinder logo, UI, photos, and layout exactly the same. Do not change anything else."
+    },
+    "lv": {
+      "languageName": "Latvian",
+      "screenText": "TAS IR MATCH!",
+      "bubbleText": "Tas ir Match!",
+      "matchRule": "Keep MATCH as a familiar dating-app loanword in Latin letters.",
+      "prompt": ""
+    },
+    "et": {
+      "languageName": "Estonian",
+      "prompt": ""
+    },
+    "sw": {
+      "languageName": "Swahili",
+      "targetText": "MMECHAGULIWA!",
+      "prompt": ""
+    }
+  }
+}

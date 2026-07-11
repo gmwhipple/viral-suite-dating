@@ -1,0 +1,446 @@
+{
+  "results": {
+    "fr": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/fr.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d08/mnpykpbAqyMaSUsMVpMxC_aUIOehc3.png",
+      "requestId": "019f3f42-02f8-73b0-960c-a5b3c7c75ccc",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into French — all replacement text must be written entirely in French, not English. Use the natural phrasing a native French speaker would expect on a dating app. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:07:46.364Z"
+    },
+    "de": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/de.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d08/osHBBRSwzayBGKdDOOII3_Oj7bVGtC.png",
+      "requestId": "019f3f42-02f8-72b2-9314-db926756e8c5",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into German — all replacement text must be written entirely in German, not English. Use the natural phrasing a native German speaker would expect on a dating app. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:07:46.782Z"
+    },
+    "es": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/es.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d12/uQyLTo_6G_iIjbDa8miTA_Mhy2qwo0.png",
+      "requestId": "019f3f42-02fb-7b63-9a6e-bffbf3b58024",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Spanish — all replacement text must be written entirely in Spanish, not English. Use the natural phrasing a native Spanish speaker would expect on a dating app. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:07:57.805Z"
+    },
+    "it": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/it.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d08/0rOnLcjpt4Xk_s0iXhxti_oyRslowO.png",
+      "requestId": "019f3f42-02fb-7b63-9a6e-c004f09760e1",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Italian — all replacement text must be written entirely in Italian, not English. Use the natural phrasing a native Italian speaker would expect on a dating app. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:08:01.935Z"
+    },
+    "pt": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/pt.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d08/3dPGzFfTBnckd9DLnbtmM_EDS3wcda.png",
+      "requestId": "019f3f42-02f8-7220-8623-4c518db7fc4a",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Portuguese — all replacement text must be written entirely in Portuguese, not English. Use the natural phrasing a native Portuguese speaker would expect on a dating app. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:08:18.132Z"
+    },
+    "ko": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ko.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f54/lhBq4uNCWFwD-ejFjuBoq_EiQJ5VXA.png",
+      "requestId": "019f3f9b-bd48-7ee1-befd-0b0a1711fef9",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"매치되었어요!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"매치되었어요!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"매치되었어요!\"\n\nWrite all replacement text in Korean. Use native Korean script (Hangul) only — no English letters.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:45:57.207Z"
+    },
+    "ru": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ru.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d8d/lJEUFMLK4Uc_QTqh7Z5tZ_ordN1rZ9.png",
+      "requestId": "019f3f56-583c-7621-a8f5-4e5643df9656",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"ЭТО ПАРА!\". This must be written entirely in Russian using the correct native script. Translate the word \"match\" fully into Russian — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:30:25.134Z"
+    },
+    "nl": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/nl.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d8d/LHihxg8lQuyMV2E476Yrv_atAzGdRi.png",
+      "requestId": "019f3f56-5832-7353-8f0f-90a466c84bab",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Dutch. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:30:26.188Z"
+    },
+    "pl": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/pl.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f5f/cIMlMHWHCturmCCGOxOW9_d9AYQnll.png",
+      "requestId": "019f3f9b-bd50-7ec2-aeb5-02f6e36a00d8",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"TO JEST MATCH!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"TO JEST MATCH!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"To jest Match!\"\n\nWrite all replacement text in Polish. Keep MATCH as a familiar dating-app loanword in Latin letters.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:45:59.707Z"
+    },
+    "ja": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ja.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15d8d/YMzdkNuvQy22Lun79IprG_d9eyD5kV.png",
+      "requestId": "019f3f56-583a-7691-8872-a257a7fcc12c",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"マッチしました！\". This must be written entirely in Japanese using the correct native script. Translate the word \"match\" fully into Japanese — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:31:02.129Z"
+    },
+    "ar": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ar.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15da2/mMFVKGHHwIGHRS0Vqtg3B_tPUQn3h3.png",
+      "requestId": "019f3f59-91b2-7412-9b94-d57d1e7887ed",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"تطابَقتم!\". This must be written entirely in Arabic using the correct native script. Translate the word \"match\" fully into Arabic — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:33:20.456Z"
+    },
+    "tr": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/tr.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15da2/3fbV_ml9heHgnnZRQxrc5_IzuYiqi8.png",
+      "requestId": "019f3f59-91b1-75c1-a65b-801c5e62138e",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"EŞLEŞTİNİZ!\". This must be written entirely in Turkish using the correct native script. Translate the word \"match\" fully into Turkish — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:33:22.776Z"
+    },
+    "zh": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/zh.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15da2/ze9J5BBVj_oPpVvf_IQ9W_kM9XqRIM.png",
+      "requestId": "019f3f59-9134-7a31-9e85-c4a8c40626a8",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"配对成功！\". This must be written entirely in Simplified Chinese using the correct native script. Translate the word \"match\" fully into Simplified Chinese — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:33:29.282Z"
+    },
+    "hi": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/hi.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15da2/lL4XORsXRleCb2q0vtTmq_zZCbHEsc.png",
+      "requestId": "019f3f59-91d5-74c2-a5d6-d25d51785807",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"मिलान हुआ!\". This must be written entirely in Hindi using the correct native script. Translate the word \"match\" fully into Hindi — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:33:36.549Z"
+    },
+    "zh-TW": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/zh-TW.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15da2/mU92zffeHYdCqr3nU-un3_jmBmoPqK.png",
+      "requestId": "019f3f59-9138-7022-94e8-557944306dab",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"配對成功！\". This must be written entirely in Traditional Chinese using the correct native script. Translate the word \"match\" fully into Traditional Chinese — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:34:03.685Z"
+    },
+    "th": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/th.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15db4/FbpMEGSXNyiN4X-L7TX8c_dQgapfJJ.png",
+      "requestId": "019f3f5c-565f-7821-b56b-1fdb91703b66",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"จับคู่แล้ว!\". This must be written entirely in Thai using the correct native script. Translate the word \"match\" fully into Thai — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:36:31.592Z"
+    },
+    "id": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/id.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15db4/mW90zggqD8WD11njMCfbX_8rTeyhvr.png",
+      "requestId": "019f3f5c-56f7-7550-9fc1-6c5d34a6386a",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"KALIAN COCOK!\". This must be written entirely in Indonesian using the correct native script. Translate the word \"match\" fully into Indonesian — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:36:33.269Z"
+    },
+    "vi": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/vi.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15db4/DdHELF_IsbER1MsDk2I7P_ntiogVmA.png",
+      "requestId": "019f3f5c-565f-7723-b6f4-6144cd712e44",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"ĐÃ GHÉP ĐÔI!\". This must be written entirely in Vietnamese using the correct native script. Translate the word \"match\" fully into Vietnamese — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:36:51.799Z"
+    },
+    "da": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/da.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15db4/ml64YOBcQtc2H2iti0zAj_gd3DV2wO.png",
+      "requestId": "019f3f5c-5702-7f23-ae5a-b6da6f3e402c",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Danish. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:36:54.278Z"
+    },
+    "sv": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/sv.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15db4/tVJEV_0dgYq3eVdWZT_v9_EqIsGIQv.png",
+      "requestId": "019f3f5c-5702-7f23-ae5a-b6c75c01a9d9",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Swedish. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:37:00.017Z"
+    },
+    "hu": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/hu.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f5f/T0sKxcUElAo8r4sXfmDNr_YbisB9ZV.png",
+      "requestId": "019f3f9b-bd55-7f12-8bc5-af831f551935",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"EZ EGY MATCH!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"EZ EGY MATCH!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"Ez egy Match!\"\n\nWrite all replacement text in Hungarian. Keep MATCH as a familiar dating-app loanword in Latin letters.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:45:46.204Z"
+    },
+    "ro": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ro.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f54/X7taQWWwkJEb6ZWJHvwuM_2KZ4leyY.png",
+      "requestId": "019f3f9b-bd54-7580-a61d-f0a8101d57ca",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"E UN MATCH!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"E UN MATCH!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"E un Match!\"\n\nWrite all replacement text in Romanian. Keep MATCH as a familiar dating-app loanword in Latin letters.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:46:04.788Z"
+    },
+    "nb": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/nb.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15dc6/WwkGXE_hSfjF5KuOKa6m3_cz5fYQVU.png",
+      "requestId": "019f3f5f-0722-75b0-b30e-b1caa2ad0d72",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Norwegian. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:39:40.689Z"
+    },
+    "cs": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/cs.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15dc6/WTmz4H0KM9dHjYV0UplDq_KASw1tEF.png",
+      "requestId": "019f3f5f-07cd-7b30-a65c-79afa0156b38",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Czech. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:39:41.620Z"
+    },
+    "fi": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/fi.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15dc6/EF7LzI9w_Coi81zRq5_1E_e45mUAlz.png",
+      "requestId": "019f3f5f-0723-7dd3-8018-ddb48879a4eb",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Finnish. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:40:33.559Z"
+    },
+    "he": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/he.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f54/8N0VFQWYB8EY6umEG3xvv_JWyQ5Jgg.png",
+      "requestId": "019f3f9b-bd54-7792-8762-65e6e5bf8878",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"יש התאמה!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"יש התאמה!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"יש התאמה!\"\n\nWrite all replacement text in Hebrew. Use Hebrew script only — translate match fully, no English.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:46:36.816Z"
+    },
+    "el": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/el.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15ddb/x_nBQ0XQMWwENHKULcw9v_vd6GNwkg.png",
+      "requestId": "019f3f62-493f-77d2-a44c-a4964d3cb73d",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"ΕΙΝΑΙ ΤΑΙΡΙΑΣΜΑ!\". This must be written entirely in Greek using the correct native script. Translate the word \"match\" fully into Greek — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:43:03.889Z"
+    },
+    "uk": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/uk.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15ddb/n84VMbmelWauRiNZv2bXI_mjKRD1WG.png",
+      "requestId": "019f3f62-49eb-71e2-b365-d6e6c810c612",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"ЦЕ ПАРА!\". This must be written entirely in Ukrainian using the correct native script. Translate the word \"match\" fully into Ukrainian — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:43:26.357Z"
+    },
+    "ms": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ms.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15ddb/dMi1yK6eQJ9s-emXh3bEt_rLxK9Ntp.png",
+      "requestId": "019f3f62-49fb-72c1-9633-baa8d8f02464",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"ANDA SEPADAN!\". This must be written entirely in Malay using the correct native script. Translate the word \"match\" fully into Malay — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:43:32.836Z"
+    },
+    "fil": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/fil.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15ddb/bDG0dksM63KQasFQj0YvJ_mPguDwzM.png",
+      "requestId": "019f3f62-49fa-7d31-9efe-2bca338e463b",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"MAGKATUGMA KAYO!\". This must be written entirely in Filipino using the correct native script. Translate the word \"match\" fully into Filipino — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:43:43.321Z"
+    },
+    "ca": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ca.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15dee/iSqZ4XWMDRDnbbGyTnUEn_2wh0meuY.png",
+      "requestId": "019f3f65-2ef3-7940-97a6-13fb89cc45d2",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Catalan. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:46:10.133Z"
+    },
+    "fa": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/fa.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15df9/eHIA-oU0kArrm2yh3obdJ_N6Rh1C7W.png",
+      "requestId": "019f3f65-2f18-7533-b48f-a5bb02ac8d65",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"هم‌خوانی شد!\". This must be written entirely in Persian using the correct native script. Translate the word \"match\" fully into Persian — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:46:12.318Z"
+    },
+    "ur": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/ur.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15dee/jfq6t72kBcCXmPp1H-vng_gfUMH7Rj.png",
+      "requestId": "019f3f65-2e80-7060-823d-37fecffc7002",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"آپ مل گئے!\". This must be written entirely in Urdu using the correct native script. Translate the word \"match\" fully into Urdu — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:46:16.819Z"
+    },
+    "bn": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/bn.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f67/RXfT2h8p0zRgktd5MGq2p_y6LJNKdn.png",
+      "requestId": "019f3f9e-c2a7-71a1-b606-4b47dc73639c",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"মিলে গেছে!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"মিলে গেছে!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"মিলে গেছে!\"\n\nWrite all replacement text in Bengali. Use Bengali script only — translate match fully, no English.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:49:09.689Z"
+    },
+    "af": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/af.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f67/JNSgLEFsgu4snXNuSxCTS_Pwlo8eNQ.png",
+      "requestId": "019f3f9e-c2a6-7933-bd43-2e3dbed6d60e",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"DIT IS 'N MATCH!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"DIT IS 'N MATCH!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"Dis 'n Match!\"\n\nWrite all replacement text in Afrikaans. Keep MATCH as a familiar dating-app loanword in Latin letters.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:49:15.837Z"
+    },
+    "sk": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/sk.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e01/W8KgAqSDCTwGXFP_NBSHY_7EMquOI0.png",
+      "requestId": "019f3f68-0947-7491-aa96-616386f9416e",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Slovak. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:49:19.792Z"
+    },
+    "hr": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/hr.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e01/1FYrRxO2g1_U1sPHDuXn__DTgB4EPR.png",
+      "requestId": "019f3f68-094b-7c33-89e9-3a6efb907b56",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Croatian. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:49:22.076Z"
+    },
+    "sl": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/sl.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e01/t6Vv6w9Hgj0EjcIRLxpcV_DZaiShoo.png",
+      "requestId": "019f3f68-09c3-7a61-97f6-bbb4bb82b433",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Slovenian. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:49:22.792Z"
+    },
+    "sr": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/sr.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e01/PhxpEr-BAO145ztVAj5ME_mvXgaDvW.png",
+      "requestId": "019f3f68-09ca-7380-a275-d9c7a63ddbf4",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Serbian. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:49:26.161Z"
+    },
+    "bg": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/bg.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f67/71PrtIRVwU1olERmFq8gi_JXG448to.png",
+      "requestId": "019f3f9e-c34f-73b3-8d1b-0d05c0d774e3",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"ТОВА Е СЪВПАДЕНИЕ!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"ТОВА Е СЪВПАДЕНИЕ!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"Това е съвпадение!\"\n\nWrite all replacement text in Bulgarian. Use Cyrillic Bulgarian only — translate match fully, no English.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:49:43.807Z"
+    },
+    "lt": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/lt.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e38/A6DXEOolMR90TBO2kuCK9_ECGgSSyJ.png",
+      "requestId": "019f3f70-854e-7b62-a845-8ab40eb2b819",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Change ONLY the headline \"It's a Match!\" to \"TAI MATCH!\" using Lithuanian grammar (Tai = It is). Keep the English loanword MATCH in Latin letters like other European dating apps. Keep Tinder logo, UI, photos, and layout exactly the same. Do not change anything else.",
+      "completedAt": "2026-07-08T01:58:38.913Z"
+    },
+    "sw": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/sw.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e10/t_UJ4MNNfxhX2mSBn6Yie_phQXd6TM.png",
+      "requestId": "019f3f6a-6e63-7e51-a6ec-4ac247ee365b",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Replace the celebration headline \"It's a Match!\" with exactly this text: \"MMECHAGULIWA!\". This must be written entirely in Swahili using the correct native script. Translate the word \"match\" fully into Swahili — do NOT use the English word \"Match\" or Latin letters. Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:51:56.438Z"
+    },
+    "et": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/et.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15e10/ak8KllE1pnDVTMjfCxCsR_gzFt6FnC.png",
+      "requestId": "019f3f6a-6dec-7321-bfcb-06bc24b243d1",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder dating app screenshot. Translate ONLY the on-screen celebration headline \"It's a Match!\" into Estonian. For European Romance/Germanic languages, it is OK to keep the word \"Match\" as a familiar dating-app loanword in Latin letters (e.g. \"Es ist ein Match!\", \"C'est un Match!\"). Keep the Tinder logo, flame icon, UI layout, button styles, profile photos, and all branding exactly the same. Do NOT translate or alter the word \"Tinder\". Do not change any other text or part of the image.",
+      "completedAt": "2026-07-08T01:51:56.717Z"
+    },
+    "lv": {
+      "status": "done",
+      "output": "/Users/G-Whiz/Documents/viral-suite-dating/public/landing/match-localized/lv.png",
+      "falUrl": "https://v3b.fal.media/files/b/0aa15f67/arZBHxXdCXcYhuiEnLDdM_kdKrg1St.png",
+      "requestId": "019f3f9e-c322-7723-bf6f-833e9e97df0d",
+      "width": null,
+      "height": null,
+      "prompt": "Edit this Tinder promotional image showing two overlapping phones. You MUST translate ALL English match-celebration text in every location. Do not leave any English words behind.\n\nLOCATION 1: On the front/left phone screen, replace the mint-green/teal overlay text — the small \"IT'S A\" line AND the large \"MATCH!\" plus the stacked hollow outline \"MATCH!\" echoes beneath it — with exactly: \"TAS IR MATCH!\"\n\nLOCATION 2: On the back/right phone screen, replace the same mint-green \"IT'S A MATCH!\" overlay (including all echoed outline layers) with exactly: \"TAS IR MATCH!\"\n\nLOCATION 3: On the bright pink rounded notification bubble, replace \"It's a MATCH!\" with exactly: \"Tas ir Match!\"\n\nWrite all replacement text in Latvian. Keep MATCH as a familiar dating-app loanword in Latin letters.\nKeep the Tinder logo, flame icon, status bar, bottom nav icons, profile photos, colors, phone frames, and layout identical. Do NOT translate or change \"Tinder\".",
+      "completedAt": "2026-07-08T02:50:10.587Z"
+    }
+  },
+  "sourceImageUrl": "https://v3b.fal.media/files/b/0aa15d07/Qsny5UwyHbBha5uso6d5w_1783472717068.png",
+  "updatedAt": "2026-07-08T02:50:10.587Z"
+}
