@@ -77,7 +77,9 @@ export async function POST(request: NextRequest) {
     if (!userId && checkoutEmail) {
       userId = (await resolveUserIdByEmail(checkoutEmail)) ?? undefined;
       if (userId) {
-        await getOrCreateUser(userId, checkoutEmail);
+        await getOrCreateUser(userId, checkoutEmail, undefined, {
+          claimPendingPurchase: true,
+        });
         console.log("[stripe/webhook] linked purchase to existing account", {
           sessionId: session.id,
           uid: userId.slice(0, 8),

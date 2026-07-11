@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAuthToken, getClientIp } from "@/lib/auth";
-import { uploadUserPhoto, deleteFromStorage } from "@/lib/storage";
-import { saveUserPhoto, getOrCreateUser, deleteUserPhoto, purgeExpiredTrainingPhotos, countUserPhotos, updateUser, trainingPhotoRetentionExpiresAt } from "@/lib/services/users";
+import { uploadUserPhoto } from "@/lib/storage";
+import {
+  assertCanUploadTrainingPhoto,
+  getOrCreateUser,
+  deleteUserPhotoByStorageKey,
+  purgeExpiredTrainingPhotos,
+  countUserPhotos,
+  updateUser,
+  trainingPhotoRetentionExpiresAt,
+  trainingPhotoId,
+  getUserPhotos,
+} from "@/lib/services/users";
 import { logActivity } from "@/lib/activity-log";
-import { v4 as uuidv4 } from "uuid";
+import { invalidateUserMediaCache } from "@/lib/dashboard-cache";
 import { MAX_UPLOAD_PHOTOS } from "@/lib/constants";
 import { getAppBaseUrl } from "@/lib/app-url";
 
@@ -37,13 +47,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Max file size 15MB" }, { status: 400 });
     }
 
+    await assertCanUploadTrainingPhoto(auth.uid);
+
     const buffer = Buffer.from(await file.arrayBuffer());
     const baseUrl = getAppBaseUrl(request);
     const stored = await uploadUserPhoto(auth.uid, file.name, buffer, file.type, baseUrl);
 
     const uploadedAt = new Date().toISOString();
     const photo = {
-      id: uuidv4(),
+      id: trainingPhotoId(stored.storageKey),
       userId: auth.uid,
       storageKey: stored.storageKey,
       publicUrl: stored.publicUrl,
@@ -54,12 +66,11 @@ export async function POST(request: NextRequest) {
       retentionExpiresAt: trainingPhotoRetentionExpiresAt(uploadedAt),
     };
 
-    await saveUserPhoto(photo);
-
     await purgeExpiredTrainingPhotos(auth.uid);
+    invalidateUserMediaCache(auth.uid);
 
     await logActivity(auth.uid, "photo_uploaded", {
-      photoId: photo.id,
+      storageKey: photo.storageKey,
       fileName: file.name,
       fileSize: file.size,
     }, {
@@ -82,9 +93,11 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    const photoId = request.nextUrl.searchParams.get("photoId");
-    if (!photoId) {
-      return NextResponse.json({ error: "photoId required" }, { status: 400 });
+    const storageKey =
+      request.nextUrl.searchParams.get("storageKey") ||
+      request.nextUrl.searchParams.get("photoId");
+    if (!storageKey) {
+      return NextResponse.json({ error: "storageKey required" }, { status: 400 });
     }
 
     const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
@@ -95,12 +108,12 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    const photo = await deleteUserPhoto(auth.uid, photoId);
+    const photo = await deleteUserPhotoByStorageKey(auth.uid, storageKey);
     if (!photo) {
       return NextResponse.json({ error: "Photo not found" }, { status: 404 });
     }
 
-    await deleteFromStorage(photo.storageKey);
+    invalidateUserMediaCache(auth.uid);
 
     const remaining = await countUserPhotos(auth.uid);
     if (remaining === 0 && user.soulJobStatus === "failed") {
@@ -111,7 +124,10 @@ export async function DELETE(request: NextRequest) {
       });
     }
 
-    await logActivity(auth.uid, "photo_deleted", { photoId, fileName: photo.fileName }, {
+    await logActivity(auth.uid, "photo_deleted", {
+      storageKey,
+      fileName: photo.fileName,
+    }, {
       ip: getClientIp(request),
       userAgent: request.headers.get("user-agent") || undefined,
     });
@@ -130,8 +146,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { getUserPhotos } = await import("@/lib/services/users");
-  const photos = await getUserPhotos(auth.uid);
+  const baseUrl = getAppBaseUrl(request);
+  const photos = await getUserPhotos(auth.uid, baseUrl);
 
   return NextResponse.json({
     photos,

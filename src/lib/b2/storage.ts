@@ -32,7 +32,7 @@ export function isB2StorageConfigured(): boolean {
 
 let client: S3Client | null = null;
 
-function getB2Client(): S3Client {
+export function getB2Client(): S3Client {
   if (!client) {
     const { accessKeyId, secretAccessKey, region, endpoint } = getB2Config();
     if (!accessKeyId || !secretAccessKey || !endpoint) {
@@ -48,7 +48,7 @@ function getB2Client(): S3Client {
   return client;
 }
 
-function getBucketName(): string {
+export function getBucketName(): string {
   const bucket = getB2Config().bucket;
   if (!bucket) throw new Error("B2_BUCKET not configured");
   return bucket;

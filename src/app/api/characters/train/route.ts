@@ -35,7 +35,8 @@ export async function POST(request: NextRequest) {
 
   try {
     const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
-    const photos = await getUserPhotos(auth.uid);
+    const baseUrl = getAppBaseUrl(request);
+    const photos = await getUserPhotos(auth.uid, baseUrl);
 
     if (photos.length < MIN_SOUL_TRAINING_PHOTOS) {
       return NextResponse.json({
@@ -70,7 +71,6 @@ export async function POST(request: NextRequest) {
       lastTrainingError: undefined,
     });
 
-    const baseUrl = getAppBaseUrl(request);
     const imageUrls = await resolveTrainingImageUrls(photos, baseUrl);
     console.log("[soul/train] starting", {
       uid: auth.uid.slice(0, 8),

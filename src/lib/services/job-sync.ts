@@ -1,5 +1,4 @@
 import { logActivity } from "@/lib/activity-log";
-import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import {
   completeGenerationFromUrl,
   extractResultUrl,
@@ -129,20 +128,18 @@ async function syncTrainingJob(
   };
 }
 
-async function loadGeneration(generationId: string): Promise<GenerationJob | null> {
-  if (!isAdminConfigured()) return null;
-  const snap = await getAdminDb().collection(COLLECTIONS.generations).doc(generationId).get();
-  if (!snap.exists) return null;
-  return snap.data() as GenerationJob;
-}
-
 async function syncGenerationJob(generation: GenerationJob): Promise<GenerationJob | null> {
   const status = await pollGenerationRequest(generation.higgsfieldJobId!);
   if (!status) return null;
 
   if (status.status === "failed" || status.status === "nsfw" || status.status === "canceled") {
     await markGenerationFailed(generation.id, generation.userId, "Generation did not complete");
-    return loadGeneration(generation.id);
+    return {
+      ...generation,
+      status: "failed",
+      error: "Generation did not complete",
+      updatedAt: new Date().toISOString(),
+    };
   }
 
   if (status.status !== "completed") return null;
@@ -150,8 +147,7 @@ async function syncGenerationJob(generation: GenerationJob): Promise<GenerationJ
   const resultUrl = extractResultUrl(status as Record<string, unknown>);
   if (!resultUrl) return null;
 
-  await completeGenerationFromUrl(generation, resultUrl);
-  return loadGeneration(generation.id);
+  return completeGenerationFromUrl(generation, resultUrl);
 }
 
 export async function syncDashboardJobs(userId: string): Promise<DashboardSyncResult> {

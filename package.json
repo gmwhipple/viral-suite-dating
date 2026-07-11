@@ -11,6 +11,7 @@
     "storage:setup": "node scripts/setup-firebase-storage.mjs",
     "storage:b2-test": "node scripts/test-b2-storage.mjs",
     "stripe:setup": "node scripts/setup-stripe.mjs",
+    "stripe:webhook": "node scripts/setup-stripe-webhook.mjs",
     "match:translate": "node scripts/translate-match-image.mjs",
     "match:translate:dry": "node scripts/translate-match-image.mjs --dry-run",
     "worker:deploy": "cd workers/signatureswipe && npm run deploy",

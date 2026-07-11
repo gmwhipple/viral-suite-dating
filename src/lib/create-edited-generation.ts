@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { getAdminDb, COLLECTIONS, isAdminConfigured } from "@/lib/firebase/admin";
 import type { GenerationJob } from "@/lib/firebase/types";
 
+/** Completed edits/smiles live in B2 only — no Firestore row. */
 export async function createEditedGeneration(
   source: GenerationJob | null,
   userId: string,
@@ -16,7 +16,7 @@ export async function createEditedGeneration(
   const id = uuidv4();
   const now = new Date().toISOString();
 
-  const generation: GenerationJob = {
+  return {
     id,
     userId,
     characterId: source?.characterId,
@@ -32,10 +32,4 @@ export async function createEditedGeneration(
     createdAt: now,
     updatedAt: now,
   };
-
-  if (isAdminConfigured()) {
-    await getAdminDb().collection(COLLECTIONS.generations).doc(id).set(generation);
-  }
-
-  return generation;
 }

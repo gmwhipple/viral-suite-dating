@@ -16,6 +16,19 @@ export const DASHBOARD_GALLERY_LIMIT = 48;
 /** Poll training/generation status only while work is in flight */
 export const DASHBOARD_ACTIVE_POLL_MS = 90_000;
 
+/** Server-side cache for B2 media listings (per user). */
+export const DASHBOARD_MEDIA_CACHE_MS = 60_000;
+
+/** Don't re-query pending-purchase claim on every dashboard refresh. */
+export const PENDING_PURCHASE_CLAIM_COOLDOWN_MS = 10 * 60_000;
+
+/** Per-minute limits — pair with Cloudflare WAF for large-scale attacks. */
+export const DASHBOARD_RATE_LIMIT_PER_USER = 30;
+export const DASHBOARD_RATE_LIMIT_PER_IP = 120;
+export const DASHBOARD_SYNC_RATE_LIMIT_PER_USER = 6;
+export const DASHBOARD_SYNC_RATE_LIMIT_PER_IP = 60;
+export const RATE_LIMIT_WINDOW_MS = 60_000;
+
 /** Set to false before launch — skips Stripe / paid-plan checks for testing. */
 export const TESTING_BYPASS_PAYMENT = true;
 

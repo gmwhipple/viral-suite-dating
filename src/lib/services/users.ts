@@ -8,13 +8,23 @@ import {
   TRAINING_PHOTO_RETENTION_DAYS,
   TESTING_BYPASS_PAYMENT,
 } from "@/lib/constants";
+import path from "path";
 import { deleteFromStorage } from "@/lib/storage";
 import { claimPendingPurchase } from "@/lib/services/pending-purchases";
+import {
+  countUserTrainingPhotosFromStorage,
+  isUserTrainingStorageKey,
+  listUserCompletedGenerationsFromStorage,
+  listUserTrainingPhotosFromStorage,
+  purgeExpiredTrainingPhotosFromStorage,
+  trainingPhotoId,
+} from "@/lib/storage/user-media";
 
 export async function getOrCreateUser(
   uid: string,
   email: string,
-  displayName?: string
+  displayName?: string,
+  options?: { claimPendingPurchase?: boolean }
 ): Promise<UserProfile> {
   if (!isAdminConfigured()) {
     return {
@@ -37,7 +47,9 @@ export async function getOrCreateUser(
 
   if (snap.exists) {
     const existing = snap.data() as UserProfile;
-    await claimPendingPurchase(email, uid);
+    if (options?.claimPendingPurchase) {
+      await claimPendingPurchase(email, uid);
+    }
     return existing;
   }
 
@@ -56,7 +68,9 @@ export async function getOrCreateUser(
   };
 
   await ref.set(omitUndefined(user));
-  await claimPendingPurchase(email, uid);
+  if (options?.claimPendingPurchase) {
+    await claimPendingPurchase(email, uid);
+  }
   return user;
 }
 
@@ -82,53 +96,36 @@ export async function activatePaidPlan(uid: string, stripeCustomerId: string) {
   });
 }
 
-export async function getUserPhotos(userId: string): Promise<UserPhoto[]> {
-  if (!isAdminConfigured()) return [];
-
-  const snap = await getAdminDb()
-    .collection(COLLECTIONS.photos)
-    .where("userId", "==", userId)
-    .get();
-
-  return snap.docs
-    .map((d) => d.data() as UserPhoto)
-    .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+/** Training photos — listed from B2/CDN storage, not Firestore. */
+export async function getUserPhotos(
+  userId: string,
+  baseUrl?: string
+): Promise<UserPhoto[]> {
+  return listUserTrainingPhotosFromStorage(userId, baseUrl);
 }
 
 export async function countUserPhotos(userId: string): Promise<number> {
-  if (!isAdminConfigured()) return 0;
-  const snap = await getAdminDb()
-    .collection(COLLECTIONS.photos)
-    .where("userId", "==", userId)
-    .count()
-    .get();
-  return snap.data().count;
+  return countUserTrainingPhotosFromStorage(userId);
 }
 
-export async function saveUserPhoto(photo: UserPhoto): Promise<void> {
-  if (!isAdminConfigured()) return;
-  const count = await countUserPhotos(photo.userId);
-  if (count >= MAX_UPLOAD_PHOTOS) {
-    throw new Error(`Maximum ${MAX_UPLOAD_PHOTOS} photos allowed`);
-  }
-  await getAdminDb().collection(COLLECTIONS.photos).doc(photo.id).set(photo);
-}
-
-export async function deleteUserPhoto(
+export async function deleteUserPhotoByStorageKey(
   userId: string,
-  photoId: string
+  storageKey: string
 ): Promise<UserPhoto | null> {
-  if (!isAdminConfigured()) return null;
+  if (!isUserTrainingStorageKey(userId, storageKey)) return null;
 
-  const ref = getAdminDb().collection(COLLECTIONS.photos).doc(photoId);
-  const snap = await ref.get();
-  if (!snap.exists) return null;
+  await deleteFromStorage(storageKey);
 
-  const photo = snap.data() as UserPhoto;
-  if (photo.userId !== userId) return null;
-
-  await ref.delete();
-  return photo;
+  return {
+    id: trainingPhotoId(storageKey),
+    userId,
+    storageKey,
+    publicUrl: "",
+    fileName: path.basename(storageKey),
+    fileSize: 0,
+    mimeType: "image/jpeg",
+    uploadedAt: new Date().toISOString(),
+  };
 }
 
 export function trainingPhotoRetentionExpiresAt(uploadedAt: string): string {
@@ -138,60 +135,54 @@ export function trainingPhotoRetentionExpiresAt(uploadedAt: string): string {
 }
 
 export async function purgeExpiredTrainingPhotos(userId: string): Promise<number> {
-  if (!isAdminConfigured()) return 0;
-
-  const photos = await getUserPhotos(userId);
-  const now = Date.now();
-  let purged = 0;
-
-  for (const photo of photos) {
-    const expiresAt = photo.retentionExpiresAt || trainingPhotoRetentionExpiresAt(photo.uploadedAt);
-    if (new Date(expiresAt).getTime() > now) continue;
-
-    try {
-      await deleteFromStorage(photo.storageKey);
-    } catch (err) {
-      console.log("[users] purge storage error", photo.storageKey, err);
-    }
-    await getAdminDb().collection(COLLECTIONS.photos).doc(photo.id).delete();
-    purged += 1;
-  }
-
-  if (purged > 0) {
-    console.log("[users] purged expired training photos", { userId: userId.slice(0, 8), purged });
-  }
-
-  return purged;
+  return purgeExpiredTrainingPhotosFromStorage(userId);
 }
 
+export async function assertCanUploadTrainingPhoto(userId: string): Promise<void> {
+  const count = await countUserTrainingPhotosFromStorage(userId);
+  if (count >= MAX_UPLOAD_PHOTOS) {
+    throw new Error(`Maximum ${MAX_UPLOAD_PHOTOS} photos allowed`);
+  }
+}
+
+/** @deprecated Firestore photo docs are no longer written — use storage keys. */
+export async function saveUserPhoto(_photo: UserPhoto): Promise<void> {
+  return;
+}
+
+/** @deprecated Use deleteUserPhotoByStorageKey */
+export async function deleteUserPhoto(
+  userId: string,
+  photoId: string
+): Promise<UserPhoto | null> {
+  return deleteUserPhotoByStorageKey(userId, photoId);
+}
+
+/** @deprecated Use deleteUserPhotoByStorageKey */
 export async function getUserPhoto(
   userId: string,
   photoId: string
 ): Promise<UserPhoto | null> {
-  if (!isAdminConfigured()) return null;
-
-  const snap = await getAdminDb().collection(COLLECTIONS.photos).doc(photoId).get();
-  if (!snap.exists) return null;
-
-  const photo = snap.data() as UserPhoto;
-  if (photo.userId !== userId) return null;
-  return photo;
+  const photos = await listUserTrainingPhotosFromStorage(userId);
+  return photos.find((p) => p.id === photoId || p.storageKey === photoId) || null;
 }
 
+/** Completed gallery — listed from B2/CDN; pending jobs stay in Firestore. */
 export async function getUserGenerations(
   userId: string,
+  baseUrl?: string,
   limit = DASHBOARD_GALLERY_LIMIT
 ): Promise<GenerationJob[]> {
-  if (!isAdminConfigured()) return [];
+  const [completed, pending] = await Promise.all([
+    listUserCompletedGenerationsFromStorage(userId, baseUrl, limit),
+    getPollablePendingGenerations(userId),
+  ]);
 
-  const snap = await getAdminDb()
-    .collection(COLLECTIONS.generations)
-    .where("userId", "==", userId)
-    .orderBy("createdAt", "desc")
-    .limit(limit)
-    .get();
+  const merged = [...pending, ...completed].sort((a, b) =>
+    b.createdAt.localeCompare(a.createdAt)
+  );
 
-  return snap.docs.map((d) => d.data() as GenerationJob);
+  return merged.slice(0, limit);
 }
 
 /** Statuses that may still need a Higgsfield status poll */
@@ -264,3 +255,5 @@ export async function incrementEditsUsed(uid: string): Promise<void> {
     });
   });
 }
+
+export { trainingPhotoId };
