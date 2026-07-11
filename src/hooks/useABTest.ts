@@ -24,7 +24,7 @@ export function useABTest() {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`ab-test ${r.status}`))))
       .then((data) => {
         window.clearTimeout(timeout);
-        finish(data);
+        finish(data as { variant?: ABVariant; sessionId?: string });
       })
       .catch((err) => {
         console.log("[ab-test] fallback", err);

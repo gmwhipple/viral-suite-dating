@@ -31,7 +31,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = (await request.json()) as { characterId?: string };
   const characterId = body?.characterId;
   if (typeof characterId !== "string" || !characterId) {
     return NextResponse.json({ error: "characterId required" }, { status: 400 });

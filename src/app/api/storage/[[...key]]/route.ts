@@ -1,3 +1,4 @@
+import { NextRequest, NextResponse } from "next/server";
 import { downloadFromStorage } from "@/lib/storage";
 import { STORAGE_IMAGE_CACHE_CONTROL } from "@/lib/constants";
 import path from "path";

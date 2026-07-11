@@ -119,16 +119,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const {
-      imageBase64,
-      image_base64,
-      serviceChoice,
-      service_choice,
-      generationId,
-      storageKey,
-      sourceImageUrl,
-    } = body as {
+    const body = (await request.json()) as {
       imageBase64?: string;
       image_base64?: string;
       serviceChoice?: number;
@@ -137,6 +128,15 @@ export async function POST(request: NextRequest) {
       storageKey?: string;
       sourceImageUrl?: string;
     };
+    const {
+      imageBase64,
+      image_base64,
+      serviceChoice,
+      service_choice,
+      generationId,
+      storageKey,
+      sourceImageUrl,
+    } = body;
 
     const resolvedChoice = serviceChoice || service_choice;
     const resolvedBase64 = imageBase64 || image_base64;

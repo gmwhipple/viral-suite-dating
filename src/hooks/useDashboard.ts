@@ -105,7 +105,7 @@ export function useDashboard(
         const res = await fetch(path, {
           headers: { Authorization: `Bearer ${bearer}` },
         });
-        const json = await res.json().catch(() => ({}));
+        const json = (await res.json().catch(() => ({}))) as Record<string, unknown>;
         return { res, json };
       };
 
@@ -140,7 +140,7 @@ export function useDashboard(
         );
       }
 
-      setData(json as DashboardData);
+      setData(json as unknown as DashboardData);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error loading dashboard");
     } finally {

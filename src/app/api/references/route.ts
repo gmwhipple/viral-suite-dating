@@ -98,7 +98,7 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  const body = (await request.json()) as { gender?: string };
   const gender = body?.gender;
   if (gender !== "men" && gender !== "women") {
     return NextResponse.json({ error: "gender must be men or women" }, { status: 400 });

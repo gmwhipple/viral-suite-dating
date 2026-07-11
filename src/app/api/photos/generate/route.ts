@@ -87,18 +87,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const {
-      storageKey,
-      imageReferenceUrl,
-      referenceName,
-      prompt,
-      referenceId,
-      characterId: bodyCharacterId,
-      enhancePrompt,
-      styleId,
-      styleName,
-    } = body as {
+    const body = (await request.json()) as {
       storageKey?: string;
       imageReferenceUrl?: string;
       referenceName?: string;
@@ -109,6 +98,17 @@ export async function POST(request: NextRequest) {
       styleId?: string;
       styleName?: string;
     };
+    const {
+      storageKey,
+      imageReferenceUrl,
+      referenceName,
+      prompt,
+      referenceId,
+      characterId: bodyCharacterId,
+      enhancePrompt,
+      styleId,
+      styleName,
+    } = body;
 
     const user = await getOrCreateUser(auth.uid, auth.email, auth.displayName);
     const characterId = bodyCharacterId || user.activeCharacterId;

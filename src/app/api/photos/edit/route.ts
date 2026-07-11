@@ -65,12 +65,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
-    const userPrompt = ((body.prompt as string) || "").trim();
+    const body = (await request.json()) as {
+      prompt?: string;
+      retextureSkin?: boolean;
+      sourceImageBase64?: string;
+      attachmentBase64?: string;
+      generationId?: string;
+    };
+    const userPrompt = (body.prompt || "").trim();
     const retextureSkin = Boolean(body.retextureSkin);
-    const sourceImageBase64 = (body.sourceImageBase64 as string) || "";
-    const attachmentBase64 = (body.attachmentBase64 as string) || "";
-    const generationId = (body.generationId as string) || "";
+    const sourceImageBase64 = body.sourceImageBase64 || "";
+    const attachmentBase64 = body.attachmentBase64 || "";
+    const generationId = body.generationId || "";
 
     if (!sourceImageBase64) {
       return NextResponse.json({ error: "source image required" }, { status: 400 });

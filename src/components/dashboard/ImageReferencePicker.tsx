@@ -86,7 +86,17 @@ export function ImageReferencePicker({
     fetch(`/api/references?gender=${gender}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => res.json().then((json) => ({ res, json })))
+      .then((res) =>
+        res.json().then((json) => ({
+          res,
+          json: json as {
+            error?: string;
+            catalogReferences?: ImageReference[];
+            customReferences?: ImageReference[];
+            catalogLockedCount?: number;
+          },
+        }))
+      )
       .then(({ res, json }) => {
         if (cancelled) return;
         if (!res.ok) throw new Error(json.error || "Failed to load references");
@@ -152,7 +162,7 @@ export function ImageReferencePicker({
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
       });
-      const json = await res.json();
+      const json = (await res.json()) as { error?: string; reference?: ImageReference };
       if (!res.ok) throw new Error(json.error || "Upload failed");
 
       const uploaded = json.reference as ImageReference;

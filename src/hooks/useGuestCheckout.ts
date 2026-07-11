@@ -49,7 +49,12 @@ export function useGuestCheckout(locale: string, priceUsd = 199, currency = "USD
             checkoutEventId: attribution.eventId,
           }),
         });
-        const data = await res.json();
+        const data = (await res.json()) as {
+          blocked?: boolean;
+          error?: string;
+          url?: string;
+          tier?: string;
+        };
 
         if (!res.ok) {
           if (data.blocked) {

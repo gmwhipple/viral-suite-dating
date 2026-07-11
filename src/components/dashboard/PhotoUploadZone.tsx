@@ -152,7 +152,7 @@ export function PhotoUploadZone({
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const json = await res.json();
+      const json = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(json.error || "Delete failed");
       await onRefresh();
     } catch (err) {
@@ -183,7 +183,7 @@ export function PhotoUploadZone({
         });
 
         if (!res.ok) {
-          const json = await res.json();
+          const json = (await res.json()) as { error?: string };
           throw new Error(json.error || "Upload failed");
         }
       }

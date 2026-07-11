@@ -4,13 +4,13 @@ import type { ABVariant } from "@/lib/ab-testing";
 import { v4 as uuidv4 } from "uuid";
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
-  const { event, sessionId, variant, userId } = body as {
+  const body = (await request.json()) as {
     event: "view" | "cta_click" | "signup" | "purchase";
     sessionId?: string;
     variant?: ABVariant;
     userId?: string;
   };
+  const { event, sessionId, variant, userId } = body;
 
   const sid = sessionId || uuidv4();
   const assignedVariant = variant || assignVariant(sid);

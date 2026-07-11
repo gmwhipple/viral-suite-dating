@@ -130,7 +130,7 @@ function DashboardContent() {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       });
-      const json = await res.json();
+      const json = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(json.error);
       setShowTraining(false);
       await refresh();
@@ -169,7 +169,7 @@ function DashboardContent() {
           checkoutEventId: attribution.eventId,
         }),
       });
-      const json = await res.json();
+      const json = (await res.json()) as { error?: string; url?: string };
       if (!res.ok) throw new Error(json.error);
       if (json.url) window.location.href = json.url;
     } catch (err) {
@@ -236,7 +236,7 @@ function DashboardContent() {
           characterId,
         }),
       });
-      const json = await res.json();
+      const json = (await res.json()) as { error?: string };
       return { res, json };
     };
 
@@ -314,7 +314,7 @@ function DashboardContent() {
           },
           body: JSON.stringify({ characterId }),
         });
-        const json = await res.json();
+        const json = (await res.json()) as { error?: string };
         return { res, json };
       };
 

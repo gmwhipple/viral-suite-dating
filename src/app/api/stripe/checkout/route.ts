@@ -24,7 +24,13 @@ async function parseCheckoutBody(request: NextRequest): Promise<{
   if (!contentType?.includes("application/json")) return {};
 
   try {
-    const body = await request.json();
+    const body = (await request.json()) as {
+      locale?: string;
+      fbc?: string;
+      fbp?: string;
+      sourceUrl?: string;
+      checkoutEventId?: string;
+    };
     return {
       locale: typeof body?.locale === "string" ? normalizeLocaleTag(body.locale) ?? undefined : undefined,
       fbc: typeof body?.fbc === "string" ? body.fbc : undefined,
