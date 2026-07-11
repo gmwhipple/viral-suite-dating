@@ -19,6 +19,11 @@ export const DASHBOARD_ACTIVE_POLL_MS = 90_000;
 /** Set to false before launch — skips Stripe / paid-plan checks for testing. */
 export const TESTING_BYPASS_PAYMENT = true;
 
+/** 1 year — B2 objects are immutable per key; long TTL keeps Cloudflare edge hot. */
+export const STORAGE_IMAGE_CACHE_SECONDS = 365 * 24 * 60 * 60;
+
+export const STORAGE_IMAGE_CACHE_CONTROL = `public, max-age=${STORAGE_IMAGE_CACHE_SECONDS}, s-maxage=${STORAGE_IMAGE_CACHE_SECONDS}, immutable`;
+
 export const AB_TEST_COOKIE = "vs_ab_variant";
 export const DEFAULT_SOUL_GENERATION_PROMPT =
   "Professional dating profile photo, photorealistic, flattering natural lighting, confident expression, high quality portrait";

@@ -1,5 +1,9 @@
 import { AwsClient } from "aws4fetch";
 
+/** 1 year — matches app STORAGE_IMAGE_CACHE_SECONDS */
+const CACHE_TTL_SECONDS = 365 * 24 * 60 * 60;
+const CACHE_CONTROL = `public, max-age=${CACHE_TTL_SECONDS}, s-maxage=${CACHE_TTL_SECONDS}, immutable`;
+
 export interface Env {
   B2_APPLICATION_KEY_ID: string;
   B2_APPLICATION_KEY: string;
@@ -34,9 +38,16 @@ function contentTypeForKey(key: string): string {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     if (request.method !== "GET" && request.method !== "HEAD") {
       return new Response("Method not allowed", { status: 405 });
+    }
+
+    const cache = caches.default;
+    const cacheKey = new Request(request.url, { method: request.method });
+    const cached = await cache.match(cacheKey);
+    if (cached) {
+      return cached;
     }
 
     const url = new URL(request.url);
@@ -71,12 +82,15 @@ export default {
       "Content-Type",
       originResponse.headers.get("Content-Type") || contentTypeForKey(storageKey)
     );
-    headers.set("Cache-Control", "public, max-age=31536000, immutable");
-    headers.set("CDN-Cache-Control", "max-age=31536000");
+    headers.set("Cache-Control", CACHE_CONTROL);
+    headers.set("CDN-Cache-Control", `max-age=${CACHE_TTL_SECONDS}`);
 
-    return new Response(request.method === "HEAD" ? null : originResponse.body, {
+    const response = new Response(request.method === "HEAD" ? null : originResponse.body, {
       status: originResponse.status,
       headers,
     });
+
+    ctx.waitUntil(cache.put(cacheKey, response.clone()));
+    return response;
   },
 } satisfies ExportedHandler<Env>;

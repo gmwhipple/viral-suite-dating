@@ -7,6 +7,7 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { STORAGE_IMAGE_CACHE_CONTROL } from "@/lib/constants";
 
 function normalizeEndpoint(raw: string): string {
   const trimmed = raw.trim();
@@ -64,7 +65,7 @@ export async function uploadToB2Storage(
       Key: storageKey,
       Body: buffer,
       ContentType: contentType,
-      CacheControl: "public, max-age=31536000, immutable",
+      CacheControl: STORAGE_IMAGE_CACHE_CONTROL,
     })
   );
 }

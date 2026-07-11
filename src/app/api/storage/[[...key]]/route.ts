@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { downloadFromStorage } from "@/lib/storage";
+import { STORAGE_IMAGE_CACHE_CONTROL } from "@/lib/constants";
 import path from "path";
 
 export async function GET(
@@ -25,7 +25,7 @@ export async function GET(
     return new NextResponse(new Uint8Array(buffer), {
       headers: {
         "Content-Type": contentType,
-        "Cache-Control": "public, max-age=31536000, immutable",
+        "Cache-Control": STORAGE_IMAGE_CACHE_CONTROL,
       },
     });
   } catch (err) {

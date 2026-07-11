@@ -1,5 +1,6 @@
 import { getStorage } from "firebase-admin/storage";
 import { getAdminApp, isAdminConfigured } from "@/lib/firebase/admin";
+import { STORAGE_IMAGE_CACHE_CONTROL } from "@/lib/constants";
 
 function getBucketName(): string {
   return (
@@ -29,7 +30,7 @@ export async function uploadToFirebaseStorage(
   await file.save(buffer, {
     metadata: {
       contentType,
-      cacheControl: "public, max-age=31536000, immutable",
+      cacheControl: STORAGE_IMAGE_CACHE_CONTROL,
     },
     resumable: false,
   });
