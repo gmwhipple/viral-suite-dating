@@ -229,6 +229,10 @@ export const ca = {
         q: "Les meves dades són privades?",
         a: "Les teves pujades i fotos generades són privades del teu compte. Mai publiquem, compartim ni entrenem models públics amb la teva cara, i pots sol·licitar l'eliminació en qualsevol moment",
       },
+      {
+        q: "Quant de temps es guarden les meves fotos i quant duren els crèdits?",
+        a: "Les fotos generades romanen a la galeria d'1 a 2 mesos. Els crèdits són vàlids un any sencer des de la compra",
+      },
     ],
   },
 

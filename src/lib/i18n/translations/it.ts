@@ -231,6 +231,10 @@ export const it = {
         q: "I miei dati sono privati?",
         a: "I tuoi caricamenti e le foto generate sono privati del tuo account. Non pubblichiamo, condividiamo o addestriamo modelli pubblici sul tuo volto, e puoi richiedere la cancellazione in qualsiasi momento",
       },
+      {
+        q: "Per quanto tempo vengono conservate le mie foto e quanto durano i crediti?",
+        a: "Le foto generate restano disponibili nella tua galleria per 1-2 mesi. I crediti sono validi per un anno intero dall'acquisto, così hai tutto il tempo per generare, modificare e scaricare ciò che ti serve",
+      },
     ],
   },
 

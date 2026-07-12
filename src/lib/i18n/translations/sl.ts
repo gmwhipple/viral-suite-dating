@@ -227,6 +227,10 @@ export const sl = {
         q: "Ali so moji podatki zasebni?",
         a: "Tvoji naloženi in generirani posnetki so zasebni v tvojem računu. Nikoli ne objavljamo, delimo ali usposabljamo javnih modelov na tvojem obrazu, kadar koli pa lahko zahtevaš izbris",
       },
+      {
+        q: "Kako dolgo so shranjene moje fotografije in kako dolgo veljajo krediti?",
+        a: "Ustvarjene fotografije ostanejo v galeriji 1–2 meseca. Krediti veljajo celo leto od nakupa",
+      },
     ],
   },
 

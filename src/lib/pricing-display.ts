@@ -33,7 +33,7 @@ export function buildDisplayPrices(params: {
   };
 }
 
-/** Locale-driven prices for the landing page (updates instantly with language picker). */
+/** Fallback when geo is unknown (offline). Prefer `/api/stripe/pricing` on the client. */
 export function getDisplayPricesForLocale(locale: string): DisplayPrices {
   const product = getLocalizedPrice(null, locale, { preferLocale: true });
   const photographer = getLocalizedPhotographerPrice(null, locale, { preferLocale: true });

@@ -228,6 +228,10 @@ export const fil = {
         q: "Private ba ang data ko?",
         a: "Private sa account mo ang uploads at generated photos mo. Hindi kami nagpo-post, nagbabahagi, o nagsasanay ng public models sa mukha mo, at puwede kang humiling ng deletion anumang oras",
       },
+      {
+        q: "Gaano katagal naka-store ang mga larawan at gaano katagal ang credits?",
+        a: "Ang mga nabuong larawan ay nasa gallery ng 1–2 buwan. Ang credits ay may bisa ng isang buong taon mula sa pagbili",
+      },
     ],
   },
 

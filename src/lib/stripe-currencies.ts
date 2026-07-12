@@ -226,7 +226,7 @@ export function getPricingCountryForLocale(locale: string | null | undefined): s
   return LOCALE_PRICING_COUNTRY[base] ?? "US";
 }
 
-/** Geo country wins at checkout; locale country drives landing-page display. */
+/** Geo wins at checkout; locale country is fallback when geo headers are absent. */
 export function resolvePricingCountry(
   geoCountry: string | null | undefined,
   locale: string | null | undefined,

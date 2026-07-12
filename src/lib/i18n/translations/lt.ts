@@ -228,6 +228,10 @@ export const lt = {
         q: "Ar mano duomenys privatūs?",
         a: "Tavo įkėlimai ir sugeneruotos nuotraukos privatai tavo paskyroje. Niekada nepostiname, nesidalijame ir neapmokome viešų modelių tavo veidu, o ištrynimą gali prašyti bet kada",
       },
+      {
+        q: "Kiek laiko saugomos mano nuotraukos ir kiek galioja kreditai?",
+        a: "Sugeneruotos nuotraukos lieka galerijoje 1–2 mėnesius. Kreditai galioja visus metus nuo pirkimo",
+      },
     ],
   },
 

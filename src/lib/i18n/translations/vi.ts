@@ -222,6 +222,10 @@ export const vi = {
         q: "Dữ liệu của tôi có riêng tư không?",
         a: "Ảnh tải lên và ảnh tạo ra chỉ thuộc tài khoản của bạn. Chúng tôi không đăng, chia sẻ hay huấn luyện mô hình công khai bằng khuôn mặt bạn, và bạn có thể yêu cầu xóa bất cứ lúc nào",
       },
+      {
+        q: "Ảnh được lưu bao lâu và tín dụng có hiệu lực bao lâu?",
+        a: "Ảnh tạo ra còn trong thư viện 1–2 tháng. Tín dụng có hiệu lực trọn một năm kể từ khi mua, đủ thời gian để tạo, chỉnh sửa và tải xuống",
+      },
     ],
   },
 

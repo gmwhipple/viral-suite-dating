@@ -227,6 +227,10 @@ export const af = {
         q: "Is my data privaat?",
         a: "Jou oplaaie en gegenereerde foto's is privaat tot jou rekening. Ons plaas, deel of lei nooit openbare modelle op jou gesig op nie, en jy kan enige tyd verwydering versoek",
       },
+      {
+        q: "Hoe lank word my foto's gestoor en hoe lank geld krediete?",
+        a: "Gegenereerde foto's bly 1–2 maande in jou galery. Krediete is 'n volle jaar geldig vanaf aankoop",
+      },
     ],
   },
 

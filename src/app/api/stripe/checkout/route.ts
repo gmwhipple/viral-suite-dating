@@ -4,9 +4,9 @@ import { createCheckoutSession, isStripeConfigured } from "@/lib/stripe";
 import { logActivity } from "@/lib/activity-log";
 import { getClientIp } from "@/lib/auth";
 import { getAppBaseUrl } from "@/lib/app-url";
-import { getClientCountry } from "@/lib/client-country";
 import { detectServerLocale, normalizeLocaleTag } from "@/lib/i18n/locale-detection";
-import { getLocalizedPrice, isCheckoutBlocked } from "@/lib/stripe-pricing";
+import { getLocalizedPrice, isCheckoutBlocked, preferLocalePricing } from "@/lib/stripe-pricing";
+import { resolveClientCountry } from "@/lib/resolve-client-country";
 import {
   isMetaCapiConfigured,
   sendMetaServerEvents,
@@ -15,6 +15,7 @@ import { META_EVENT } from "@/lib/meta-event-ids";
 
 async function parseCheckoutBody(request: NextRequest): Promise<{
   locale?: string;
+  country?: string;
   fbc?: string;
   fbp?: string;
   sourceUrl?: string;
@@ -26,6 +27,7 @@ async function parseCheckoutBody(request: NextRequest): Promise<{
   try {
     const body = (await request.json()) as {
       locale?: string;
+      country?: string;
       fbc?: string;
       fbp?: string;
       sourceUrl?: string;
@@ -33,6 +35,10 @@ async function parseCheckoutBody(request: NextRequest): Promise<{
     };
     return {
       locale: typeof body?.locale === "string" ? normalizeLocaleTag(body.locale) ?? undefined : undefined,
+      country:
+        typeof body?.country === "string" && body.country.trim().length === 2
+          ? body.country.trim().toUpperCase()
+          : undefined,
       fbc: typeof body?.fbc === "string" ? body.fbc : undefined,
       fbp: typeof body?.fbp === "string" ? body.fbp : undefined,
       sourceUrl: typeof body?.sourceUrl === "string" ? body.sourceUrl : undefined,
@@ -52,10 +58,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
   }
 
-  const country = getClientCountry(request);
+  const countryParam = request.nextUrl.searchParams.get("country");
+  const country = await resolveClientCountry(
+    request,
+    body.country || countryParam
+  );
   const locale =
     bodyLocale ?? detectServerLocale(request.headers.get("accept-language"));
-  const preferLocale = Boolean(bodyLocale);
 
   if (isCheckoutBlocked(country)) {
     return NextResponse.json(
@@ -69,7 +78,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const localizedPrice = getLocalizedPrice(country, locale, { preferLocale });
+  const localizedPrice = getLocalizedPrice(country, locale, {
+    preferLocale: preferLocalePricing(country, Boolean(bodyLocale)),
+  });
   const appUrl = getAppBaseUrl(request);
   const isGuest = !auth;
 

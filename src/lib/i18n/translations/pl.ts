@@ -227,6 +227,10 @@ export const pl = {
         q: "Czy moje dane są prywatne?",
         a: "Twoje uploady i wygenerowane zdjęcia są prywatne na twoim koncie. Nigdy nie publikujemy, nie udostępniamy ani nie trenujemy publicznych modeli na twojej twarzy, a usunięcie możesz poprosić w każdej chwili",
       },
+      {
+        q: "Jak długo przechowywane są moje zdjęcia i jak długo ważne są kredyty?",
+        a: "Wygenerowane zdjęcia pozostają w galerii przez 1–2 miesiące. Kredyty są ważne przez pełny rok od zakupu, więc masz dużo czasu na generowanie, edycję i pobieranie",
+      },
     ],
   },
 

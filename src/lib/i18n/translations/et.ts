@@ -230,6 +230,10 @@ export const et = {
         q: "Kas mu andmed on privaatsed?",
         a: "Sinu üleslaadimised ja genereeritud fotod on privaatsed sinu kontol. Me ei postita, jaga ega treeni avalikke mudeleid sinu näoga kunagi, ja saad igal ajal kustutamist taotleda",
       },
+      {
+        q: "Kui kaua mu fotosid hoitakse ja kui kaua kehtivad krediidid?",
+        a: "Genereeritud fotod jäävad galeriisse 1–2 kuuks. Krediidid kehtivad terve aasta ostust alates",
+      },
     ],
   },
 

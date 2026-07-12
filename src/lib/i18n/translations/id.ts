@@ -223,6 +223,10 @@ export const id = {
         q: "Apakah data saya privat?",
         a: "Upload dan foto yang di-generate privat untuk akunmu. Kami tidak pernah posting, sharing, atau melatih model publik dengan wajahmu, dan kamu bisa minta penghapusan kapan saja",
       },
+      {
+        q: "Berapa lama foto disimpan dan berapa lama kredit berlaku?",
+        a: "Foto yang dibuat tetap di galeri 1–2 bulan. Kredit berlaku satu tahun penuh sejak pembelian, cukup waktu untuk membuat, mengedit, dan mengunduh",
+      },
     ],
   },
 

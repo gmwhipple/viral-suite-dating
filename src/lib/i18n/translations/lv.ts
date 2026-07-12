@@ -227,6 +227,10 @@ export const lv = {
         q: "Vai mani dati ir privāti?",
         a: "Tavi augšupielādes un ģenerētie attēli ir privāti tavā kontā. Mēs nekad nepublicējam, nekopīgojam un neapmācām publiskos modeļus ar tavu seju, un izdzēšanu vari pieprasīt jebkurā laikā",
       },
+      {
+        q: "Cik ilgi tiek glabātas manas fotogrāfijas un cik ilgi der kredīti?",
+        a: "Ģenerētās fotogrāfijas paliek galerijā 1–2 mēnešus. Kredīti ir derīgi visu gadu no pirkuma",
+      },
     ],
   },
 

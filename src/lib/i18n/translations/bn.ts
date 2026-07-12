@@ -221,6 +221,10 @@ export const bn = {
         q: "আমার data private?",
         a: "upload ও generated photos আপনার account-এ private। আমরা post, share, বা public model-এ face train করি না; anytime deletion request করতে পারেন",
       },
+      {
+        q: "ছবি কতদিন সংরক্ষিত থাকে এবং ক্রেডিট কতদিন থাকে?",
+        a: "তৈরি ছবি ১–২ মাস গ্যালারিতে থাকে। ক্রেডিট কেনার পর এক বছর পর্যন্ত বৈধ",
+      },
     ],
   },
 

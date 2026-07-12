@@ -224,6 +224,10 @@ export const pt = {
         q: "Os meus dados são privados?",
         a: "Os seus uploads e fotos geradas são privados da sua conta. Nunca publicamos, partilhamos ou treinamos modelos públicos com o seu rosto, e pode pedir eliminação a qualquer momento",
       },
+      {
+        q: "Por quanto tempo as minhas fotos ficam guardadas e quanto tempo duram os créditos?",
+        a: "As fotos geradas ficam disponíveis na sua galeria durante 1 a 2 meses. Os créditos são válidos durante um ano completo a partir da compra, para ter tempo de gerar, editar e descarregar tudo o que precisar",
+      },
     ],
   },
 

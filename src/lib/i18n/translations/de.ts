@@ -229,6 +229,10 @@ export const de = {
         q: "Sind meine Daten privat?",
         a: "Deine Uploads und generierten Fotos sind privat in deinem Konto. Wir posten, teilen oder trainieren nie öffentliche Modelle mit deinem Gesicht, und du kannst jederzeit die Löschung anfordern",
       },
+      {
+        q: "Wie lange werden meine Fotos gespeichert und wie lange sind Credits gültig?",
+        a: "Generierte Fotos bleiben 1 bis 2 Monate in deiner Galerie verfügbar. Credits sind ab dem Kauf ein volles Jahr gültig, sodass du genügend Zeit hast, alles zu generieren, zu bearbeiten und herunterzuladen",
+      },
     ],
   },
 

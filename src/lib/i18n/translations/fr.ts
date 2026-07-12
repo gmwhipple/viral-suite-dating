@@ -233,6 +233,10 @@ export const fr = {
         q: "Mes données sont-elles privées ?",
         a: "Vos téléchargements et photos générées sont privés à votre compte. Nous ne publions, ne partageons ni n'entraînons de modèles publics sur votre visage, et vous pouvez demander la suppression à tout moment",
       },
+      {
+        q: "Combien de temps mes photos sont-elles conservées et combien de temps durent les crédits ?",
+        a: "Les photos générées restent disponibles dans votre galerie pendant 1 à 2 mois. Les crédits sont valables un an à compter de l'achat, vous laissant amplement le temps de générer, modifier et télécharger tout ce dont vous avez besoin",
+      },
     ],
   },
 

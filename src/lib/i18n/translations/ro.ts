@@ -226,6 +226,10 @@ export const ro = {
         q: "Datele mele sunt private?",
         a: "Încărcările și fotografiile generate sunt private în contul tău. Nu postăm, nu partajăm și nu antrenăm modele publice pe fața ta, iar poți solicita ștergerea oricând",
       },
+      {
+        q: "Cât timp sunt stocate fotografiile și cât durează creditele?",
+        a: "Fotografiile generate rămân în galerie 1–2 luni. Creditele sunt valabile un an întreg de la cumpărare, pentru generare, editare și descărcare",
+      },
     ],
   },
 

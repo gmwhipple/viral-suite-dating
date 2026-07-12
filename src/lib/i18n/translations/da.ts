@@ -225,6 +225,10 @@ export const da = {
         q: "Er mine data private?",
         a: "Dine uploads og genererede fotos er private på din konto. Vi poster, deler eller træner aldrig offentlige modeller på dit ansigt, og du kan til enhver tid anmode om sletning",
       },
+      {
+        q: "Hvor længe gemmes mine billeder, og hvor længe varer credits?",
+        a: "Genererede billeder er tilgængelige i galleriet i 1–2 måneder. Credits er gyldige et helt år fra køb, så du har god tid til at generere, redigere og downloade",
+      },
     ],
   },
 

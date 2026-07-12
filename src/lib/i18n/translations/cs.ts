@@ -222,6 +222,10 @@ export const cs = {
         q: "Jsou moje data soukromá?",
         a: "Vaše nahrané a vygenerované fotky jsou soukromé ve vašem účtu. Nikdy nepostujeme, nesdílíme ani netrénujeme veřejné modely na vaší tváři a kdykoli můžete požádat o smazání",
       },
+      {
+        q: "Jak dlouho se ukládají mé fotky a jak dlouho platí kredity?",
+        a: "Vygenerované fotky zůstávají v galerii 1–2 měsíce. Kredity platí celý rok od nákupu, takže máte dost času na generování, úpravy a stažení",
+      },
     ],
   },
 

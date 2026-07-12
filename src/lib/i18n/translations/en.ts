@@ -231,6 +231,10 @@ export const en = {
         q: "Is my data private?",
         a: "Your uploads and generated photos are private to your account. We never post, share, or train public models on your face, and you can request deletion anytime",
       },
+      {
+        q: "How long are my photos stored, and how long do credits last?",
+        a: "Generated photos stay available in your gallery for 1 to 2 months. Credits are valid for a full year from purchase, so you have plenty of time to generate, edit, and download everything you need",
+      },
     ],
   },
 

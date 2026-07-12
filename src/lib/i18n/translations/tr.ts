@@ -229,6 +229,10 @@ export const tr: Dictionary = {
         q: "Verilerim özel mi?",
         a: "Yüklemeleriniz ve oluşturulan fotoğraflarınız hesabınıza özeldir. Yüzünüzü asla paylaşmaz, yayınlamaz veya genel modeller üzerinde eğitmeyiz; istediğiniz zaman silme talep edebilirsiniz",
       },
+      {
+        q: "Fotoğraflarım ne kadar saklanır, krediler ne kadar geçerlidir?",
+        a: "Oluşturulan fotoğraflar galerinizde 1–2 ay kalır. Krediler satın almadan itibaren tam bir yıl geçerlidir; üretmek, düzenlemek ve indirmek için bolca zamanınız olur",
+      },
     ],
   },
 

@@ -89,6 +89,14 @@ export function roundMarketingUsd(raw: number): number {
   return Math.max(9, Math.round(raw / 5) * 5 - 1);
 }
 
+/** Geo wins for currency/tier; locale country is only used when geo is unknown (localhost). */
+export function preferLocalePricing(
+  geoCountry: string | null | undefined,
+  hasLocaleHint: boolean
+): boolean {
+  return !geoCountry && hasLocaleHint;
+}
+
 export function getPricingTier(countryCode: string | null | undefined): PricingTier {
   if (!countryCode) return "tier1";
   const code = countryCode.toUpperCase();

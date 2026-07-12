@@ -8,7 +8,12 @@ import {
   trackInitiateCheckout,
 } from "@/lib/meta-browser";
 
-export function useGuestCheckout(locale: string, priceUsd = 199, currency = "USD") {
+export function useGuestCheckout(
+  locale: string,
+  priceUsd = 199,
+  currency = "USD",
+  country: string | null = null
+) {
   const { token } = useAuth();
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
@@ -43,6 +48,7 @@ export function useGuestCheckout(locale: string, priceUsd = 199, currency = "USD
           headers,
           body: JSON.stringify({
             locale,
+            ...(country ? { country } : {}),
             fbc: attribution.fbc,
             fbp: attribution.fbp,
             sourceUrl: attribution.sourceUrl,
@@ -84,7 +90,7 @@ export function useGuestCheckout(locale: string, priceUsd = 199, currency = "USD
         setCheckingOut(false);
       }
     },
-    [locale, token, priceUsd, currency]
+    [locale, token, priceUsd, currency, country]
   );
 
   return {

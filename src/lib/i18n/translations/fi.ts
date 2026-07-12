@@ -231,6 +231,10 @@ export const fi = {
         q: "Ovatko tietoni yksityisiä?",
         a: "Latauksesi ja generoidut kuvasi ovat yksityisiä tililläsi. Emme koskaan julkaise, jaa tai kouluta julkisia malleja kasvoillasi, ja voit pyytää poistoa milloin tahansa",
       },
+      {
+        q: "Kuinka kauan kuviani säilytetään ja kuinka kauan krediitit ovat voimassa?",
+        a: "Luodut kuvat ovat galleriassa 1–2 kuukautta. Krediitit ovat voimassa täyden vuoden oston jälkeen, joten sinulla on aikaa luoda, muokata ja ladata",
+      },
     ],
   },
 

@@ -226,6 +226,10 @@ export const ms = {
         q: "Adakah data saya peribadi?",
         a: "Muat naik dan foto dijana anda peribadi pada akaun anda. Kami tidak pernah siar, kongsi, atau latih model awam pada wajah anda, dan anda boleh minta pemadaman bila-bila masa",
       },
+      {
+        q: "Berapa lama foto disimpan dan berapa lama kredit sah?",
+        a: "Foto yang dijana kekal dalam galeri 1–2 bulan. Kredit sah satu tahun penuh dari pembelian",
+      },
     ],
   },
 

@@ -1,22 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getClientCountry } from "@/lib/client-country";
 import { detectServerLocale, normalizeLocaleTag } from "@/lib/i18n/locale-detection";
 import {
   BASE_PRICE_USD,
   getLocalizedPhotographerPrice,
   getLocalizedPrice,
   isCheckoutBlocked,
+  preferLocalePricing,
   TIER_PRICES_USD,
 } from "@/lib/stripe-pricing";
+import { resolveClientCountry } from "@/lib/resolve-client-country";
 
 export async function GET(request: NextRequest) {
-  const geoCountry = getClientCountry(request);
+  const countryParam = request.nextUrl.searchParams.get("country");
+  const geoCountry = await resolveClientCountry(request, countryParam);
   const localeParam = request.nextUrl.searchParams.get("locale");
   const locale =
     (localeParam ? normalizeLocaleTag(localeParam) : null) ??
     detectServerLocale(request.headers.get("accept-language"));
 
-  const preferLocale = Boolean(localeParam);
+  const preferLocale = preferLocalePricing(geoCountry, Boolean(localeParam));
   const blocked = isCheckoutBlocked(geoCountry);
   const pricing = getLocalizedPrice(geoCountry, locale, { preferLocale });
   const photographer = getLocalizedPhotographerPrice(geoCountry, locale, { preferLocale });

@@ -225,6 +225,10 @@ export const hu = {
         q: "Privátak az adataim?",
         a: "A feltöltéseid és generált fotóid privátak a fiókodban. Soha nem posztoljuk, osztjuk meg vagy tanítunk nyilvános modelleket az arcoddal, és bármikor kérheted a törlést",
       },
+      {
+        q: "Meddig tárolódnak a képeim és meddig érvényesek a kreditek?",
+        a: "A generált fotók 1–2 hónapig érhetők el a galériában. A kreditek a vásárlástól számított egy teljes évig érvényesek",
+      },
     ],
   },
 

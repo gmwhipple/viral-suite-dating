@@ -225,6 +225,10 @@ export const sr = {
         q: "Da li su moji podaci privatni?",
         a: "Tvoji otpremljeni i generisani materijali privatni su na tvom nalogu. Nikad ne objavljujemo, ne delimo niti treniramo javne modele na tvom licu, a brisanje možeš da zatražiš bilo kada",
       },
+      {
+        q: "Koliko dugo se čuvaju moje fotografije i koliko traju krediti?",
+        a: "Generisane fotografije ostaju u galeriji 1–2 meseca. Krediti važe celu godinu od kupovine",
+      },
     ],
   },
 

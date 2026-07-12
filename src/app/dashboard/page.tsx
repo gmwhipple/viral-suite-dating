@@ -67,7 +67,7 @@ function DashboardContent() {
   const [checkoutBlocked, setCheckoutBlocked] = useState(false);
   const [locale, setLocale] = useState("en");
   const checkoutStartedRef = useRef(false);
-  const { prices, blocked: pricingBlocked } = useLocalizedPricing(locale);
+  const { prices, blocked: pricingBlocked, country: pricingCountry } = useLocalizedPricing(locale);
   const checkoutPriceLabel = prices.productLabel;
   const { open: helpOpen, openHelp, closeHelp } = useDashboardHelp(user?.uid);
 
@@ -163,6 +163,7 @@ function DashboardContent() {
         },
         body: JSON.stringify({
           locale,
+          country: pricingCountry ?? undefined,
           fbc: attribution.fbc,
           fbp: attribution.fbp,
           sourceUrl: attribution.sourceUrl,

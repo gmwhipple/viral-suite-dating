@@ -109,17 +109,7 @@ const GAZE_EXAMPLES: Record<Audience, string[]> = {
   ],
 };
 
-const DATING_APPS = [
-  "Tinder",
-  "Hinge",
-  "Bumble",
-  "OkCupid",
-  "Match",
-  "Badoo",
-  "Raya",
-  "The League",
-];
-
+import { getDatingAppsForLocale } from "@/lib/i18n/dating-apps-by-locale";
 const ACCENT = "text-rose-500";
 const ACCENT_BG = "bg-rose-500";
 
@@ -158,11 +148,12 @@ function CheckoutButton({
 
 export function LandingPage({ onCtaClick }: LandingPageProps) {
   const { t, locale, setLocale } = useTranslations();
-  const { prices } = useLocalizedPricing(locale);
+  const { prices, country: pricingCountry } = useLocalizedPricing(locale);
   const { startCheckout, checkingOut, checkoutError, checkoutBlocked } = useGuestCheckout(
     locale,
     prices.productAmount,
-    prices.currency.toUpperCase()
+    prices.currency.toUpperCase(),
+    pricingCountry
   );
   const [audience, setAudience] = useState<Audience>("him");
   const photoCount = MAX_GENERATIONS_PER_USER;
@@ -184,9 +175,6 @@ export function LandingPage({ onCtaClick }: LandingPageProps) {
         t={t}
         locale={locale}
         onLocaleChange={setLocale}
-        onCheckout={handleCheckout}
-        checkingOut={checkingOut}
-        checkoutBlocked={checkoutBlocked}
       />
 
       {checkoutError && (
@@ -207,7 +195,7 @@ export function LandingPage({ onCtaClick }: LandingPageProps) {
           checkoutBlocked={checkoutBlocked}
         />
         <BeforeAfterSection t={t} audience={audience} onAudienceChange={setAudience} />
-        <TrustMarquee t={t} />
+        <TrustMarquee t={t} locale={locale} />
         <ProofSection t={t} audience={audience} />
         <GazeSection t={t} />
         <PhotoshootComparison t={t} priceValues={priceValues} />
@@ -244,16 +232,10 @@ function FloatingNav({
   t,
   locale,
   onLocaleChange,
-  onCheckout,
-  checkingOut,
-  checkoutBlocked,
 }: {
   t: Dictionary;
   locale: string;
   onLocaleChange: (locale: string) => void;
-  onCheckout: () => void;
-  checkingOut?: boolean;
-  checkoutBlocked?: boolean;
 }) {
   const links = [
     { href: "#results", label: t.nav.results },
@@ -291,13 +273,6 @@ function FloatingNav({
           >
             {t.nav.signIn}
           </Link>
-          <CheckoutButton
-            label={t.nav.getStarted}
-            onCheckout={onCheckout}
-            checkingOut={checkingOut}
-            disabled={checkoutBlocked}
-            className={cn(CTA_PRIMARY, "whitespace-nowrap px-5 py-2.5 text-xs")}
-          />
         </div>
       </div>
     </header>
@@ -603,8 +578,9 @@ function Hero({
 
 /* ------------------------------ Trust marquee ---------------------------- */
 
-function TrustMarquee({ t }: { t: Dictionary }) {
-  const items = [...DATING_APPS, ...DATING_APPS];
+function TrustMarquee({ t, locale }: { t: Dictionary; locale: string }) {
+  const datingApps = getDatingAppsForLocale(locale);
+  const items = [...datingApps, ...datingApps];
 
   return (
     <section className="border-y border-white/10 py-10">

@@ -228,6 +228,10 @@ export const sv = {
         q: "Är mina data privata?",
         a: "Dina uppladdningar och genererade foton är privata för ditt konto. Vi publicerar, delar eller tränar aldrig publika modeller på ditt ansikte, och du kan begära radering när som helst",
       },
+      {
+        q: "Hur länge sparas mina bilder och hur länge gäller krediter?",
+        a: "Genererade bilder finns i galleriet i 1–2 månader. Krediter gäller ett helt år från köp, så du har gott om tid att generera, redigera och ladda ner",
+      },
     ],
   },
 

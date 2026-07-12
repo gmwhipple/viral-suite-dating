@@ -225,6 +225,10 @@ export const nb = {
         q: "Er dataene mine private?",
         a: "Opplastingene og genererte bilder er private på kontoen din. Vi poster, deler eller trener aldri offentlige modeller på ansiktet ditt, og du kan be om sletting når som helst",
       },
+      {
+        q: "Hvor lenge lagres bildene mine, og hvor lenge varer kreditter?",
+        a: "Genererte bilder er tilgjengelige i galleriet i 1–2 måneder. Kreditter er gyldige et helt år fra kjøp, så du har god tid til å generere, redigere og laste ned",
+      },
     ],
   },
 

@@ -229,6 +229,10 @@ export const nl = {
         q: "Zijn mijn gegevens privé?",
         a: "Je uploads en gegenereerde foto's zijn privé voor je account. We plaatsen, delen of trainen nooit publieke modellen op je gezicht, en je kunt op elk moment verwijdering aanvragen",
       },
+      {
+        q: "Hoe lang worden mijn foto's bewaard en hoe lang blijven credits geldig?",
+        a: "Gegenereerde foto's blijven 1 tot 2 maanden beschikbaar in je galerij. Credits zijn een volledig jaar geldig vanaf aankoop, zodat je ruim de tijd hebt om alles te genereren, bewerken en downloaden",
+      },
     ],
   },
 

@@ -231,6 +231,10 @@ export const sw = {
         q: "Je, data yangu ni ya faragha?",
         a: "Upakiaji wako na picha zilizotengenezwa ni za faragha kwenye akaunti yako. Hatutawahi kuchapisha, kushiriki, au kufundisha modeli za umma kwa uso wako, na unaweza kuomba kufutwa wakati wowote",
       },
+      {
+        q: "Picha zinahifadhiwa kwa muda gani na mikopo inadumu kwa muda gani?",
+        a: "Picha zilizotengenezwa zinabaki kwenye gallery kwa mwezi 1–2. Mikopo inatumika mwaka mzima tangu ununuzi",
+      },
     ],
   },
 
