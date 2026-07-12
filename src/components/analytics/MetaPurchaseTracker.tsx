@@ -2,7 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
-import { purchaseEventIdFromSession, trackPurchase } from "@/lib/meta-browser";
+import { purchaseEventId, trackPurchase } from "@/lib/meta-browser";
+
+const purchaseStorageKey = (sessionId: string) => `meta_purchase_${sessionId}`;
 
 export function MetaPurchaseTracker() {
   const searchParams = useSearchParams();
@@ -14,6 +16,15 @@ export function MetaPurchaseTracker() {
 
     const sessionId = searchParams.get("session_id");
     if (!sessionId) return;
+
+    const eventId = purchaseEventId(sessionId);
+
+    if (typeof sessionStorage !== "undefined") {
+      if (sessionStorage.getItem(purchaseStorageKey(sessionId))) {
+        console.log("[meta/pixel] Purchase already sent for session", sessionId.slice(0, 12));
+        return;
+      }
+    }
 
     firedRef.current = true;
 
@@ -35,11 +46,17 @@ export function MetaPurchaseTracker() {
       }
 
       trackPurchase({
-        eventId: purchaseEventIdFromSession(sessionId),
+        eventId,
         value,
         currency,
       });
+
+      if (typeof sessionStorage !== "undefined") {
+        sessionStorage.setItem(purchaseStorageKey(sessionId), eventId);
+      }
+
       console.log("[meta/pixel] Purchase tracked", {
+        eventId,
         sessionId: sessionId.slice(0, 12),
         value,
         currency,

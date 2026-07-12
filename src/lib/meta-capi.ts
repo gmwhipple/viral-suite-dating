@@ -1,12 +1,15 @@
 import crypto from "crypto";
+import { META_EVENT, purchaseEventId } from "@/lib/meta-event-ids";
+
+export { purchaseEventId } from "@/lib/meta-event-ids";
 
 const GRAPH_API_VERSION = "v22.0";
 
 export type MetaCapiEventName =
-  | "ViewContent"
-  | "InitiateCheckout"
+  | typeof META_EVENT.ViewContent
+  | typeof META_EVENT.InitiateCheckout
   | "AddPaymentInfo"
-  | "Purchase";
+  | typeof META_EVENT.Purchase;
 
 export interface MetaUserDataInput {
   email?: string | null;
@@ -45,6 +48,21 @@ function getPixelId(): string | undefined {
     process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() ||
     undefined
   );
+}
+
+function useMetaCapiTestMode(): boolean {
+  const testCode = process.env.META_TEST_EVENT_CODE?.trim();
+  if (!testCode) return false;
+
+  // Explicit override — set META_CAPI_TEST_MODE=true only while debugging in Events Manager.
+  if (process.env.META_CAPI_TEST_MODE === "true") return true;
+  if (process.env.META_CAPI_TEST_MODE === "false") return false;
+
+  // Production app URL → never tag CAPI events as test (they won't show in Overview).
+  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").toLowerCase();
+  if (appUrl.includes("signatureswipe.com")) return false;
+
+  return true;
 }
 
 function getAccessToken(): string | undefined {
@@ -157,7 +175,7 @@ export async function sendMetaServerEvents(events: MetaServerEventInput[]): Prom
   };
 
   const testCode = process.env.META_TEST_EVENT_CODE?.trim();
-  if (testCode) payload.test_event_code = testCode;
+  if (useMetaCapiTestMode() && testCode) payload.test_event_code = testCode;
 
   const url = `https://graph.facebook.com/${GRAPH_API_VERSION}/${pixelId}/events?access_token=${encodeURIComponent(accessToken)}`;
 
@@ -181,21 +199,16 @@ export async function sendMetaServerEvents(events: MetaServerEventInput[]): Prom
     }
 
     console.log("[meta/capi] sent", {
-      events: events.map((event) => event.eventName),
+      events: events.map((event) => ({
+        eventName: event.eventName,
+        eventId: event.eventId,
+      })),
       received: json.events_received,
-      testMode: Boolean(testCode),
+      testMode: useMetaCapiTestMode(),
     });
     return true;
   } catch (err) {
     console.log("[meta/capi] request failed", err instanceof Error ? err.message : err);
     return false;
   }
-}
-
-export function purchaseEventId(sessionId: string): string {
-  return `purchase_${sessionId}`;
-}
-
-export function checkoutEventId(sessionId: string): string {
-  return `checkout_${sessionId}`;
 }

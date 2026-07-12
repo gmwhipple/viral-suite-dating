@@ -11,9 +11,9 @@ import { trackABEvent } from "@/lib/ab-testing";
 import {
   buildMetaUserDataFromStripeSession,
   isMetaCapiConfigured,
-  purchaseEventId,
   sendMetaServerEvents,
 } from "@/lib/meta-capi";
+import { META_EVENT, purchaseEventId } from "@/lib/meta-event-ids";
 
 function getCheckoutEmail(session: {
   customer_details?: { email?: string | null } | null;
@@ -125,7 +125,7 @@ export async function POST(request: NextRequest) {
 
       await sendMetaServerEvents([
         {
-          eventName: "Purchase",
+          eventName: META_EVENT.Purchase,
           eventId: purchaseEventId(session.id),
           eventSourceUrl: session.metadata?.metaSourceUrl,
           userData: buildMetaUserDataFromStripeSession(session),

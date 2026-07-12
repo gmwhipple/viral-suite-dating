@@ -8,10 +8,10 @@ import { getClientCountry } from "@/lib/client-country";
 import { detectServerLocale, normalizeLocaleTag } from "@/lib/i18n/locale-detection";
 import { getLocalizedPrice, isCheckoutBlocked } from "@/lib/stripe-pricing";
 import {
-  checkoutEventId,
   isMetaCapiConfigured,
   sendMetaServerEvents,
 } from "@/lib/meta-capi";
+import { META_EVENT } from "@/lib/meta-event-ids";
 
 async function parseCheckoutBody(request: NextRequest): Promise<{
   locale?: string;
@@ -122,11 +122,11 @@ export async function POST(request: NextRequest) {
       }
     );
 
-    if (isMetaCapiConfigured()) {
+    if (isMetaCapiConfigured() && body.checkoutEventId) {
       await sendMetaServerEvents([
         {
-          eventName: "InitiateCheckout",
-          eventId: body.checkoutEventId || checkoutEventId(session.id),
+          eventName: META_EVENT.InitiateCheckout,
+          eventId: body.checkoutEventId,
           eventSourceUrl: body.sourceUrl || request.headers.get("referer") || `${appUrl}/`,
           userData: {
             email: auth?.email,
@@ -144,6 +144,8 @@ export async function POST(request: NextRequest) {
           },
         },
       ]);
+    } else if (isMetaCapiConfigured()) {
+      console.log("[meta/capi] skipped InitiateCheckout — missing checkoutEventId (pixel/CAPI dedup requires same id)");
     }
 
     console.log("[stripe/checkout] session created", {

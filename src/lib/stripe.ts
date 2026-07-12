@@ -75,6 +75,7 @@ export async function createCheckoutSession(params: {
 
   const session = await getStripe().checkout.sessions.create({
     mode: "payment",
+    allow_promotion_codes: true,
     locale: mapLocaleToStripe(params.locale || "en"),
     customer_creation: "always",
     ...(params.email ? { customer_email: params.email } : {}),

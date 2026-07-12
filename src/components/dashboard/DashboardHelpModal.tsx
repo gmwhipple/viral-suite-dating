@@ -318,17 +318,17 @@ function ValidateSlide() {
       </p>
 
       <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-5">
-        <p className="text-sm font-semibold text-emerald-900">Test on PhotoFeelr</p>
+        <p className="text-sm font-semibold text-emerald-900">Test on PhotoFeeler</p>
         <p className="mt-2 text-sm leading-relaxed text-emerald-800">
           Upload your best-looking generated photos — the ones where you look like your most attractive,
           authentic self — to{" "}
           <a
-            href="https://www.photofeelr.com"
+            href="https://www.photofeeler.com"
             target="_blank"
             rel="noopener noreferrer"
             className="font-semibold underline underline-offset-2"
           >
-            photofeelr.com
+            photofeeler.com
           </a>
           . Real people rate your photos so you get unbiased feedback from your target demographic
           before you put them live on Tinder, Hinge, or Bumble.
@@ -342,7 +342,7 @@ function ValidateSlide() {
         />
         <HelpBullet
           title="Let the data decide"
-          body="Your friends may be kind; strangers voting on PhotoFeelr tell you what actually stops the scroll for your target audience."
+          body="Your friends may be kind; strangers voting on PhotoFeeler tell you what actually stops the scroll for your target audience."
         />
         <HelpBullet
           title="Iterate and improve"
