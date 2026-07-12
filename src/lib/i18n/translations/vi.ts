@@ -147,7 +147,7 @@ export const vi = {
 
   match: {
     kicker: "Đích đến của hành trình",
-    title: "Cuộc trò chuyện chất lượng hơn bắt đầu từ cú vuốt",
+    title: "Cuộc trò chuyện chất lượng hơn bắt đầu từ ảnh đẹp hơn",
     body: "Nhiều match chỉ là khởi đầu. Khi ảnh của bạn cuối cùng thể hiện bạn thú vị và tự tin thế nào, buổi hẹn ít bùng hơn, trò chuyện mở đầu mạnh hơn, và \u201cbạn giống hệt ảnh\u201d trở thành lời khen, không phải sự nhẹ nhõm",
     imageAlt: "Màn hình match Tinder hiển thị It's a Match",
   },

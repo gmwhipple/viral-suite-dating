@@ -152,7 +152,7 @@ export const lt = {
 
   match: {
     kicker: "Kur tai veda",
-    title: "Kokybiškesni pokalbiai prasideda nuo swipe",
+    title: "Kokybiškesni pokalbiai prasideda nuo geresnių nuotraukų",
     body: "Daugiau atitikimų, tik pradžia. Kai tavo nuotraukos pagaliau parodo, koks įdomus ir pasitikintis atrodai, pasimatymai nebedingsta, pokalbiai prasideda stipriau, o „atrodi kaip nuotraukose“ tampa komplimentu, ne palengvėjimu",
     imageAlt: "Tinder atitikimų ekranai su It's a Match",
   },

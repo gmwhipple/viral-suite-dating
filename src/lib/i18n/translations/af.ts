@@ -151,7 +151,7 @@ export const af = {
 
   match: {
     kicker: "Waar dit eindig",
-    title: "Gesprekke van hoër kwaliteit begin by die swipe",
+    title: "Gesprekke van hoër kwaliteit begin met beter foto's",
     body: "Meer matches is net die begin. Wanneer jou foto's uiteindelik wys hoe interessant en selfversekerd jy lyk, kanselleer mense nie meer nie, geselsies begin sterker, en \u201cjy lyk presies soos jou foto's\u201d word 'n kompliment, nie 'n verligting nie",
     imageAlt: "Tinder match-skermme wat It's a Match wys",
   },

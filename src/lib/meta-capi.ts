@@ -50,21 +50,6 @@ function getPixelId(): string | undefined {
   );
 }
 
-function useMetaCapiTestMode(): boolean {
-  const testCode = process.env.META_TEST_EVENT_CODE?.trim();
-  if (!testCode) return false;
-
-  // Explicit override — set META_CAPI_TEST_MODE=true only while debugging in Events Manager.
-  if (process.env.META_CAPI_TEST_MODE === "true") return true;
-  if (process.env.META_CAPI_TEST_MODE === "false") return false;
-
-  // Production app URL → never tag CAPI events as test (they won't show in Overview).
-  const appUrl = (process.env.NEXT_PUBLIC_APP_URL || "").toLowerCase();
-  if (appUrl.includes("signatureswipe.com")) return false;
-
-  return true;
-}
-
 function getAccessToken(): string | undefined {
   return process.env.META_DATASET_QUALITY_API?.trim();
 }
@@ -151,10 +136,7 @@ export async function sendMetaServerEvents(events: MetaServerEventInput[]): Prom
     return false;
   }
 
-  const payload: {
-    data: Array<Record<string, unknown>>;
-    test_event_code?: string;
-  } = {
+  const payload = {
     data: events.map((event) => ({
       event_name: event.eventName,
       event_time: event.eventTime ?? Math.floor(Date.now() / 1000),
@@ -173,9 +155,6 @@ export async function sendMetaServerEvents(events: MetaServerEventInput[]): Prom
         : {}),
     })),
   };
-
-  const testCode = process.env.META_TEST_EVENT_CODE?.trim();
-  if (useMetaCapiTestMode() && testCode) payload.test_event_code = testCode;
 
   const url = `https://graph.facebook.com/${GRAPH_API_VERSION}/${pixelId}/events?access_token=${encodeURIComponent(accessToken)}`;
 
@@ -204,7 +183,6 @@ export async function sendMetaServerEvents(events: MetaServerEventInput[]): Prom
         eventId: event.eventId,
       })),
       received: json.events_received,
-      testMode: useMetaCapiTestMode(),
     });
     return true;
   } catch (err) {

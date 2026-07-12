@@ -151,7 +151,7 @@ export const fil = {
 
   match: {
     kicker: "Kung saan ito hahantong",
-    title: "Mas de-kalidad na usapan ang nagsisimula sa swipe",
+    title: "Mas de-kalidad na usapan ang nagsisimula sa mas magagandang larawan",
     body: "Simula lang ang mas maraming match. Kapag ipinapakita na ng mga larawan mo kung gaano ka ka-interesting at confident, tumitigil ang hindi pagdating ng mga date, mas malakas ang simula ng usapan, at ang \u201cmukha kang larawan mo\u201d ay papuri na, hindi ginhawa",
     imageAlt: "Mga Tinder match screen na may It's a Match",
   },

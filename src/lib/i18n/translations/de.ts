@@ -153,7 +153,7 @@ export const de = {
 
   match: {
     kicker: "Wohin das führt",
-    title: "Hochwertigere Gespräche beginnen beim Swipe",
+    title: "Hochwertigere Gespräche beginnen mit besseren Fotos",
     body: "Mehr Matches sind nur der Anfang. Wenn deine Fotos endlich zeigen, wie interessant und selbstbewusst du wirkst, sagen Dates nicht mehr ab, Gespräche starten stärker, und „du siehst genauso aus wie auf deinen Bildern“ wird ein Kompliment, kein Erleichterungsseufzer",
     imageAlt: "Tinder-Match-Bildschirme mit It's a Match",
   },

@@ -152,7 +152,7 @@ export const sv = {
 
   match: {
     kicker: "Var det här slutar",
-    title: "Högkvalitativa samtal börjar med swipen",
+    title: "Högkvalitativa samtal börjar med bättre bilder",
     body: "Fler matchningar är bara början. När dina foton äntligen visar hur intressant och självsäker du ser ut avbokas dejter inte längre, samtal öppnar starkare, och \u201cdu ser ut precis som på bilderna\u201d blir en komplimang, inte en lättnad",
     imageAlt: "Tinder-matchskärmar som visar It's a Match",
   },

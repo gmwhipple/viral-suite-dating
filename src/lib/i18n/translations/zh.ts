@@ -136,7 +136,7 @@ export const zh: Dictionary = {
 
   match: {
     kicker: "终点在这里",
-    title: "更高质量的对话从滑动开始",
+    title: "更高质量的对话从更好的照片开始",
     body: "更多匹配只是开始。当照片终于展现你有趣又自信的一面，放鸽子变少，开场更强，「你和照片一样」会成为赞美，而不是松一口气",
     imageAlt: "显示 It's a Match 的 Tinder 匹配界面",
   },

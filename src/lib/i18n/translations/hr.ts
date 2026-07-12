@@ -148,7 +148,7 @@ export const hr = {
 
   match: {
     kicker: "Gdje to završava",
-    title: "Kvalitetniji razgovori počinju swipeom",
+    title: "Kvalitetniji razgovori počinju boljim fotografijama",
     body: "Više matchova je tek početak. Kad tvoje fotografije konačno pokažu koliko zanimljivo i samopouzdano izgledaš, spojevi prestaju nestajati, razgovori kreću jače, a \u201eizgledaš baš kao na slikama\u201c postaje kompliment, a ne olakšanje",
     imageAlt: "Zasloni Tinder matchova s natpisom It's a Match",
   },

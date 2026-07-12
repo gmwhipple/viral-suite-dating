@@ -147,7 +147,7 @@ export const id = {
 
   match: {
     kicker: "Akhir dari semua ini",
-    title: "Percakapan berkualitas lebih tinggi dimulai dari swipe",
+    title: "Percakapan berkualitas lebih tinggi dimulai dari foto yang lebih baik",
     body: "Lebih banyak match cuma permulaan. Saat fotomu akhirnya menunjukkan betapa menarik dan percaya dirimu, kencan jarang batal, obrolan dibuka lebih kuat, dan \u201ckamu persis seperti fotomu\u201d jadi pujian, bukan lega",
     imageAlt: "Layar match Tinder menampilkan It's a Match",
   },

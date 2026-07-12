@@ -151,7 +151,7 @@ export const lv = {
 
   match: {
     kicker: "Kur tas beidzas",
-    title: "Kvalitatīvākas sarunas sākas ar swipe",
+    title: "Kvalitatīvākas sarunas sākas ar labākām fotogrāfijām",
     body: "Vairāk atbilstību, tikai sākums. Kad tavas fotogrāfijas beidzot parāda, cik interesants un pārliecināts izskaties, randiņi vairs neatceļas, sarunas sākas spēcīgāk, un „izskaties tieši kā bildēs“ kļūst par komplimentu, nevis atvieglojumu",
     imageAlt: "Tinder atbilstību ekrāni ar It's a Match",
   },

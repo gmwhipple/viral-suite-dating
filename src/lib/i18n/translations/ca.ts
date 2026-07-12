@@ -153,7 +153,7 @@ export const ca = {
 
   match: {
     kicker: "On acaba això",
-    title: "Converses de millor qualitat comencen amb el swipe",
+    title: "Converses de millor qualitat comencen amb millors fotos",
     body: "Més matches és només el principi. Quan les teves fotos finalment mostren com d'interessant i segur et veus, deixes de rebre plantons, les converses comencen més fortes, i \u201ctens el mateix aspecte que a les teves fotos\u201d es converteix en un elogi, no en un alleujament",
     imageAlt: "Pantalles de match de Tinder mostrant It's a Match",
   },

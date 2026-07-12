@@ -146,7 +146,7 @@ export const cs = {
 
   match: {
     kicker: "Kam to vede",
-    title: "Kvalitnější konverzace začínají swipen",
+    title: "Kvalitnější konverzace začínají lepšími fotkami",
     body: "Více matchů je jen začátek. Když vaše fotky konečně ukazují, jak zajímavě a sebevědomě vypadáte, rande přestávají mizet, konverzace začínají silněji a „vypadáš přesně jako na fotkách“ je kompliment, ne úleva",
     imageAlt: "Obrazovky Tinder matchů s It's a Match",
   },

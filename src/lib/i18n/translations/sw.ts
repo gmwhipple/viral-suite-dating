@@ -154,7 +154,7 @@ export const sw = {
 
   match: {
     kicker: "Mahali hii inaelekea",
-    title: "Mazungumzo bora zaidi huanza na swipe",
+    title: "Mazungumzo bora zaidi huanza na picha bora zaidi",
     body: 'Mechi zaidi ni mwanzo tu. Picha zako zinapoonyesha jinsi unavyovutia na kujiamini, miadi haibati tena, mazungumzo huanza kwa nguvu zaidi, na "unaonekana kama picha zako" inakuwa sifa, si faraja',
     imageAlt: "Skrini za mechi za Tinder zinaonyesha It's a Match",
   },

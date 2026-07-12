@@ -151,7 +151,7 @@ export const sl = {
 
   match: {
     kicker: "Kam to vodi",
-    title: "Kakovostnejši pogovori se začnejo ob swipu",
+    title: "Kakovostnejši pogovori se začnejo z boljšimi fotografijami",
     body: "Več ujemanj je šele začetek. Ko tvoje fotografije končno pokažejo, kako zanimiv in samozavesten izgledaš, zmenki ne odpovedujejo več, pogovori se odprejo močneje, in »izgledaš ravno kot na slikah« postane kompliment, ne olajšanje",
     imageAlt: "Zasloni Tinder ujemanj z napisom It's a Match",
   },

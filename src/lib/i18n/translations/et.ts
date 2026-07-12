@@ -153,7 +153,7 @@ export const et = {
 
   match: {
     kicker: "Kuhu see viib",
-    title: "Kvaliteetsemad vestlused algavad swipe'ist",
+    title: "Kvaliteetsemad vestlused algavad parematest fotodest",
     body: "Rohkem vasteid on alles algus. Kui sinu fotod näitavad lõpuks, kui huvitav ja enesekindel sa välja näed, kohtingud ei tühistu enam, vestlused algavad tugevamalt ja „sa näed välja täpselt nagu piltidel“ muutub komplimendiks, mitte kergenduseks",
     imageAlt: "Tinderi vaste ekraanid It's a Match kirjaga",
   },

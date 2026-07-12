@@ -151,7 +151,7 @@ export const ms = {
 
   match: {
     kicker: "Ke mana ini membawa",
-    title: "Perbualan berkualiti tinggi bermula dengan swipe",
+    title: "Perbualan berkualiti tinggi bermula dengan foto yang lebih baik",
     body: "Lebih banyak padanan hanyalah permulaan. Apabila foto anda akhirnya menunjukkan betapa menarik dan yakin anda kelihatan, tarikh berhenti batal, perbualan bermula lebih kuat, dan \u201canda nampak macam dalam gambar\u201d menjadi pujian, bukan lega",
     imageAlt: "Skrin padanan Tinder menunjukkan It's a Match",
   },

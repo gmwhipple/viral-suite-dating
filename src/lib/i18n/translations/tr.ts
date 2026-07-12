@@ -153,7 +153,7 @@ export const tr: Dictionary = {
 
   match: {
     kicker: "Bunun sonu",
-    title: "Daha kaliteli sohbetler kaydırmayla başlar",
+    title: "Daha kaliteli sohbetler daha iyi fotoğraflarla başlar",
     body: 'Daha fazla eşleşme sadece başlangıç. Fotoğraflarınız sonunda ne kadar ilginç ve kendinden emin göründüğünüzü gösterdiğinde randevular iptal etmeyi bırakır, sohbetler daha güçlü açılır ve "fotoğraflarına çok benziyorsun" bir iltifat olur, rahatlama değil',
     imageAlt: "It's a Match gösteren Tinder eşleşme ekranları",
   },

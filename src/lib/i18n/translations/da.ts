@@ -149,7 +149,7 @@ export const da = {
 
   match: {
     kicker: "Hvor det ender",
-    title: "Bedre samtaler starter med swipet",
+    title: "Bedre samtaler starter med bedre billeder",
     body: "Flere matches er kun begyndelsen. Når dine fotos endelig viser, hvor interessant og selvsikker du ser ud, bliver dates ikke længere aflyst, samtaler starter stærkere, og „du ligner præcis dine billeder“ bliver en kompliment, ikke en lettelse",
     imageAlt: "Tinder-match-skærme med It's a Match",
   },

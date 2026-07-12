@@ -150,7 +150,7 @@ export const hu = {
 
   match: {
     kicker: "Ahová ez vezet",
-    title: "Jobb minőségű beszélgetések a swipe-tól kezdődnek",
+    title: "Jobb minőségű beszélgetések jobb fotókkal kezdődnek",
     body: "A több match csak a kezdet. Amikor a fotóid végre megmutatják, mennyire érdekes és magabiztos vagy, a randik nem mondanak le, a beszélgetések erősebben indulnak, és a „pontosan úgy nézel ki, mint a képeiden” mondat bók lesz, nem megkönnyebbülés",
     imageAlt: "Tinder match képernyők It's a Match felirattal",
   },

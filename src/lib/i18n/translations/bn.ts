@@ -146,7 +146,7 @@ export const bn = {
 
   match: {
     kicker: "এটা কোথায় নিয়ে যায়",
-    title: "উচ্চমানের কথোপকথন সোয়াইপ থেকে শুরু",
+    title: "উচ্চমানের কথোপকথন ভালো ছবি দিয়ে শুরু হয়",
     body: "বেশি ম্যাচ শুধু শুরু। যখন ছবি আপনি কত interesting ও confident দেখান তা দেখায়, ডেট ভেজাল করা বন্ধ, কথা শক্তভাবে শুরু, আর \u201cছবির মতোই দেখাচ্ছ\u201d compliment হয়, relief নয়",
     imageAlt: "Tinder match screen যেখানে It's a Match",
   },

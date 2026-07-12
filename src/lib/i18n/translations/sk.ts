@@ -149,7 +149,7 @@ export const sk = {
 
   match: {
     kicker: "Kde to končí",
-    title: "Kvalitnejšie rozhovory začínajú swipeom",
+    title: "Kvalitnejšie rozhovory začínajú lepšími fotkami",
     body: "Viac matchov je len začiatok. Keď vaše fotky konečne ukazujú, ak zaujímavo a sebavedomo vyzeráte, rande prestávajú miznúť, rozhovory začínajú silnejšie a \u201evyzeráš presne ako na fotkách\u201c sa stáva komplimentom, nie úľavou",
     imageAlt: "Obrazovky Tinder matchov s nápisom It's a Match",
   },

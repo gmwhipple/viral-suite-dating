@@ -154,7 +154,7 @@ export const it = {
 
   match: {
     kicker: "Dove finisce tutto",
-    title: "Conversazioni di qualità superiore iniziano con lo swipe",
+    title: "Conversazioni di qualità superiore iniziano con foto migliori",
     body: "Più match è solo l'inizio. Quando le tue foto mostrano finalmente quanto sei interessante e sicuro di te, gli appuntamenti smettono di essere disdetti, le conversazioni partono più forti e \u201csei proprio come nelle foto\u201d diventa un complimento, non un sollievo",
     imageAlt: "Schermate di match su Tinder con It's a Match",
   },

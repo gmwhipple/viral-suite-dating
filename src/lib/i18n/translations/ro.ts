@@ -149,7 +149,7 @@ export const ro = {
 
   match: {
     kicker: "Unde ajunge asta",
-    title: "Conversații de calitate superioară încep cu swipe-ul",
+    title: "Conversații de calitate superioară încep cu fotografii mai bune",
     body: "Mai multe potriviri sunt doar începutul. Când fotografiile tale arată în sfârșit cât de interesant și încrezător arăți, datele nu mai sunt anulate, conversațiile pornesc mai puternic, iar „arăți exact ca în poze” devine un compliment, nu o ușurare",
     imageAlt: "Ecrane de match Tinder cu It's a Match",
   },

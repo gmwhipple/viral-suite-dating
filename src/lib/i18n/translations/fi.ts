@@ -154,7 +154,7 @@ export const fi = {
 
   match: {
     kicker: "Mihin tämä johtaa",
-    title: "Laadukkaammat keskustelut alkavat pyyhkäisystä",
+    title: "Laadukkaammat keskustelut alkavat paremmista kuvista",
     body: "Enemmän matcheja on vasta alku. Kun kuvasi vihdoin näyttävät, kuinka mielenkiintoinen ja itsevarma näytät, treffit eivät enää peruunnu, keskustelut alkavat vahvemmin, ja „näytät juuri kuviesi kaltaiselta“ on kohteliaisuus, ei helpotus",
     imageAlt: "Tinder-match-näytöt, joissa lukee It's a Match",
   },
