@@ -246,4 +246,11 @@ export const fil = {
     support: "May tanong?",
     rights: "Lahat ng karapatan ay nakalaan",
   },
+  feedbackPrompt: {
+    question: "May kulang bang impormasyon para magamit ang aming serbisyo?",
+    placeholder: "Sabihin sa amin kung ano ang kulang o hindi malinaw...",
+    submit: "Isumite",
+    closeLabel: "Isara",
+    thanks: "Salamat sa iyong feedback!",
+  },
 } satisfies Dictionary;

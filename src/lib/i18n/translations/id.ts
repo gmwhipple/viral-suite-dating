@@ -241,4 +241,11 @@ export const id = {
     support: "Ada pertanyaan?",
     rights: "Hak cipta dilindungi",
   },
+  feedbackPrompt: {
+    question: "Apakah ada informasi yang kurang untuk menggunakan layanan kami?",
+    placeholder: "Beri tahu kami apa yang kurang atau tidak jelas...",
+    submit: "Kirim",
+    closeLabel: "Tutup",
+    thanks: "Terima kasih atas masukan Anda!",
+  },
 } satisfies Dictionary;

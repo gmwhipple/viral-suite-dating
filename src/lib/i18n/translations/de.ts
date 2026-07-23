@@ -247,4 +247,11 @@ export const de = {
     support: "Fragen?",
     rights: "Alle Rechte vorbehalten",
   },
+  feedbackPrompt: {
+    question: "Fehlt Ihnen Informationen, um unseren Service zu nutzen?",
+    placeholder: "Sagen Sie uns, was fehlt oder unklar ist...",
+    submit: "Absenden",
+    closeLabel: "Schließen",
+    thanks: "Danke für Ihr Feedback!",
+  },
 } satisfies Dictionary;

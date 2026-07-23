@@ -243,4 +243,11 @@ export const hr = {
     support: "Pitanja?",
     rights: "Sva prava pridržana",
   },
+  feedbackPrompt: {
+    question: "Nedostaje li vam informacija za korištenje naše usluge?",
+    placeholder: "Recite nam što nedostaje ili nije jasno...",
+    submit: "Pošalji",
+    closeLabel: "Zatvori",
+    thanks: "Hvala na povratnim informacijama!",
+  },
 } satisfies Dictionary;

@@ -247,4 +247,11 @@ export const ca = {
     support: "Preguntes?",
     rights: "Tots els drets reservats",
   },
+  feedbackPrompt: {
+    question: "Us falta alguna informació per utilitzar el nostre servei?",
+    placeholder: "Expliqueu-nos què falta o no queda clar...",
+    submit: "Enviar",
+    closeLabel: "Tancar",
+    thanks: "Gràcies pels comentaris!",
+  },
 } satisfies Dictionary;

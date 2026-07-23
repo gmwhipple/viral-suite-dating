@@ -245,4 +245,11 @@ export const lv = {
     support: "Jautājumi?",
     rights: "Visas tiesības aizsargātas",
   },
+  feedbackPrompt: {
+    question: "Vai jums trūkst informācijas, lai izmantotu mūsu pakalpojumu?",
+    placeholder: "Pastāstiet, kas trūkst vai nav skaidrs...",
+    submit: "Iesniegt",
+    closeLabel: "Aizvērt",
+    thanks: "Paldies par atsauksmi!",
+  },
 } satisfies Dictionary;

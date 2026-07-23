@@ -240,4 +240,11 @@ export const vi = {
     support: "Có câu hỏi?",
     rights: "Bảo lưu mọi quyền",
   },
+  feedbackPrompt: {
+    question: "Bạn có thiếu thông tin nào để sử dụng dịch vụ của chúng tôi không?",
+    placeholder: "Cho chúng tôi biết điều gì còn thiếu hoặc chưa rõ...",
+    submit: "Gửi",
+    closeLabel: "Đóng",
+    thanks: "Cảm ơn phản hồi của bạn!",
+  },
 } satisfies Dictionary;

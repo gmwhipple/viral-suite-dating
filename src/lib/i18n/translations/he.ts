@@ -232,4 +232,11 @@ export const he = {
     support: "שאלות?",
     rights: "כל הזכויות שמורות",
   },
+  feedbackPrompt: {
+    question: "האם חסרה לך מידע כדי להשתמש בשירות שלנו?",
+    placeholder: "ספר לנו מה חסר או מה לא ברור...",
+    submit: "שליחה",
+    closeLabel: "סגירה",
+    thanks: "תודה על המשוב!",
+  },
 } satisfies Dictionary;

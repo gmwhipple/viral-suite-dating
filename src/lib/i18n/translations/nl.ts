@@ -247,4 +247,11 @@ export const nl = {
     support: "Vragen?",
     rights: "Alle rechten voorbehouden",
   },
+  feedbackPrompt: {
+    question: "Mis je informatie om onze dienst te gebruiken?",
+    placeholder: "Vertel ons wat ontbreekt of onduidelijk is...",
+    submit: "Versturen",
+    closeLabel: "Sluiten",
+    thanks: "Bedankt voor je feedback!",
+  },
 } satisfies Dictionary;

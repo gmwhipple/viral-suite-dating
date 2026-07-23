@@ -243,4 +243,11 @@ export const sk = {
     support: "Otázky?",
     rights: "Všetky práva vyhradené",
   },
+  feedbackPrompt: {
+    question: "Chýbajú vám nejaké informácie na používanie našej služby?",
+    placeholder: "Povedzte nám, čo chýba alebo nie je jasné...",
+    submit: "Odoslať",
+    closeLabel: "Zavrieť",
+    thanks: "Ďakujeme za spätnú väzbu!",
+  },
 } satisfies Dictionary;

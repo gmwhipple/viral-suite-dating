@@ -229,4 +229,12 @@ export const zh: Dictionary = {
     support: "有疑问？",
     rights: "版权所有",
   },
+
+  feedbackPrompt: {
+    question: "您是否缺少使用我们服务所需的信息？",
+    placeholder: "告诉我们缺少什么或哪里不清楚...",
+    submit: "提交",
+    closeLabel: "关闭",
+    thanks: "感谢您的反馈！",
+  },
 };

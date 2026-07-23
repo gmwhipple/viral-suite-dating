@@ -244,4 +244,12 @@ export const ar: Dictionary = {
     support: "أسئلة؟",
     rights: "جميع الحقوق محفوظة",
   },
+
+  feedbackPrompt: {
+    question: "هل ينقصك أي معلومات لاستخدام خدمتنا؟",
+    placeholder: "أخبرنا بما ينقص أو ما هو غير واضح...",
+    submit: "إرسال",
+    closeLabel: "إغلاق",
+    thanks: "شكرًا على ملاحظاتك!",
+  },
 };

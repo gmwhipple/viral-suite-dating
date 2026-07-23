@@ -243,4 +243,11 @@ export const hu = {
     support: "Kérdések?",
     rights: "Minden jog fenntartva",
   },
+  feedbackPrompt: {
+    question: "Hiányzik valamilyen információ a szolgáltatásunk használatához?",
+    placeholder: "Mondja el, mi hiányzik vagy mi nem egyértelmű...",
+    submit: "Küldés",
+    closeLabel: "Bezárás",
+    thanks: "Köszönjük a visszajelzést!",
+  },
 } satisfies Dictionary;

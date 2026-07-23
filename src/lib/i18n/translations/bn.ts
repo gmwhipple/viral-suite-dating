@@ -239,4 +239,11 @@ export const bn = {
     support: "প্রশ্ন?",
     rights: "সর্বস্বত্ব সংরক্ষিত",
   },
+  feedbackPrompt: {
+    question: "আমাদের সেবা ব্যবহার করতে আপনার কোনো তথ্যের অভাব আছে কি?",
+    placeholder: "কী অনুপস্থিত বা অস্পষ্ট তা আমাদের জানান...",
+    submit: "জমা দিন",
+    closeLabel: "বন্ধ করুন",
+    thanks: "আপনার মতামতের জন্য ধন্যবাদ!",
+  },
 } satisfies Dictionary;

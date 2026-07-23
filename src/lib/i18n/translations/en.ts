@@ -249,6 +249,14 @@ export const en = {
     support: "Questions?",
     rights: "All rights reserved",
   },
+
+  feedbackPrompt: {
+    question: "Is there any info you are missing in order to use our service?",
+    placeholder: "Tell us what's missing or unclear...",
+    submit: "Submit",
+    closeLabel: "Close",
+    thanks: "Thank you for your feedback!",
+  },
 };
 
 /** Structural type all locales must satisfy. */

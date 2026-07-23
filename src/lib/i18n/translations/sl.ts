@@ -245,4 +245,11 @@ export const sl = {
     support: "Vprašanja?",
     rights: "Vse pravice pridržane",
   },
+  feedbackPrompt: {
+    question: "Ali vam manjka kakšna informacija za uporabo naše storitve?",
+    placeholder: "Povejte nam, kaj manjka ali ni jasno...",
+    submit: "Pošlji",
+    closeLabel: "Zapri",
+    thanks: "Hvala za povratne informacije!",
+  },
 } satisfies Dictionary;

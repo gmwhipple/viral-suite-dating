@@ -249,4 +249,11 @@ export const fi = {
     support: "Kysymyksiä?",
     rights: "Kaikki oikeudet pidätetään",
   },
+  feedbackPrompt: {
+    question: "Puuttuuko sinulta tietoa palvelumme käyttämiseen?",
+    placeholder: "Kerro, mitä puuttuu tai mikä on epäselvää...",
+    submit: "Lähetä",
+    closeLabel: "Sulje",
+    thanks: "Kiitos palautteestasi!",
+  },
 } satisfies Dictionary;

@@ -242,4 +242,11 @@ export const pt = {
     support: "Perguntas?",
     rights: "Todos os direitos reservados",
   },
+  feedbackPrompt: {
+    question: "Falta alguma informação para usar o nosso serviço?",
+    placeholder: "Diga-nos o que falta ou não está claro...",
+    submit: "Enviar",
+    closeLabel: "Fechar",
+    thanks: "Obrigado pelo seu feedback!",
+  },
 } satisfies Dictionary;

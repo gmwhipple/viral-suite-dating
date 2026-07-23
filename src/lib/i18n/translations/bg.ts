@@ -243,4 +243,11 @@ export const bg = {
     support: "Въпроси?",
     rights: "Всички права запазени",
   },
+  feedbackPrompt: {
+    question: "Липсва ли ви информация, за да използвате нашата услуга?",
+    placeholder: "Кажете ни какво липсва или не е ясно...",
+    submit: "Изпрати",
+    closeLabel: "Затвори",
+    thanks: "Благодарим за обратната връзка!",
+  },
 } satisfies Dictionary;

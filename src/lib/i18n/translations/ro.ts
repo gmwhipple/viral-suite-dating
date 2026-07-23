@@ -244,4 +244,11 @@ export const ro = {
     support: "Întrebări?",
     rights: "Toate drepturile rezervate",
   },
+  feedbackPrompt: {
+    question: "Îți lipsește vreo informație pentru a folosi serviciul nostru?",
+    placeholder: "Spune-ne ce lipsește sau ce nu este clar...",
+    submit: "Trimite",
+    closeLabel: "Închide",
+    thanks: "Mulțumim pentru feedback!",
+  },
 } satisfies Dictionary;

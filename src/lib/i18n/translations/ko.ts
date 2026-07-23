@@ -238,4 +238,12 @@ export const ko: Dictionary = {
     support: "궁금한 점이 있으신가요?",
     rights: "All rights reserved",
   },
+
+  feedbackPrompt: {
+    question: "서비스를 이용하는 데 필요한 정보가 부족한가요?",
+    placeholder: "부족하거나 불분명한 점을 알려주세요...",
+    submit: "제출",
+    closeLabel: "닫기",
+    thanks: "피드백 감사합니다!",
+  },
 };

@@ -249,4 +249,11 @@ export const sw = {
     support: "Maswali?",
     rights: "Haki zote zimehifadhiwa",
   },
+  feedbackPrompt: {
+    question: "Je, kuna taarifa unazokosa ili kutumia huduma yetu?",
+    placeholder: "Tuambie kinachokosekana au hakiko wazi...",
+    submit: "Tuma",
+    closeLabel: "Funga",
+    thanks: "Asante kwa maoni yako!",
+  },
 } satisfies Dictionary;

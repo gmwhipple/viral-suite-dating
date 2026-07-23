@@ -249,4 +249,11 @@ export const it = {
     support: "Domande?",
     rights: "Tutti i diritti riservati",
   },
+  feedbackPrompt: {
+    question: "Ti manca qualche informazione per usare il nostro servizio?",
+    placeholder: "Dicci cosa manca o non è chiaro...",
+    submit: "Invia",
+    closeLabel: "Chiudi",
+    thanks: "Grazie per il feedback!",
+  },
 } satisfies Dictionary;

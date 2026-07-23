@@ -7,6 +7,10 @@ import {
   getMetaCheckoutAttribution,
   trackInitiateCheckout,
 } from "@/lib/meta-browser";
+import {
+  getRedditCheckoutAttribution,
+  trackAddToCart,
+} from "@/lib/reddit-browser";
 
 export function useGuestCheckout(
   locale: string,
@@ -14,7 +18,7 @@ export function useGuestCheckout(
   currency = "USD",
   country: string | null = null
 ) {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
   const [checkingOut, setCheckingOut] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [checkoutBlocked, setCheckoutBlocked] = useState(false);
@@ -29,11 +33,23 @@ export function useGuestCheckout(
       try {
         const checkoutEventId = createCheckoutClickEventId();
         const attribution = getMetaCheckoutAttribution(checkoutEventId);
+        const redditAttribution = getRedditCheckoutAttribution(checkoutEventId, {
+          email: user?.email ?? undefined,
+          externalId: user?.uid,
+        });
 
         trackInitiateCheckout({
           value: priceUsd,
           currency,
           eventId: checkoutEventId,
+        });
+
+        trackAddToCart({
+          value: priceUsd,
+          currency,
+          eventId: checkoutEventId,
+          email: user?.email ?? undefined,
+          externalId: user?.uid,
         });
 
         const headers: Record<string, string> = {
@@ -53,6 +69,10 @@ export function useGuestCheckout(
             fbp: attribution.fbp,
             sourceUrl: attribution.sourceUrl,
             checkoutEventId: attribution.eventId,
+            rdtCid: redditAttribution.rdtCid,
+            rdtUuid: redditAttribution.rdtUuid,
+            screenWidth: redditAttribution.screenWidth,
+            screenHeight: redditAttribution.screenHeight,
           }),
         });
         const data = (await res.json()) as {
@@ -90,7 +110,7 @@ export function useGuestCheckout(
         setCheckingOut(false);
       }
     },
-    [locale, token, priceUsd, currency, country]
+    [locale, token, user, priceUsd, currency, country]
   );
 
   return {

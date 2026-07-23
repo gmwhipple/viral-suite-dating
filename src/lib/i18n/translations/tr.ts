@@ -247,4 +247,12 @@ export const tr: Dictionary = {
     support: "Sorular?",
     rights: "Tüm hakları saklıdır",
   },
+
+  feedbackPrompt: {
+    question: "Hizmetimizi kullanmak için eksik bilginiz var mı?",
+    placeholder: "Eksik veya belirsiz olan şeyi bize söyleyin...",
+    submit: "Gönder",
+    closeLabel: "Kapat",
+    thanks: "Geri bildiriminiz için teşekkürler!",
+  },
 };

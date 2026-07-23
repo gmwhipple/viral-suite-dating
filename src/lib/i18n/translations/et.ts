@@ -248,4 +248,11 @@ export const et = {
     support: "Küsimused?",
     rights: "Kõik õigused kaitstud",
   },
+  feedbackPrompt: {
+    question: "Kas teil puudub teave meie teenuse kasutamiseks?",
+    placeholder: "Öelge, mis puudub või on ebaselge...",
+    submit: "Saada",
+    closeLabel: "Sulge",
+    thanks: "Täname tagasiside eest!",
+  },
 } satisfies Dictionary;

@@ -12,6 +12,11 @@ import {
   sendMetaServerEvents,
 } from "@/lib/meta-capi";
 import { META_EVENT } from "@/lib/meta-event-ids";
+import {
+  isRedditCapiConfigured,
+  sendRedditServerEvents,
+} from "@/lib/reddit-capi";
+import { REDDIT_CONVERSION_PRODUCT, REDDIT_EVENT } from "@/lib/reddit-event-ids";
 
 async function parseCheckoutBody(request: NextRequest): Promise<{
   locale?: string;
@@ -20,6 +25,10 @@ async function parseCheckoutBody(request: NextRequest): Promise<{
   fbp?: string;
   sourceUrl?: string;
   checkoutEventId?: string;
+  rdtCid?: string;
+  rdtUuid?: string;
+  screenWidth?: number;
+  screenHeight?: number;
 }> {
   const contentType = request.headers.get("content-type");
   if (!contentType?.includes("application/json")) return {};
@@ -32,6 +41,10 @@ async function parseCheckoutBody(request: NextRequest): Promise<{
       fbp?: string;
       sourceUrl?: string;
       checkoutEventId?: string;
+      rdtCid?: string;
+      rdtUuid?: string;
+      screenWidth?: number;
+      screenHeight?: number;
     };
     return {
       locale: typeof body?.locale === "string" ? normalizeLocaleTag(body.locale) ?? undefined : undefined,
@@ -43,6 +56,10 @@ async function parseCheckoutBody(request: NextRequest): Promise<{
       fbp: typeof body?.fbp === "string" ? body.fbp : undefined,
       sourceUrl: typeof body?.sourceUrl === "string" ? body.sourceUrl : undefined,
       checkoutEventId: typeof body?.checkoutEventId === "string" ? body.checkoutEventId : undefined,
+      rdtCid: typeof body?.rdtCid === "string" ? body.rdtCid : undefined,
+      rdtUuid: typeof body?.rdtUuid === "string" ? body.rdtUuid : undefined,
+      screenWidth: typeof body?.screenWidth === "number" ? body.screenWidth : undefined,
+      screenHeight: typeof body?.screenHeight === "number" ? body.screenHeight : undefined,
     };
   } catch {
     return {};
@@ -112,6 +129,10 @@ export async function POST(request: NextRequest) {
         sourceUrl: body.sourceUrl || request.headers.get("referer") || `${appUrl}/`,
         checkoutEventId: body.checkoutEventId,
         externalId: auth?.uid,
+        rdtCid: body.rdtCid,
+        rdtUuid: body.rdtUuid,
+        screenWidth: body.screenWidth,
+        screenHeight: body.screenHeight,
       },
     });
 
@@ -157,6 +178,34 @@ export async function POST(request: NextRequest) {
       ]);
     } else if (isMetaCapiConfigured()) {
       console.log("[meta/capi] skipped InitiateCheckout — missing checkoutEventId (pixel/CAPI dedup requires same id)");
+    }
+
+    if (isRedditCapiConfigured() && body.checkoutEventId) {
+      await sendRedditServerEvents([
+        {
+          eventName: REDDIT_EVENT.AddToCart,
+          conversionId: body.checkoutEventId,
+          eventSourceUrl: body.sourceUrl || request.headers.get("referer") || `${appUrl}/`,
+          userData: {
+            email: auth?.email,
+            externalId: auth?.uid,
+            clientIpAddress: clientIp,
+            clientUserAgent,
+            clickId: body.rdtCid,
+            uuid: body.rdtUuid,
+            screenWidth: body.screenWidth,
+            screenHeight: body.screenHeight,
+          },
+          customData: {
+            currency: localizedPrice.currency.toUpperCase(),
+            value: localizedPrice.amount,
+            itemCount: 1,
+            products: [REDDIT_CONVERSION_PRODUCT],
+          },
+        },
+      ]);
+    } else if (isRedditCapiConfigured()) {
+      console.log("[reddit/capi] skipped AddToCart — missing checkoutEventId (pixel/CAPI dedup requires same id)");
     }
 
     console.log("[stripe/checkout] session created", {

@@ -246,4 +246,11 @@ export const sv = {
     support: "Frågor?",
     rights: "Alla rättigheter förbehållna",
   },
+  feedbackPrompt: {
+    question: "Saknar du information för att använda vår tjänst?",
+    placeholder: "Berätta vad som saknas eller är otydligt...",
+    submit: "Skicka",
+    closeLabel: "Stäng",
+    thanks: "Tack för din feedback!",
+  },
 } satisfies Dictionary;

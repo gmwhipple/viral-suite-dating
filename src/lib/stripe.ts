@@ -42,6 +42,10 @@ export async function createCheckoutSession(params: {
     sourceUrl?: string;
     checkoutEventId?: string;
     externalId?: string;
+    rdtCid?: string;
+    rdtUuid?: string;
+    screenWidth?: number;
+    screenHeight?: number;
   };
 }) {
   const { localizedPrice } = params;
@@ -66,6 +70,14 @@ export async function createCheckoutSession(params: {
     metadata.metaCheckoutEventId = params.metaAttribution.checkoutEventId;
   }
   if (params.metaAttribution?.externalId) metadata.metaExternalId = params.metaAttribution.externalId;
+  if (params.metaAttribution?.rdtCid) metadata.redditRdtCid = params.metaAttribution.rdtCid;
+  if (params.metaAttribution?.rdtUuid) metadata.redditUuid = params.metaAttribution.rdtUuid;
+  if (params.metaAttribution?.screenWidth != null) {
+    metadata.redditScreenWidth = String(params.metaAttribution.screenWidth);
+  }
+  if (params.metaAttribution?.screenHeight != null) {
+    metadata.redditScreenHeight = String(params.metaAttribution.screenHeight);
+  }
 
   if (params.userId) {
     metadata.userId = params.userId;
@@ -98,6 +110,7 @@ export async function createCheckoutSession(params: {
     success_url: params.successUrl,
     cancel_url: params.cancelUrl,
     billing_address_collection: "required",
+    phone_number_collection: { enabled: true },
     metadata,
   });
 

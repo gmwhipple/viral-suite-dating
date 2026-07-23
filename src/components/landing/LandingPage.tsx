@@ -25,6 +25,7 @@ import { useTranslations } from "@/hooks/useTranslations";
 import { useLocalizedPricing } from "@/hooks/useLocalizedPricing";
 import { useGuestCheckout } from "@/hooks/useGuestCheckout";
 import { LanguagePicker } from "@/components/landing/LanguagePicker";
+import { MissingInfoFeedbackModal } from "@/components/landing/MissingInfoFeedbackModal";
 import { cn } from "@/lib/utils";
 
 interface LandingPageProps {
@@ -222,6 +223,7 @@ export function LandingPage({ onCtaClick }: LandingPageProps) {
 
       <Footer t={t} />
       <StickyCta t={t} photoCount={photoCount} />
+      <MissingInfoFeedbackModal t={t} locale={locale} />
     </div>
   );
 }
@@ -246,11 +248,17 @@ function FloatingNav({
   return (
     <header className="fixed inset-x-0 top-0 z-50 px-4 pt-4 sm:px-8 sm:pt-5">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 rounded-full border border-white/10 bg-black/60 py-2.5 pl-6 pr-2.5 backdrop-blur-2xl">
-        <Link
-          href="/"
-          className="whitespace-nowrap font-display text-sm font-bold uppercase tracking-[0.2em]"
-        >
-          {APP_NAME}
+        <Link href="/" className="flex shrink-0 items-center">
+          <Image
+            src="/icon.png"
+            alt={APP_NAME}
+            width={28}
+            height={28}
+            className="rounded-md sm:hidden"
+          />
+          <span className="hidden whitespace-nowrap font-display text-sm font-bold uppercase tracking-[0.2em] sm:inline">
+            {APP_NAME}
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 lg:flex">
@@ -269,7 +277,7 @@ function FloatingNav({
           <LanguagePicker locale={locale} onLocaleChange={onLocaleChange} />
           <Link
             href="/login"
-            className="hidden whitespace-nowrap text-xs font-medium uppercase tracking-[0.15em] text-zinc-400 transition hover:text-white md:block"
+            className="whitespace-nowrap text-xs font-medium uppercase tracking-[0.15em] text-zinc-400 transition hover:text-white"
           >
             {t.nav.signIn}
           </Link>
@@ -280,6 +288,11 @@ function FloatingNav({
 }
 
 /* ------------------------------- Sticky CTA ------------------------------ */
+
+function stickyCtaSubWithoutPhotos(sub: string): string {
+  const separator = sub.includes(" · ") ? " · " : "·";
+  return sub.split(separator)[0]?.trim() ?? sub;
+}
 
 function StickyCta({ t, photoCount }: { t: Dictionary; photoCount: number }) {
   const [visible, setVisible] = useState(false);
@@ -315,13 +328,19 @@ function StickyCta({ t, photoCount }: { t: Dictionary; photoCount: number }) {
       )}
     >
       <div className="mx-auto flex max-w-md flex-col items-center gap-2 rounded-3xl border border-white/10 bg-black/80 p-3 backdrop-blur-2xl">
-        <a href="#pricing" className={cn(CTA_PRIMARY, "w-full py-4 text-sm")}>
+        <a href="#pricing-plan" className={cn(CTA_PRIMARY, "w-full py-4 text-sm sm:hidden")}>
+          {t.stickyCta.label}
+          <ArrowRight className="h-4 w-4" />
+        </a>
+        <a href="#pricing" className={cn(CTA_PRIMARY, "hidden w-full py-4 text-sm sm:flex")}>
           {t.stickyCta.label}
           <ArrowRight className="h-4 w-4" />
         </a>
         <p className="flex items-center gap-2 text-[11px] uppercase tracking-[0.15em] text-zinc-500">
           <RatingStars compact />
-          {format(t.stickyCta.sub, { photoCount })}
+          <span className="font-display font-bold text-white sm:hidden">4.9</span>
+          <span className="sm:hidden">{stickyCtaSubWithoutPhotos(t.stickyCta.sub)}</span>
+          <span className="hidden sm:inline">{format(t.stickyCta.sub, { photoCount })}</span>
         </p>
       </div>
     </div>
@@ -928,7 +947,10 @@ function PricingSection({
       <div className="mx-auto max-w-6xl">
         <SectionHeading kicker={t.pricing.kicker} title={t.pricing.title} body={t.pricing.body} center />
 
-        <div className="mx-auto mt-16 max-w-lg overflow-hidden rounded-3xl border border-white/15 border-t-[3px] border-t-rose-500">
+        <div
+          id="pricing-plan"
+          className="mx-auto mt-16 max-w-lg scroll-mt-28 overflow-hidden rounded-3xl border border-white/15 border-t-[3px] border-t-rose-500"
+        >
           <div className="p-8 sm:p-12">
             <div className="flex items-start justify-between gap-4">
               <h3 className="font-display text-sm font-bold uppercase tracking-[0.25em]">

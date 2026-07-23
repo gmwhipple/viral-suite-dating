@@ -243,4 +243,11 @@ export const sr = {
     support: "Pitanja?",
     rights: "Sva prava zadržana",
   },
+  feedbackPrompt: {
+    question: "Да ли вам недостаје информација да бисте користили нашу услугу?",
+    placeholder: "Реците нам шта недостаје или није јасно...",
+    submit: "Пошаљи",
+    closeLabel: "Затвори",
+    thanks: "Хвала на повратној информацији!",
+  },
 } satisfies Dictionary;

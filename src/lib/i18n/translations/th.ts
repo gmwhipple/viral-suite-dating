@@ -238,4 +238,11 @@ export const th = {
     support: "มีคำถาม?",
     rights: "สงวนลิขสิทธิ์",
   },
+  feedbackPrompt: {
+    question: "มีข้อมูลใดที่คุณยังขาดอยู่เพื่อใช้บริการของเราหรือไม่?",
+    placeholder: "บอกเราว่าขาดอะไรหรือส่วนไหนไม่ชัดเจน...",
+    submit: "ส่ง",
+    closeLabel: "ปิด",
+    thanks: "ขอบคุณสำหรับความคิดเห็น!",
+  },
 } satisfies Dictionary;

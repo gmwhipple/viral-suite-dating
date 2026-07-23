@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Instrument_Serif, Space_Grotesk } from "next/font/go
 import "./globals.css";
 import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
 import { MetaPixel } from "@/components/analytics/MetaPixel";
+import { RedditPixel } from "@/components/analytics/RedditPixel";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -52,6 +53,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <MetaPixel />
+        <RedditPixel />
         {children}
       </body>
     </html>

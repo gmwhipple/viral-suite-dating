@@ -245,4 +245,11 @@ export const af = {
     support: "Vrae?",
     rights: "Alle regte voorbehou",
   },
+  feedbackPrompt: {
+    question: "Ontbreek daar inligting om ons diens te gebruik?",
+    placeholder: "Sê vir ons wat ontbreek of onduidelik is...",
+    submit: "Stuur",
+    closeLabel: "Sluit",
+    thanks: "Dankie vir jou terugvoer!",
+  },
 } satisfies Dictionary;

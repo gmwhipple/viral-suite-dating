@@ -244,4 +244,11 @@ export const ms = {
     support: "Soalan?",
     rights: "Hak cipta terpelihara",
   },
+  feedbackPrompt: {
+    question: "Adakah maklumat yang anda perlukan untuk menggunakan perkhidmatan kami?",
+    placeholder: "Beritahu kami apa yang kurang atau tidak jelas...",
+    submit: "Hantar",
+    closeLabel: "Tutup",
+    thanks: "Terima kasih atas maklum balas anda!",
+  },
 } satisfies Dictionary;

@@ -69,53 +69,194 @@ function splitName(fullName?: string | null): { firstName?: string; lastName?: s
   return { firstName: parts[0], lastName: parts.slice(1).join(" ") };
 }
 
+function normalizeMetaPhone(phone?: string | null): string | undefined {
+  if (!phone?.trim()) return undefined;
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 7 ? digits : undefined;
+}
+
+function normalizeMetaState(state?: string | null, country?: string | null): string | undefined {
+  if (!state?.trim()) return undefined;
+  const cleaned = state.trim().replace(/[^a-z0-9]/gi, "");
+  if (!cleaned) return undefined;
+  if (cleaned.length === 2) return cleaned.toLowerCase();
+
+  const countryCode = country?.trim().toLowerCase();
+  if (countryCode === "us" || countryCode === "usa") {
+    const usStates: Record<string, string> = {
+      alabama: "al",
+      alaska: "ak",
+      arizona: "az",
+      arkansas: "ar",
+      california: "ca",
+      colorado: "co",
+      connecticut: "ct",
+      delaware: "de",
+      florida: "fl",
+      georgia: "ga",
+      hawaii: "hi",
+      idaho: "id",
+      illinois: "il",
+      indiana: "in",
+      iowa: "ia",
+      kansas: "ks",
+      kentucky: "ky",
+      louisiana: "la",
+      maine: "me",
+      maryland: "md",
+      massachusetts: "ma",
+      michigan: "mi",
+      minnesota: "mn",
+      mississippi: "ms",
+      missouri: "mo",
+      montana: "mt",
+      nebraska: "ne",
+      nevada: "nv",
+      newhampshire: "nh",
+      newjersey: "nj",
+      newmexico: "nm",
+      newyork: "ny",
+      northcarolina: "nc",
+      northdakota: "nd",
+      ohio: "oh",
+      oklahoma: "ok",
+      oregon: "or",
+      pennsylvania: "pa",
+      rhodeisland: "ri",
+      southcarolina: "sc",
+      southdakota: "sd",
+      tennessee: "tn",
+      texas: "tx",
+      utah: "ut",
+      vermont: "vt",
+      virginia: "va",
+      washington: "wa",
+      westvirginia: "wv",
+      wisconsin: "wi",
+      wyoming: "wy",
+      districtofcolumbia: "dc",
+    };
+    const mapped = usStates[cleaned.toLowerCase()];
+    if (mapped) return mapped;
+  }
+
+  return cleaned.toLowerCase();
+}
+
+function normalizeMetaZip(postal?: string | null, country?: string | null): string | undefined {
+  if (!postal?.trim()) return undefined;
+  const countryCode = country?.trim().toLowerCase();
+  const compact = postal.trim().replace(/\s/g, "").toLowerCase();
+
+  if (countryCode === "us" || countryCode === "usa") {
+    const digits = compact.replace(/[^\d]/g, "");
+    return digits.slice(0, 5) || undefined;
+  }
+
+  return compact.replace(/-/g, "") || undefined;
+}
+
+function normalizeMetaCountry(country?: string | null): string | undefined {
+  if (!country?.trim()) return undefined;
+  const cleaned = country.trim().toLowerCase();
+  if (cleaned.length === 2) return cleaned;
+  if (cleaned === "usa" || cleaned === "unitedstates") return "us";
+  if (cleaned === "uk" || cleaned === "unitedkingdom" || cleaned === "greatbritain") return "gb";
+  return cleaned.slice(0, 2);
+}
+
+function isValidClientIp(ip?: string | null): ip is string {
+  if (!ip?.trim() || ip.trim().toLowerCase() === "unknown") return false;
+  return /^(?:\d{1,3}\.){3}\d{1,3}$/.test(ip.trim()) || /:/.test(ip.trim());
+}
+
+export function metaUserDataFieldCoverage(input: MetaUserDataInput): Record<string, boolean> {
+  return {
+    email: Boolean(input.email?.trim()),
+    phone: Boolean(normalizeMetaPhone(input.phone)),
+    firstName: Boolean(input.firstName?.trim()),
+    lastName: Boolean(input.lastName?.trim()),
+    city: Boolean(input.city?.trim()),
+    state: Boolean(normalizeMetaState(input.state, input.country)),
+    zip: Boolean(normalizeMetaZip(input.zip, input.country)),
+    country: Boolean(normalizeMetaCountry(input.country)),
+    externalId: Boolean(input.externalId?.trim()),
+    clientIpAddress: isValidClientIp(input.clientIpAddress),
+    clientUserAgent: Boolean(input.clientUserAgent?.trim()),
+    fbc: Boolean(input.fbc?.trim()),
+    fbp: Boolean(input.fbp?.trim()),
+  };
+}
+
 export function buildMetaUserData(input: MetaUserDataInput): Record<string, string | string[]> {
   const userData: Record<string, string | string[]> = {};
 
-  if (input.email) userData.em = [hashMetaField(input.email)];
-  if (input.phone) userData.ph = [hashMetaField(input.phone.replace(/\D/g, ""))];
-  if (input.firstName) userData.fn = [hashMetaField(input.firstName)];
-  if (input.lastName) userData.ln = [hashMetaField(input.lastName)];
+  if (input.email?.trim()) userData.em = [hashMetaField(input.email)];
+  const phone = normalizeMetaPhone(input.phone);
+  if (phone) userData.ph = [hashMetaField(phone)];
+  if (input.firstName?.trim()) userData.fn = [hashMetaField(input.firstName)];
+  if (input.lastName?.trim()) userData.ln = [hashMetaField(input.lastName)];
 
-  if (input.city) userData.ct = [hashMetaField(input.city.replace(/[^a-z0-9]/gi, ""))];
-  if (input.state) userData.st = [hashMetaField(input.state.replace(/[^a-z0-9]/gi, ""))];
-  if (input.zip) userData.zp = [hashMetaField(input.zip.replace(/\s/g, ""))];
-  if (input.country) userData.country = [hashMetaField(input.country)];
+  const country = normalizeMetaCountry(input.country);
+  if (input.city?.trim()) userData.ct = [hashMetaField(input.city.replace(/[^a-z0-9]/gi, ""))];
+  const state = normalizeMetaState(input.state, country);
+  if (state) userData.st = [hashMetaField(state)];
+  const zip = normalizeMetaZip(input.zip, country);
+  if (zip) userData.zp = [hashMetaField(zip)];
+  if (country) userData.country = [hashMetaField(country)];
 
-  if (input.externalId) userData.external_id = [hashMetaField(input.externalId)];
+  if (input.externalId?.trim()) userData.external_id = [hashMetaField(input.externalId)];
 
-  if (input.clientIpAddress) userData.client_ip_address = input.clientIpAddress;
-  if (input.clientUserAgent) userData.client_user_agent = input.clientUserAgent;
-  if (input.fbc) userData.fbc = input.fbc;
-  if (input.fbp) userData.fbp = input.fbp;
+  if (isValidClientIp(input.clientIpAddress)) userData.client_ip_address = input.clientIpAddress.trim();
+  if (input.clientUserAgent?.trim()) userData.client_user_agent = input.clientUserAgent.trim();
+  if (input.fbc?.trim()) userData.fbc = input.fbc.trim();
+  if (input.fbp?.trim()) userData.fbp = input.fbp.trim();
 
   return userData;
 }
 
+type StripeAddressLike = {
+  city?: string | null;
+  state?: string | null;
+  postal_code?: string | null;
+  country?: string | null;
+  line1?: string | null;
+  line2?: string | null;
+} | null | undefined;
+
+type StripeCustomerDetailsLike = {
+  email?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  address?: StripeAddressLike;
+} | null | undefined;
+
+type StripeCustomerLike = {
+  email?: string | null;
+  name?: string | null;
+  phone?: string | null;
+  address?: StripeAddressLike;
+} | null | undefined;
+
 export function buildMetaUserDataFromStripeSession(session: {
-  customer_details?: {
-    email?: string | null;
-    name?: string | null;
-    phone?: string | null;
-    address?: {
-      city?: string | null;
-      state?: string | null;
-      postal_code?: string | null;
-      country?: string | null;
-    } | null;
-  } | null;
+  customer_details?: StripeCustomerDetailsLike;
+  customer_email?: string | null;
   metadata?: Record<string, string> | null;
-}): MetaUserDataInput {
-  const nameParts = splitName(session.customer_details?.name);
+}, customer?: StripeCustomerLike): MetaUserDataInput {
+  const details = session.customer_details;
+  const address = details?.address || customer?.address;
+  const country = address?.country;
+  const nameParts = splitName(details?.name || customer?.name);
+
   return {
-    email: session.customer_details?.email,
-    phone: session.customer_details?.phone,
+    email: details?.email || session.customer_email || customer?.email,
+    phone: details?.phone || customer?.phone,
     firstName: nameParts.firstName,
     lastName: nameParts.lastName,
-    city: session.customer_details?.address?.city,
-    state: session.customer_details?.address?.state,
-    zip: session.customer_details?.address?.postal_code,
-    country: session.customer_details?.address?.country,
+    city: address?.city,
+    state: address?.state,
+    zip: address?.postal_code,
+    country,
     externalId: session.metadata?.userId || session.metadata?.metaExternalId,
     clientIpAddress: session.metadata?.metaClientIp,
     clientUserAgent: session.metadata?.metaClientUserAgent,
@@ -181,6 +322,8 @@ export async function sendMetaServerEvents(events: MetaServerEventInput[]): Prom
       events: events.map((event) => ({
         eventName: event.eventName,
         eventId: event.eventId,
+        userDataFields: event.userData ? metaUserDataFieldCoverage(event.userData) : {},
+        capiKeys: event.userData ? Object.keys(buildMetaUserData(event.userData)) : [],
       })),
       received: json.events_received,
     });

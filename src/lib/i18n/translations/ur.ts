@@ -238,4 +238,11 @@ export const ur = {
     support: "سوالات؟",
     rights: "جملہ حقوق محفوظ ہیں",
   },
+  feedbackPrompt: {
+    question: "کیا ہماری سروس استعمال کرنے کے لیے آپ کو کوئی معلومات نہیں مل رہی؟",
+    placeholder: "بتائیں کیا کمی ہے یا کیا واضح نہیں...",
+    submit: "جمع کرائیں",
+    closeLabel: "بند کریں",
+    thanks: "آپ کی رائے کا شکریہ!",
+  },
 } satisfies Dictionary;

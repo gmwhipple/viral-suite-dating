@@ -238,4 +238,11 @@ export const fa = {
     support: "سؤالی دارید؟",
     rights: "تمامی حقوق محفوظ است",
   },
+  feedbackPrompt: {
+    question: "آیا اطلاعاتی برای استفاده از سرویس ما کم دارید؟",
+    placeholder: "بگویید چه چیزی کم است یا نامشخص است...",
+    submit: "ارسال",
+    closeLabel: "بستن",
+    thanks: "از بازخورد شما متشکریم!",
+  },
 } satisfies Dictionary;

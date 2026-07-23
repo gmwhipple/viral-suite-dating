@@ -243,4 +243,11 @@ export const da = {
     support: "Spørgsmål?",
     rights: "Alle rettigheder forbeholdes",
   },
+  feedbackPrompt: {
+    question: "Mangler du information for at bruge vores service?",
+    placeholder: "Fortæl os, hvad der mangler eller er uklart...",
+    submit: "Send",
+    closeLabel: "Luk",
+    thanks: "Tak for din feedback!",
+  },
 } satisfies Dictionary;

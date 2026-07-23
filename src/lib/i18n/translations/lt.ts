@@ -246,4 +246,11 @@ export const lt = {
     support: "Klausimai?",
     rights: "Visos teisės saugomos",
   },
+  feedbackPrompt: {
+    question: "Ar jums trūksta informacijos, kad galėtumėte naudotis mūsų paslauga?",
+    placeholder: "Pasakykite, ko trūksta ar kas neaišku...",
+    submit: "Siųsti",
+    closeLabel: "Uždaryti",
+    thanks: "Ačiū už atsiliepimą!",
+  },
 } satisfies Dictionary;

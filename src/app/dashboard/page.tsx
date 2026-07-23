@@ -7,11 +7,16 @@ import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
 import { CharacterTrainingPanel } from "@/components/dashboard/CharacterTrainingPanel";
 import { MetaPurchaseTracker } from "@/components/analytics/MetaPurchaseTracker";
+import { RedditPurchaseTracker } from "@/components/analytics/RedditPurchaseTracker";
 import {
   createCheckoutClickEventId,
   getMetaCheckoutAttribution,
   trackInitiateCheckout,
 } from "@/lib/meta-browser";
+import {
+  getRedditCheckoutAttribution,
+  trackAddToCart,
+} from "@/lib/reddit-browser";
 import { ImageReferencePicker, type GenerateReferencePayload } from "@/components/dashboard/ImageReferencePicker";
 import { GenerationGallery } from "@/components/dashboard/GenerationGallery";
 import { PlanUsageBanner } from "@/components/dashboard/PlanUsageBanner";
@@ -147,12 +152,24 @@ function DashboardContent() {
     try {
       const checkoutEventId = createCheckoutClickEventId();
       const attribution = getMetaCheckoutAttribution(checkoutEventId);
+      const redditAttribution = getRedditCheckoutAttribution(checkoutEventId, {
+        email: user?.email ?? undefined,
+        externalId: user?.uid,
+      });
       const checkoutValue = Number(checkoutPriceLabel.replace(/[^\d.]/g, "")) || 199;
 
       trackInitiateCheckout({
         value: checkoutValue,
         currency: prices.currency.toUpperCase(),
         eventId: checkoutEventId,
+      });
+
+      trackAddToCart({
+        value: checkoutValue,
+        currency: prices.currency.toUpperCase(),
+        eventId: checkoutEventId,
+        email: user?.email ?? undefined,
+        externalId: user?.uid,
       });
 
       const res = await fetch("/api/stripe/checkout", {
@@ -168,6 +185,10 @@ function DashboardContent() {
           fbp: attribution.fbp,
           sourceUrl: attribution.sourceUrl,
           checkoutEventId: attribution.eventId,
+          rdtCid: redditAttribution.rdtCid,
+          rdtUuid: redditAttribution.rdtUuid,
+          screenWidth: redditAttribution.screenWidth,
+          screenHeight: redditAttribution.screenHeight,
         }),
       });
       const json = (await res.json()) as { error?: string; url?: string };
@@ -361,6 +382,7 @@ function DashboardContent() {
   return (
     <div className="min-h-screen bg-gray-50">
       <MetaPurchaseTracker />
+      <RedditPurchaseTracker />
       <DashboardHelpModal open={helpOpen} onClose={closeHelp} />
 
       <header className="border-b border-gray-200 bg-white">

@@ -242,4 +242,11 @@ export const uk = {
     support: "Питання?",
     rights: "Усі права захищені",
   },
+  feedbackPrompt: {
+    question: "Чи бракує вам інформації, щоб користуватися нашим сервісом?",
+    placeholder: "Розкажіть, чого не вистачає або що незрозуміло...",
+    submit: "Надіслати",
+    closeLabel: "Закрити",
+    thanks: "Дякуємо за відгук!",
+  },
 } satisfies Dictionary;

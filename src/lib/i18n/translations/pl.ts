@@ -245,4 +245,11 @@ export const pl = {
     support: "Pytania?",
     rights: "Wszelkie prawa zastrzeżone",
   },
+  feedbackPrompt: {
+    question: "Czy brakuje Ci informacji, aby korzystać z naszej usługi?",
+    placeholder: "Powiedz nam, czego brakuje lub co jest niejasne...",
+    submit: "Wyślij",
+    closeLabel: "Zamknij",
+    thanks: "Dziękujemy za opinię!",
+  },
 } satisfies Dictionary;

@@ -229,4 +229,12 @@ export const zhTW: Dictionary = {
     support: "有疑問？",
     rights: "版權所有",
   },
+
+  feedbackPrompt: {
+    question: "您是否缺少使用我們服務所需的資訊？",
+    placeholder: "告訴我們缺少什麼或哪裡不清楚...",
+    submit: "提交",
+    closeLabel: "關閉",
+    thanks: "感謝您的回饋！",
+  },
 };

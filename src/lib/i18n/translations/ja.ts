@@ -236,4 +236,12 @@ export const ja: Dictionary = {
     support: "ご質問は？",
     rights: "All rights reserved",
   },
+
+  feedbackPrompt: {
+    question: "サービスを利用するのに不足している情報はありますか？",
+    placeholder: "不足している点や不明な点を教えてください...",
+    submit: "送信",
+    closeLabel: "閉じる",
+    thanks: "フィードバックありがとうございます！",
+  },
 };

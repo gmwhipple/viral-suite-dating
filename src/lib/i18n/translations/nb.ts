@@ -243,4 +243,11 @@ export const nb = {
     support: "Spørsmål?",
     rights: "Alle rettigheter forbeholdt",
   },
+  feedbackPrompt: {
+    question: "Mangler du informasjon for å bruke tjenesten vår?",
+    placeholder: "Fortell oss hva som mangler eller er uklart...",
+    submit: "Send",
+    closeLabel: "Lukk",
+    thanks: "Takk for tilbakemeldingen!",
+  },
 } satisfies Dictionary;

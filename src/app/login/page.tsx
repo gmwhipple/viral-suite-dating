@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_NAME, SUPPORT_EMAIL } from "@/lib/constants";
 import { MetaPurchaseTracker } from "@/components/analytics/MetaPurchaseTracker";
+import { RedditPurchaseTracker } from "@/components/analytics/RedditPurchaseTracker";
 
 function authErrorMessage(err: unknown): string {
   const code =
@@ -180,6 +181,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-rose-50 to-orange-50 px-4">
       <Suspense fallback={null}>
         <MetaPurchaseTracker />
+        <RedditPurchaseTracker />
       </Suspense>
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         <Link href="/" className="text-xl font-bold text-rose-600">

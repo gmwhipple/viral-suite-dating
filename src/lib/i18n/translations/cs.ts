@@ -240,4 +240,11 @@ export const cs = {
     support: "Otázky?",
     rights: "Všechna práva vyhrazena",
   },
+  feedbackPrompt: {
+    question: "Chybí vám nějaké informace pro používání naší služby?",
+    placeholder: "Řekněte nám, co chybí nebo není jasné...",
+    submit: "Odeslat",
+    closeLabel: "Zavřít",
+    thanks: "Děkujeme za zpětnou vazbu!",
+  },
 } satisfies Dictionary;
